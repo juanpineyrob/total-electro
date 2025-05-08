@@ -38,8 +38,8 @@ INSERT INTO products (name, short_description, long_description, price, dimensio
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views) VALUES ('Kit de automatización', 'Tu hogar inteligente', 'Kit con sensor, enchufe inteligente, interruptor y app de control.', 200, '30x20x10 cm', 4, 0);
 
 -- Users
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('juan@ejemplo.com', 'pass1234', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', '555-1111');
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('ana@ejemplo.com', 'clave5678', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', '555-2222');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number, role) VALUES ('juan@ejemplo.com', 'pass1234', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', '555-1111', 'USER');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number, role) VALUES ('ana@ejemplo.com', 'clave5678', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', '555-2222', 'USER');
 
 -- Orders
 INSERT INTO orders (total_price, date, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 1);

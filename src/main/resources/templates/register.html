@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Total Electro</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="login-container" style="max-width:400px;margin:60px auto;padding:32px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+        <h2 style="text-align:center;">Criar nova conta</h2>
+        
+        <!-- Mensagem de erro -->
+        <div th:if="${error}" style="background:#ffebee;color:#c62828;padding:12px;border-radius:4px;margin-bottom:18px;" th:text="${error}"></div>
+        
+        <form method="post" action="/register">
+            <div style="margin-bottom:18px;">
+                <label for="firstName">Nome</label>
+                <input type="text" id="firstName" name="firstName" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="lastName">Sobrenome</label>
+                <input type="text" id="lastName" name="lastName" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="city">Cidade</label>
+                <input type="text" id="city" name="city" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="address">Endereço</label>
+                <input type="text" id="address" name="address" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label for="phoneNumber">Telefone</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required style="width:100%;padding:8px;margin-top:4px;">
+            </div>
+            <button type="submit" style="width:100%;background:#f36f21;color:#fff;padding:10px 0;border:none;border-radius:6px;font-size:16px;">Cadastrar</button>
+        </form>
+        <div style="text-align:center;margin-top:18px;">
+            <span>Já tem conta?</span>
+            <a href="/login" style="color:#f36f21;font-weight:bold;">Entrar</a>
+        </div>
+    </div>
+</body>
+</html> 

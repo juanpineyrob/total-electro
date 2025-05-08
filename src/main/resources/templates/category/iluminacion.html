@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,11 @@
         </div>
         <div class="header-actions">
             <button class="lang">🇧🇷</button>
-            <a href="#" class="account">Minha conta</a>
+            <span sec:authorize="isAuthenticated()">
+                Olá, <span sec:authentication="principal.username"></span> |
+                <a th:href="@{/logout}" style="color:#f36f21;font-weight:bold;">Sair</a>
+            </span>
+            <a th:href="@{/login}" class="account" sec:authorize="isAnonymous()">Minha conta</a>
             <a href="#" class="cart"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
         </div>
     </div>

@@ -1,55 +1,37 @@
 package com.totalelectro.model;
 
-import lombok.*;
-
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+@Data
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
 public class User {
-
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", nullable = false)
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    @Column(name = "first_name", nullable = false)
+    @Column(nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(nullable = false)
     private String lastName;
 
-    @Column(name = "city")
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private String city;
 
-    @Column(name = "address")
+    @Column(nullable = false)
     private String address;
 
-    @Column(name = "phone_number")
+    @Column(nullable = false)
     private String phoneNumber;
 
-//    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-//    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-//    @Enumerated(EnumType.STRING)
-//    private Set<Role> roles;
-
-    @ManyToMany
-    private List<Product> productList;
-
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders = new ArrayList<>();
+    @Column(nullable = false)
+    private String role = "USER"; // USER ou ADMIN
 }
