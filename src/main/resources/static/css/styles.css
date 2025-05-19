@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
@@ -154,7 +156,7 @@ nav.main-menu {
 
 .banner-img {
   flex: 1;
-  min-width: 220px;
+  min-width: 577px;
   max-width: 340px;
   margin-right: 32px;
 }
@@ -163,6 +165,7 @@ nav.main-menu {
   width: 100%;
   height: auto;
   border-radius: 8px;
+  margin-left: -30px;
 }
 
 .banner-text {
@@ -174,15 +177,36 @@ nav.main-menu {
 }
 
 .banner-text h1 {
-  font-size: 48px;
-  color: #ff3131;
+  font-size: 86px;
+  color: #ffffff;
   margin: 0 0 8px 0;
   font-weight: bold;
 }
 
 .banner-text p {
+  font-family: 'Orbitron', Arial, sans-serif;
+  font-weight: 700;
   font-size: 20px;
-  margin: 0;
+  margin-left: 172px;
+  margin-top: -30px;
+}
+
+.envios-text {
+  font-family: 'Orbitron', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 96px;
+  color: #fff;
+  margin-left: 52px;
+}
+
+.imediatos-text {
+  font-family: 'Orbitron', Arial, sans-serif;
+  font-weight: 700;
+  margin-left: 50px;
+  font-size: 138px;
+  color: #f00;
+  display: block;
+  margin-top: -30px;
 }
 
 /* FEATURES */
