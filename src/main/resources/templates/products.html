@@ -76,7 +76,13 @@
         <div class="products-grid">
             <div class="product" th:each="product : ${page.content}">
                 <span class="fav">&#10084;</span>
-                <img th:src="@{/images/product1.png}" th:alt="${product.name}">
+                <img th:if="${product.imageUrl != null}" 
+                     th:src="${product.imageUrl}" 
+                     th:alt="${product.name}"
+                     class="product-image">
+                <div th:unless="${product.imageUrl != null}" class="no-image">
+                    <i class="bi bi-image"></i>
+                </div>
                 <h3 th:text="${product.name}">Nome do produto</h3>
                 <span class="price" th:text="'R$ ' + ${product.price}">R$ 0,00</span>
                 <a th:href="@{/product/{id}(id=${product.id})}" class="btn-comprar" sec:authorize="isAuthenticated()">Comprar</a>

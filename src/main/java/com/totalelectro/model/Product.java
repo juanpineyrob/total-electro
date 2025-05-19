@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
@@ -30,7 +31,7 @@ public class Product {
     private String long_description;
 
     @Column(name = "price", nullable = false)
-    private Integer price;
+    private BigDecimal price;
 
     @Column(name = "dimensions", nullable = false)
     private String dimensions;
@@ -44,4 +45,7 @@ public class Product {
 
     @Column(nullable = false)
     private Integer views = 0;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

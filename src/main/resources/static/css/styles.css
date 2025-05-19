@@ -458,4 +458,73 @@ footer {
 .footer-payments img {
   width: 40px;
   margin-right: 8px;
+}
+
+/* Product Images */
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.no-image {
+    width: 100%;
+    height: 200px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.no-image i {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Product Detail Image */
+.product-detail .product-images {
+    margin-bottom: 2rem;
+}
+
+.product-detail .main-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.product-detail .no-image {
+    width: 100%;
+    height: 400px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.product-detail .no-image i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+/* Admin Product List Image */
+.admin-product-list img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    border-radius: 4px;
 } 

@@ -67,6 +67,7 @@ public class AdminService {
         entity.setLong_description(dto.getLong_description());
         entity.setPrice(dto.getPrice());
         entity.setDimensions(dto.getDimensions());
+        entity.setImageUrl(dto.getImageUrl());
         Category category = new Category();
         category.setId(dto.getCategory().getId());
         entity.setCategory(categoryRepository.getCategoryById(category.getId()));

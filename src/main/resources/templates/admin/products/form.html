@@ -15,7 +15,7 @@
                         <h2 class="card-title" th:text="${product.id == null ? 'Nuevo Producto' : 'Editar Producto'}"></h2>
                     </div>
                     <div class="card-body">
-                        <form th:action="${product.id == null ? '/admin/products' : '/admin/products/update'}" th:object="${product}" method="post">
+                        <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
                             <input type="hidden" th:field="*{id}">
                             
                             <div class="mb-3">
@@ -35,7 +35,7 @@
 
                             <div class="mb-3">
                                 <label for="price" class="form-label">Precio</label>
-                                <input type="number" class="form-control" id="price" th:field="*{price}" required>
+                                <input type="number" class="form-control" id="price" th:field="*{price}" required step="0.01" min="0">
                             </div>
 
                             <div class="mb-3">
@@ -52,6 +52,15 @@
                                             th:text="${category.name}">
                                     </option>
                                 </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Imagen del Producto</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div th:if="${product.imageUrl != null}" class="mt-2">
+                                    <p>Imagen actual:</p>
+                                    <img th:src="${product.imageUrl}" alt="Imagen del producto" style="max-width: 200px; max-height: 200px;">
+                                </div>
                             </div>
 
                             <div class="d-flex justify-content-between">

@@ -55,21 +55,21 @@
   <!-- FEATURES -->
   <div class="features">
     <div class="feature-item">
-      <img th:src="@{/images/truck.png}" alt="Envio rápido" class="feature-img">
+      <img th:src="@{/images/truck (1).png}" alt="Envio rápido" class="feature-img">
       <div>
         <span>Envio rápido</span>
         <p class="feature-description">Logística própria</p>
       </div>
     </div>
     <div class="feature-item">
-      <img th:src="@{/images/certified.png}" alt="Loja certificada" class="feature-img">
+      <img th:src="@{/images/verifica.png}" alt="Loja certificada" class="feature-img">
       <div>
         <span>Loja certificada</span>
         <p class="feature-description">Compre com segurança</p>
       </div>
     </div>
     <div class="feature-item">
-      <img th:src="@{/images/cards.png}" alt="Todas as bandeiras" class="feature-img">
+      <img th:src="@{/images/tarjetas.png}" alt="Todas as bandeiras" class="feature-img">
       <div>
         <span>Todas as bandeiras</span>
         <p class="feature-description">Facilitamos suas compras</p>
@@ -86,7 +86,13 @@
           <th:block th:each="product : ${popularProductsSlide1}">
             <div class="product">
               <span class="fav">&#10084;</span>
-              <img th:src="@{/images/product1.png}" th:alt="${product.name}">
+              <img th:if="${product.imageUrl != null}" 
+                   th:src="${product.imageUrl}" 
+                   th:alt="${product.name}"
+                   class="product-image">
+              <div th:unless="${product.imageUrl != null}" class="no-image">
+                <i class="bi bi-image"></i>
+              </div>
               <span class="tag">Mais vendido</span>
               <h3 th:text="${product.name}">Nome do produto</h3>
               <span class="price-new" th:text="'R$ ' + ${product.price}">R$ 0,00</span>
@@ -99,7 +105,13 @@
           <th:block th:each="product : ${popularProductsSlide2}">
             <div class="product">
               <span class="fav">&#10084;</span>
-              <img th:src="@{/images/product1.png}" th:alt="${product.name}">
+              <img th:if="${product.imageUrl != null}" 
+                   th:src="${product.imageUrl}" 
+                   th:alt="${product.name}"
+                   class="product-image">
+              <div th:unless="${product.imageUrl != null}" class="no-image">
+                <i class="bi bi-image"></i>
+              </div>
               <span class="tag">Mais vendido</span>
               <h3 th:text="${product.name}">Nome do produto</h3>
               <span class="price-new" th:text="'R$ ' + ${product.price}">R$ 0,00</span>
