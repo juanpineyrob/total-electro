@@ -4,6 +4,7 @@ import com.totalelectro.constants.Pages;
 import com.totalelectro.constants.PathConstants;
 import com.totalelectro.model.Product;
 import com.totalelectro.service.ProductService;
+import com.totalelectro.service.CategoryService;
 import com.totalelectro.utils.ControllerUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
     private final ControllerUtils controllerUtils;
 
     @GetMapping("/{id}")

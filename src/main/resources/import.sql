@@ -6,7 +6,7 @@ INSERT INTO categories(name) VALUES ('Automatizacion y Domotica');
 INSERT INTO categories(name) VALUES ('Seguridad Electrica');
 
 -- Products
-INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Foco LED 10W', 'Iluminación LED eficiente','Foco LED de 10W ideal para interiores, luz blanca fría, durabilidad de 15,000 horas.', 50, '5x5x10 cm', 1, 0, '/images/products/foco-led-10w.jpg');
+INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Foco LED 10W', 'Iluminación LED eficiente', 'Foco LED de 10W ideal para interiores, luz blanca fría, durabilidad de 15,000 horas.', 50, '5x5x10 cm', 1, 0, '/images/products/foco-led-10w.jpg');
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Foco LED 20W', 'Foco potente para exteriores', 'Luz LED de 20W para exteriores, resistente al agua y de bajo consumo.', 90, '6x6x12 cm', 1, 0, '/images/products/foco-led-20w.jpg');
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Panel Solar 100W', 'Panel solar compacto', 'Generador solar portátil de 100W para zonas sin red eléctrica o respaldo de emergencia.', 800, '100x60x3 cm', 1, 0, '/images/products/panel-solar-100w.jpg');
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Regleta 4 enchufes', 'Regleta con protección', 'Regleta con interruptor y protección contra sobretensiones, ideal para oficina.', 40, '30x5x4 cm', 3, 0, '/images/products/regleta-4-enchufes.jpg');
@@ -37,14 +37,27 @@ INSERT INTO products (name, short_description, long_description, price, dimensio
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Caja estanca IP65', 'Protección al aire libre', 'Caja de conexiones eléctrica con protección contra agua y polvo.', 42, '15x10x8 cm', 5, 0, '/images/products/caja-estanca.jpg');
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Kit de automatización', 'Tu hogar inteligente', 'Kit con sensor, enchufe inteligente, interruptor y app de control.', 200, '30x20x10 cm', 4, 0, '/images/products/kit-automatizacion.jpg');
 
--- Users
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number, role) VALUES ('juan@ejemplo.com', 'pass1234', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', '555-1111', 'USER');
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number, role) VALUES ('ana@ejemplo.com', 'clave5678', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', '555-2222', 'USER');
+-- Roles
+INSERT INTO roles (name) VALUES ('USER');
+INSERT INTO roles (name) VALUES ('ADMIN');
+
+-- Users (con contraseñas encriptadas)
+-- Contraseña para juan@ejemplo.com: pass1234
+-- Contraseña para ana@ejemplo.com: clave5678
+-- Contraseña para admin@totalelectro.com: pass1234
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('juan@ejemplo.com', '$2a$10$CEBO1m5bHlhJhLOeNh06mO.HaGwaIkDZw6ZMBg0ovgGYOyQN1ivlm', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', '555-1111');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('ana@ejemplo.com', '$2a$10$8K1p/a0dR1LXMIgoEDFrwOfgqw7z6aP3y9T0V9QUIz2VhQv5Uq6.q', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', '555-2222');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('admin@totalelectro.com', '$2a$10$CEBO1m5bHlhJhLOeNh06mO.HaGwaIkDZw6ZMBg0ovgGYOyQN1ivlm', 'Admin', 'System', 'Ciudad', 'Dirección', '123456789');
+
+-- Asignación de roles
+INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'juan@ejemplo.com' AND r.name = 'ADMIN';
+INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'ana@ejemplo.com' AND r.name = 'USER';
+INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'admin@totalelectro.com' AND r.name = 'ADMIN';
 
 -- Orders
-INSERT INTO orders (total_price, date, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 1);
-INSERT INTO orders (total_price, date, first_name, last_name, city, address, email, phone_number, user_id) VALUES (160.00, CURRENT_TIMESTAMP, 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', 'ana@ejemplo.com', '555-2222', 2);
-INSERT INTO orders (total_price, date, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 2);
+INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'PENDIENTE', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 1);
+INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (160.00, CURRENT_TIMESTAMP, 'COMPLETADA', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', 'ana@ejemplo.com', '555-2222', 2);
+INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'PENDIENTE', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 2);
 
 -- Order-Product Relationships
 INSERT INTO orders_products (order_id, product_id) VALUES (1, 1);
@@ -53,7 +66,3 @@ INSERT INTO orders_products (order_id, product_id) VALUES (1, 6);
 INSERT INTO orders_products (order_id, product_id) VALUES (2, 2);
 INSERT INTO orders_products (order_id, product_id) VALUES (2, 5);
 INSERT INTO orders_products (order_id, product_id) VALUES (2, 7);
-
--- User-Role Relationships (commented out)
--- insert into user_role (user_id, roles) values (1, 'ADMIN');
--- insert into user_role (user_id, roles) values (2, 'USER');

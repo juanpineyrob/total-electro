@@ -28,6 +28,10 @@ public class Order {
     @Column(name = "date", columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime date = LocalDateTime.now();
 
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -53,7 +57,7 @@ public class Order {
     private Set<Product> products = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
 

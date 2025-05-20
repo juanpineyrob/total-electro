@@ -3,7 +3,6 @@ package com.totalelectro.constants;
 public class Pages {
     public static final String ADMIN_PRODUCT = "admin-product";
     public static final String ADMIN_EDIT_PRODUCT = "admin-edit-product";
-    public static final String ADMIN_ADD_PRODUCT = "admin-add-product";
     public static final String ADMIN_REMOVE_PRODUCT = "admin-remove-product";
     public static final String PRODUCT = "product";
     public static final String PRODUCTS = "products";
@@ -15,6 +14,4 @@ public class Pages {
     public static final String SEGURIDAD_ELECTRICA = "seguridad-electrica";
     public static final String CART = "cart";
     public static final String HOME = "home";
-    public static final String LOGIN = "login";
-    public static final String REGISTRATION = "registration";
- }
+}
