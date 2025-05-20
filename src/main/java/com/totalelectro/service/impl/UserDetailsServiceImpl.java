@@ -1,6 +1,7 @@
 package com.totalelectro.service.impl;
 
 import com.totalelectro.model.User;
+import com.totalelectro.projection.UserDetailsProjection;
 import com.totalelectro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,50 +29,61 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         logger.info("Intentando cargar usuario con email: {}", email);
         
         try {
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> {
-                        logger.error("❌ Usuario no encontrado con email: {}", email);
-                        return new UsernameNotFoundException("Usuario no encontrado con email: " + email);
-                    });
-
-            logger.info("✅ Usuario encontrado: {} {} (ID: {})", user.getFirstName(), user.getLastName(), user.getId());
-            logger.info("📋 Roles del usuario (tamaño del conjunto): {}", user.getRoles().size());
-            
-            if (user.getRoles().isEmpty()) {
-                logger.warn("⚠️ El usuario no tiene roles asignados");
-            } else {
-                logger.info("📋 Conjunto de roles del usuario: {}", user.getRoles());
+            // Verificar si el email está vacío
+            if (email == null || email.trim().isEmpty()) {
+                logger.error("❌ Email proporcionado está vacío");
+                throw new UsernameNotFoundException("El email no puede estar vacío");
             }
-            
-            user.getRoles().forEach(role -> {
-                logger.info("📋 Rol encontrado: {} (ID: {})", role.getName(), role.getId());
-                logger.info("📋 Detalles del rol: {}", role);
-            });
 
-            var authorities = user.getRoles().stream()
-                    .map(role -> {
-                        String authority = "ROLE_" + role.getName();
-                        logger.info("🔑 Asignando autoridad: {} al usuario {}", authority, email);
+            // Buscar el usuario y sus roles usando la consulta nativa
+            List<UserDetailsProjection> userDetails = userRepository.searchUserAndRolesByEmail(email);
+            
+            if (userDetails.isEmpty()) {
+                logger.error("❌ Usuario no encontrado con email: {}", email);
+                throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);
+            }
+
+            logger.info("✅ Usuario encontrado: {}", email);
+            
+            // Debug detallado de roles
+            logger.info("=== DEBUG DE ROLES ===");
+            logger.info("📋 Número total de roles: {}", userDetails.size());
+            
+            // Crear autoridades
+            var authorities = userDetails.stream()
+                    .map(projection -> {
+                        String authority = "ROLE_" + projection.getAuthority();
+                        logger.info("🔑 Creando autoridad: {} para el usuario {}", authority, email);
                         return new SimpleGrantedAuthority(authority);
                     })
                     .collect(Collectors.toList());
 
-            logger.info("🎯 Autoridades finales para {}: {}", email, authorities);
-            logger.info("🎯 Tamaño de la lista de autoridades: {}", authorities.size());
+            logger.info("📋 Lista final de autoridades:");
+            authorities.forEach(auth -> logger.info("  - {}", auth.getAuthority()));
+            logger.info("📋 Total de autoridades: {}", authorities.size());
 
-            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
+            // Crear UserDetails usando el primer resultado (todos tienen la misma contraseña)
+            UserDetails userDetailsObj = new org.springframework.security.core.userdetails.User(
+                    userDetails.get(0).getUsername(),
+                    userDetails.get(0).getPassword(),
                     authorities
             );
             
-            logger.info("✅ UserDetails creado exitosamente para {} con authorities: {}", email, userDetails.getAuthorities());
-            logger.info("✅ Tamaño de authorities en UserDetails: {}", userDetails.getAuthorities().size());
-            logger.info("=== FIN DE AUTENTICACIÓN ===");
+            logger.info("✅ UserDetails creado exitosamente");
+            logger.info("  - Email: {}", userDetailsObj.getUsername());
+            logger.info("  - Contraseña: [PROTEGIDA]");
+            logger.info("  - Cuenta no expirada: {}", userDetailsObj.isAccountNonExpired());
+            logger.info("  - Cuenta no bloqueada: {}", userDetailsObj.isAccountNonLocked());
+            logger.info("  - Credenciales no expiradas: {}", userDetailsObj.isCredentialsNonExpired());
+            logger.info("  - Cuenta habilitada: {}", userDetailsObj.isEnabled());
+            logger.info("  - Autoridades finales: {}", userDetailsObj.getAuthorities());
             
-            return userDetails;
+            logger.info("=== FIN DE AUTENTICACIÓN ===");
+            return userDetailsObj;
+            
         } catch (Exception e) {
-            logger.error("❌ Error al cargar usuario: {}", e.getMessage(), e);
+            logger.error("❌ Error durante la autenticación: {}", e.getMessage());
+            logger.error("❌ Tipo de excepción: {}", e.getClass().getName());
             logger.error("❌ Stack trace completo:", e);
             throw e;
         }

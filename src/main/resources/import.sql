@@ -43,11 +43,11 @@ INSERT INTO roles (name) VALUES ('ADMIN');
 
 -- Users (con contraseñas encriptadas)
 -- Contraseña para juan@ejemplo.com: pass1234
--- Contraseña para ana@ejemplo.com: clave5678
+-- Contraseña para ana@ejemplo.com: pass1234
 -- Contraseña para admin@totalelectro.com: pass1234
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('juan@ejemplo.com', '$2a$10$CEBO1m5bHlhJhLOeNh06mO.HaGwaIkDZw6ZMBg0ovgGYOyQN1ivlm', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', '555-1111');
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('ana@ejemplo.com', '$2a$10$8K1p/a0dR1LXMIgoEDFrwOfgqw7z6aP3y9T0V9QUIz2VhQv5Uq6.q', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', '555-2222');
-INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('admin@totalelectro.com', '$2a$10$CEBO1m5bHlhJhLOeNh06mO.HaGwaIkDZw6ZMBg0ovgGYOyQN1ivlm', 'Admin', 'System', 'Ciudad', 'Dirección', '123456789');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('juan@ejemplo.com', '$2a$10$CD0AKAgdinolsfw7mz1QBu4egK8Tcjm.N0eAPB1.VbHXjn2grs8mm', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', '555-1111');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('ana@ejemplo.com', '$2a$10$CD0AKAgdinolsfw7mz1QBu4egK8Tcjm.N0eAPB1.VbHXjn2grs8mm', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', '555-2222');
+INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('admin@totalelectro.com', '$2a$10$CD0AKAgdinolsfw7mz1QBu4egK8Tcjm.N0eAPB1.VbHXjn2grs8mm', 'Admin', 'System', 'Ciudad', 'Dirección', '123456789');
 
 -- Asignación de roles
 INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'juan@ejemplo.com' AND r.name = 'ADMIN';
