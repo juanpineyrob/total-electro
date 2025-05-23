@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'Resultados para: ' + ${param.name[0]} + ' - Total Electro'">Resultados da Busca - Total Electro</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Estilo común para los botones “Carrinho”, “Sair” y “Minha conta” (igual que “Buscar”) */
+        .header-btn {
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <!-- HEADER -->
@@ -21,8 +28,11 @@
         </div>
         <div class="header-actions">
             <button class="lang">🇧🇷</button>
-            <a th:href="@{/login}" class="account">Minha conta</a>
-            <a href="#" class="cart"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
+            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
+            <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
+                <button type="submit" class="btn btn-link text-danger p-0 border-0 header-btn" style="text-decoration: none;">Sair</button>
+            </form>
+            <a href="#" class="cart header-btn"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
         </div>
     </div>
 

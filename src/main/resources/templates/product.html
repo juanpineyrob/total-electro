@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,10 @@
         </div>
         <div class="header-actions">
             <button class="lang">🇧🇷</button>
-            <a th:href="@{/login}" class="account">Minha conta</a>
+            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account">Minha conta</a>
+            <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
+                <button type="submit" class="btn btn-link text-danger p-0 border-0" style="text-decoration: none;">Sair</button>
+            </form>
             <a href="#" class="cart"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
         </div>
     </div>

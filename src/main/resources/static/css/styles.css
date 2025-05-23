@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+ñ@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -68,16 +68,35 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
 .header-actions .lang {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 24px;
   color: #fff;
   cursor: pointer;
   margin-right: 8px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.2s ease;
+}
+
+.header-actions .lang .material-symbols-outlined {
+  font-size: 20px;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.header-actions .lang:hover .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+
+.header-actions .lang:hover {
+  transform: none;
 }
 
 .header-actions .account {
@@ -118,6 +137,29 @@ body {
   border: 2px solid #f36f21;
 }
 
+.header-actions .btn-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #dc3545;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-actions .btn-link:hover {
+  color: #c82333;
+}
+
+.header-actions form {
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+}
+
 /* MENU */
 nav.main-menu {
   background: #fff;
@@ -128,6 +170,7 @@ nav.main-menu {
   height: 48px;
   border-bottom: 1px solid #eee;
   font-size: 15px;
+  font-family: 'Roboto', sans-serif;
 }
 
 .menu-items {
@@ -135,15 +178,66 @@ nav.main-menu {
   gap: 24px;
 }
 
-.menu-items span {
-  cursor: pointer;
-  color: #222;
+.menu-items a {
+  color: #000;
+  text-decoration: none;
   padding: 8px 0;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.menu-items span:hover {
+.menu-items a::after {
+  content: '';
+  display: none;
+}
+
+.menu-items a .material-symbols-outlined {
+  font-size: 20px;
+  color: #000;
+  transition: transform 0.2s ease;
+}
+
+.menu-items a:hover .material-symbols-outlined {
   color: #f36f21;
+  transform: rotate(180deg);
+}
+
+.menu-items a:hover {
+  color: #f36f21;
+}
+
+/* Submenu styles */
+.menu-items .submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  min-width: 200px;
+  z-index: 1000;
+}
+
+.menu-items a:hover .submenu {
+  display: block;
+}
+
+.menu-items .submenu a {
+  padding: 8px 16px;
+  display: block;
+  white-space: nowrap;
+}
+
+.menu-items .submenu a::after {
+  display: none;
+}
+
+.menu-items .submenu a:hover {
+  background: #f8f9fa;
 }
 
 .menu-offers button {
@@ -155,6 +249,19 @@ nav.main-menu {
   font-weight: bold;
   cursor: pointer;
   font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-offers button .material-symbols-outlined {
+  font-size: 20px;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.menu-offers button:hover .material-symbols-outlined {
+  transform: rotate(180deg);
 }
 
 /* BANNER */

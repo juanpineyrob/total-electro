@@ -45,19 +45,46 @@ public class  SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configurando SecurityFilterChain");
         
+        // Detectar si el perfil activo es 'dev' para permitir H2-console y deshabilitar frameOptions solo en desarrollo
+        boolean isDev = java.util.Arrays.asList(org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME)
+                .contains("dev");
+
+        if (isDev) {
+            http.headers(headers -> headers.frameOptions().disable());
+            http.authorizeHttpRequests(auth -> auth.requestMatchers("/h2-console/**").permitAll());
+        }
+        // Habilitar CSRF (por defecto está habilitado, así que no lo deshabilitamos)
+        // http.csrf(csrf -> csrf.disable()); // Eliminado para mayor seguridad
+
         http
-            .csrf(csrf -> {
-                csrf.disable();
-                logger.info("CSRF deshabilitado");
-            })
-            .headers(headers -> headers.frameOptions().disable())
             .authorizeHttpRequests(auth -> {
                 logger.info("Configurando autorizaciones HTTP");
                 auth
-                    .requestMatchers("/h2-console/**").permitAll()
-                    .requestMatchers("/", "/products/**", "/categories/**", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    // Rutas públicas (sin autenticación)
+                    .requestMatchers(
+                        new AntPathRequestMatcher("/"),
+                        new AntPathRequestMatcher("/product/**"),  // Todas las rutas de productos
+                        new AntPathRequestMatcher("/register"),
+                        new AntPathRequestMatcher("/login"),
+                        new AntPathRequestMatcher("/css/**"),
+                        new AntPathRequestMatcher("/js/**"),
+                        new AntPathRequestMatcher("/images/**"),
+                        new AntPathRequestMatcher("/favicon.ico")
+                    ).permitAll()
+                    // Rutas que requieren autenticación
+                    .requestMatchers(
+                        new AntPathRequestMatcher("/cart/**"),
+                        new AntPathRequestMatcher("/profile/**"),
+                        new AntPathRequestMatcher("/orders/**")
+                    ).authenticated()
+                    // Rutas de administración
+                    .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
+                    // Cualquier otra ruta requiere autenticación
                     .anyRequest().authenticated();
+
+                // Agregar logging para depuración
+                logger.info("Rutas públicas configuradas:");
+                logger.info("- /product/** está permitida");
                 logger.info("Autorizaciones HTTP configuradas");
             })
             .formLogin(form -> {
@@ -76,7 +103,7 @@ public class  SecurityConfig {
                 logger.info("Configurando logout");
                 logout
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/login?logout=true")
+                    .logoutSuccessUrl("/")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID", "remember-me")
@@ -98,6 +125,8 @@ public class  SecurityConfig {
             })
             .authenticationProvider(authenticationProvider());
         
+        // ADVERTENCIA: Revisa los logs en producción para evitar fuga de información sensible
+        // ADVERTENCIA: Revisa las rutas públicas para evitar exposición de datos sensibles
         logger.info("SecurityFilterChain configurado completamente");
         return http.build();
     }

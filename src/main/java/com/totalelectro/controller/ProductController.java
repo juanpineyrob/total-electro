@@ -41,10 +41,22 @@ public class ProductController {
         
         model.addAttribute("page", products);
         model.addAttribute("categorySlug", categorySlug);
+        model.addAttribute("categoryName", getCategoryName(categorySlug));
         model.addAttribute("pagination", products.getTotalPages() > 0 ? 
             java.util.stream.IntStream.rangeClosed(0, products.getTotalPages() - 1).boxed().toList() : null);
         
-        return Pages.PRODUCTS;
+        return "category/products";
+    }
+
+    private String getCategoryName(String categorySlug) {
+        return switch (categorySlug) {
+            case "iluminacion" -> "Iluminação";
+            case "cables-y-accessorios" -> "Cabos e Acessórios";
+            case "herramientas-electricas" -> "Ferramentas Elétricas";
+            case "automatizacion-y-domoticas" -> "Automação e Domótica";
+            case "seguridad-electrica" -> "Segurança Elétrica";
+            default -> "Categoría";
+        };
     }
 
     @GetMapping("/search")

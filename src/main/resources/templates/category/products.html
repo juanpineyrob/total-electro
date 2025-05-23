@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iluminação - Total Electro</title>
+    <title th:text="${categoryName} + ' - Total Electro'">Categoría - Total Electro</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .header-btn {
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <!-- HEADER -->
@@ -21,18 +27,18 @@
         </div>
         <div class="header-actions">
             <button class="lang">🇧🇷</button>
-            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account">Minha conta</a>
+            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
             <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
-                <button type="submit" class="btn btn-link text-danger p-0 border-0" style="text-decoration: none;">Sair</button>
+                <button type="submit" class="btn btn-link text-danger p-0 border-0 header-btn" style="text-decoration: none;">Sair</button>
             </form>
-            <a href="#" class="cart"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
+            <a href="#" class="cart header-btn"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
         </div>
     </div>
 
     <!-- MENU -->
     <nav class="main-menu">
         <div class="menu-items">
-            <a th:href="@{/product/category/iluminacion}" class="active">Iluminação</a>
+            <a th:href="@{/product/category/iluminacion}">Iluminação</a>
             <a th:href="@{/product/category/cables-y-accessorios}">Cabos e acessórios</a>
             <a th:href="@{/product/category/herramientas-electricas}">Ferramentas elétricas</a>
             <a th:href="@{/product/category/automatizacion-y-domoticas}">Automação e domótica</a>
@@ -45,7 +51,7 @@
 
     <!-- CATEGORIA -->
     <div class="category-page">
-        <h1>Iluminação</h1>
+        <h1 th:text="${categoryName}">Categoría</h1>
         
         <!-- FILTROS -->
         <div class="filters">
@@ -73,7 +79,13 @@
         <div class="products-grid">
             <div class="product" th:each="product : ${page.content}">
                 <span class="fav">&#10084;</span>
-                <img th:src="@{/images/product1.png}" th:alt="${product.name}">
+                <img th:if="${product.imageUrl != null}" 
+                     th:src="${product.imageUrl}" 
+                     th:alt="${product.name}"
+                     class="product-image">
+                <div th:unless="${product.imageUrl != null}" class="no-image">
+                    <i class="bi bi-image"></i>
+                </div>
                 <h3 th:text="${product.name}">Nome do produto</h3>
                 <span class="price" th:text="'R$ ' + ${product.price}">R$ 0,00</span>
                 <a th:href="@{/product/{id}(id=${product.id})}" class="btn-comprar">Comprar</a>
@@ -83,7 +95,7 @@
         <!-- PAGINAÇÃO -->
         <div class="pagination" th:if="${pagination != null}">
             <a th:each="page : ${pagination}" 
-               th:href="@{/product/category/iluminacion(page=${page})}"
+               th:href="@{/product/category/{slug}(slug=${categorySlug}, page=${page})}"
                th:text="${page}"
                th:class="${page == #numbers.formatDecimal(page, 0, 0)} ? 'active' : ''">
             </a>
