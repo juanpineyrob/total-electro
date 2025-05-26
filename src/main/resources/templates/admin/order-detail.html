@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Pedido #' + ${order.id} + ' - Total Electro'">Detalhes do Pedido - Total Electro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 16px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+            text-decoration: none;
+            color: #495057;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .order-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .status-pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completada {
+            background: #d1edff;
+            color: #004085;
+        }
+
+        .status-cancelada {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #212529;
+            font-weight: 500;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .products-table th,
+        .products-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .products-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .products-table td {
+            font-size: 14px;
+            color: #212529;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-image {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            padding: 4px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .actions-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .actions-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #212529;
+        }
+
+        .actions-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .total-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .total-final {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            color: #212529;
+            border-top: 1px solid #dee2e6;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .order-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-container {
+                padding: 20px 16px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .products-table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="/admin/orders" class="back-btn">←</a>
+                <h1 class="page-title">Pedido <span th:text="'#' + ${order.id}">#001</span></h1>
+            </div>
+            <div>
+                <a href="/admin/orders" class="btn btn-outline">📋 Todos os Pedidos</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <div class="order-grid">
+            <!-- Coluna Principal -->
+            <div>
+                <!-- Informações do Pedido -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Informações do Pedido</h2>
+                        <div class="card-subtitle">
+                            <span th:text="${#temporals.format(order.date, 'dd/MM/yyyy')} + ' às ' + ${#temporals.format(order.date, 'HH:mm')}">01/01/2024 às 10:00</span>
+                            •
+                            <span class="status-badge" 
+                                  th:classappend="'status-' + ${#strings.toLowerCase(order.status)}"
+                                  th:text="${order.status}">
+                                PENDENTE
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">ID do Pedido</span>
+                            <span class="info-value" th:text="'#' + ${order.id}">#001</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Data do Pedido</span>
+                            <span class="info-value" th:text="${#temporals.format(order.date, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Status</span>
+                            <span class="info-value" th:text="${order.status}">PENDENTE</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total</span>
+                            <span class="info-value" th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações do Cliente -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Informações do Cliente</h2>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Nome</span>
+                            <span class="info-value" th:text="${order.firstName + ' ' + order.lastName}">Nome do Cliente</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">E-mail</span>
+                            <span class="info-value" th:text="${order.email}">cliente@email.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Telefone</span>
+                            <span class="info-value" th:text="${order.phoneNumber}">+55 11 99999-9999</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Cidade</span>
+                            <span class="info-value" th:text="${order.city}">São Paulo</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item" style="margin-top: 16px;">
+                        <span class="info-label">Endereço</span>
+                        <span class="info-value" th:text="${order.address}">Rua Exemplo, 123 - Bairro - São Paulo</span>
+                    </div>
+                </div>
+
+                <!-- Produtos do Pedido -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Produtos do Pedido</h2>
+                        <span class="card-subtitle" th:text="${#lists.size(order.products)} + ' produto(s)'">1 produto(s)</span>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(order.products)}" style="text-align: center; padding: 32px; color: #6c757d;">
+                        <p>Nenhum produto encontrado neste pedido</p>
+                    </div>
+
+                    <table th:unless="${#lists.isEmpty(order.products)}" class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Preço</th>
+                                <th>Categoria</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="product : ${order.products}">
+                                <td>
+                                    <div class="product-info">
+                                        <img th:src="${product.imageUrl ?: '/images/no-image.png'}" 
+                                             th:alt="${product.name}"
+                                             class="product-image" />
+                                        <div class="product-details">
+                                            <div class="product-name" th:text="${product.name}">Nome do Produto</div>
+                                            <div class="product-category" th:text="${product.category?.name}">Categoria</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong th:text="'$' + ${#numbers.formatDecimal(product.price, 0, 2)}">$0.00</strong>
+                                </td>
+                                <td th:text="${product.category?.name}">Categoria</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="total-section">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">$0.00</span>
+                        </div>
+                        <div class="total-final">
+                            <span>Total:</span>
+                            <span th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra Lateral -->
+            <div>
+                <!-- Ações -->
+                <div class="card">
+                    <div class="actions-section">
+                        <h3 class="actions-title">Ações do Pedido</h3>
+                        <div class="actions-grid">
+                            <div th:if="${order.status.name() == 'PENDIENTE'}">
+                                <form th:action="@{'/admin/orders/' + ${order.id} + '/complete'}" method="post">
+                                    <button type="submit" class="btn btn-success" style="width: 100%;"
+                                            onclick="return confirm('Marcar pedido como completado?')">
+                                        ✅ Marcar como Completado
+                                    </button>
+                                </form>
+                            </div>
+                            <div th:if="${order.status.name() == 'PENDIENTE'}">
+                                <form th:action="@{'/admin/orders/' + ${order.id} + '/cancel'}" method="post">
+                                    <button type="submit" class="btn btn-danger" style="width: 100%;"
+                                            onclick="return confirm('Cancelar este pedido?')">
+                                        ❌ Cancelar Pedido
+                                    </button>
+                                </form>
+                            </div>
+                            <div th:if="${order.status.name() == 'COMPLETADA'}">
+                                <div style="padding: 16px; background: #d1edff; border-radius: 4px; color: #004085; text-align: center;">
+                                    ✅ Pedido Completado
+                                </div>
+                            </div>
+                            <div th:if="${order.status.name() == 'CANCELADA'}">
+                                <div style="padding: 16px; background: #f8d7da; border-radius: 4px; color: #721c24; text-align: center;">
+                                    ❌ Pedido Cancelado
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumo -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Resumo</h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Produtos</span>
+                            <span class="info-value" th:text="${#lists.size(order.products)}">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Cliente</span>
+                            <span class="info-value" th:text="${order.user?.firstName ?: 'N/A'}">Cliente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

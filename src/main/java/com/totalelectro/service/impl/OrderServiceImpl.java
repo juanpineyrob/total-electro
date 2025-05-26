@@ -28,8 +28,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> findAllWithProducts() {
+        return orderRepository.findAllWithProducts();
+    }
+
+    @Override
     public Order findById(Long id) {
         return orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException("No se encontró la orden con ID: " + id));
+    }
+
+    @Override
+    public Order findByIdWithProducts(Long id) {
+        return orderRepository.findByIdWithProducts(id)
                 .orElseThrow(() -> new OrderNotFoundException("No se encontró la orden con ID: " + id));
     }
 
@@ -85,5 +96,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean isOrderOwner(Long orderId, String userEmail) {
         return orderRepository.existsByIdAndUserEmail(orderId, userEmail);
+    }
+
+    @Override
+    public Double getCurrentMonthSales() {
+        return orderRepository.findCurrentMonthCompletedOrdersTotal();
     }
 } 

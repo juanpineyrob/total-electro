@@ -85,6 +85,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmailOrNull(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
     @Transactional
     public void updateProfile(String email, User updatedUser) {
         User existingUser = findByEmail(email);

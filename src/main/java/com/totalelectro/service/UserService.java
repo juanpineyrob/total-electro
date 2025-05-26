@@ -10,6 +10,7 @@ public interface UserService {
     void addRoleToUser(String email, String roleName);
     void removeRoleFromUser(String email, String roleName);
     User findByEmail(String email);
+    User findByEmailOrNull(String email);
     void updateProfile(String email, User updatedUser);
     void changePassword(String email, String currentPassword, String newPassword, String confirmPassword);
     List<Order> getUserOrders(String email);

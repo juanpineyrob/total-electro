@@ -7,15 +7,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
         .checkout-container {
             min-height: 100vh;
-            background: #f9fafb;
+            background: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
         }
         
         .checkout-header {
             background: white;
-            border-bottom: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e9ecef;
+            padding: 16px 0;
         }
         
         .back-button {
@@ -24,29 +29,29 @@
             gap: 8px;
             background: none;
             border: none;
-            padding: 8px 12px;
-            color: #374151;
+            padding: 8px 16px;
+            color: #6c757d;
             text-decoration: none;
-            border-radius: 6px;
-            transition: background 0.3s ease;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+            font-size: 14px;
         }
         
         .back-button:hover {
-            background: #f3f4f6;
+            color: #495057;
             text-decoration: none;
-            color: #374151;
         }
         
         .checkout-main {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 32px 16px;
+            padding: 32px 20px;
         }
         
         .checkout-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #111827;
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
             margin-bottom: 32px;
         }
         
@@ -59,22 +64,38 @@
         .form-section {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
             padding: 24px;
-            border: 1px solid #e5e7eb;
             margin-bottom: 24px;
         }
         
         .section-header {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .section-icon {
+            background: #f8f9fa;
+            color: #f36f21;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 1px solid #e9ecef;
         }
         
         .section-title {
-            font-size: 1.25rem;
+            font-size: 18px;
             font-weight: 600;
+            color: #212529;
+            margin: 0;
         }
         
         .form-grid {
@@ -94,32 +115,48 @@
         
         .form-label {
             font-weight: 500;
-            margin-bottom: 4px;
-            color: #374151;
+            margin-bottom: 6px;
+            color: #495057;
+            font-size: 14px;
         }
         
         .form-input {
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
             font-size: 14px;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.2s ease;
+            background: white;
+            color: #495057;
         }
         
         .form-input:focus {
             outline: none;
             border-color: #f36f21;
-            box-shadow: 0 0 0 3px rgba(243, 111, 33, 0.1);
+            box-shadow: 0 0 0 2px rgba(243, 111, 33, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: #adb5bd;
         }
         
         .order-summary {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
             padding: 24px;
-            border: 1px solid #e5e7eb;
             position: sticky;
             top: 32px;
+            height: fit-content;
+        }
+        
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9ecef;
         }
         
         .product-item {
@@ -128,15 +165,17 @@
             gap: 16px;
             margin-bottom: 24px;
             padding-bottom: 24px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e9ecef;
         }
         
         .product-image {
             width: 64px;
             height: 64px;
             object-fit: contain;
-            background: #f9fafb;
-            border-radius: 6px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            padding: 8px;
         }
         
         .product-info {
@@ -146,44 +185,55 @@
         .product-name {
             font-weight: 500;
             margin-bottom: 4px;
+            color: #212529;
+            font-size: 14px;
         }
         
         .product-quantity {
-            color: #6b7280;
-            font-size: 14px;
+            color: #6c757d;
+            font-size: 12px;
         }
         
         .product-price {
             font-weight: 600;
+            color: #212529;
+            font-size: 16px;
+        }
+        
+        .summary-calculations {
+            margin-bottom: 24px;
         }
         
         .summary-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 12px;
+            font-size: 14px;
+            color: #495057;
         }
         
         .summary-total {
             display: flex;
             justify-content: space-between;
-            font-weight: bold;
-            font-size: 1.125rem;
-            padding-top: 12px;
-            border-top: 1px solid #e5e7eb;
-            margin-top: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e9ecef;
+            margin-top: 16px;
+            color: #212529;
         }
         
         .checkout-button {
             width: 100%;
-            background: #10b981;
+            background: #28a745;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 1.125rem;
+            padding: 16px 24px;
+            border-radius: 4px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background-color 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -191,22 +241,32 @@
         }
         
         .checkout-button:hover {
-            background: #059669;
+            background: #218838;
+        }
+        
+        .checkout-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
         }
         
         .security-text {
             font-size: 12px;
-            color: #6b7280;
+            color: #6c757d;
             text-align: center;
             margin-top: 16px;
         }
         
-        .icon {
-            width: 20px;
-            height: 20px;
-            color: #f36f21;
+        .badge {
+            background: #f36f21;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: auto;
         }
         
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .checkout-grid {
                 grid-template-columns: 1fr;
@@ -218,6 +278,27 @@
             
             .order-summary {
                 position: static;
+                margin-top: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-main {
+                padding: 24px 16px;
+            }
+            
+            .checkout-title {
+                font-size: 24px;
+            }
+            
+            .form-section, .order-summary {
+                padding: 20px;
+            }
+            
+            .section-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
             }
         }
     </style>
@@ -247,7 +328,7 @@
                         <!-- Dados Pessoais -->
                         <div class="form-section">
                             <div class="section-header">
-                                <span class="icon">👤</span>
+                                <div class="section-icon">👤</div>
                                 <h2 class="section-title">Dados Pessoais</h2>
                             </div>
                             
@@ -261,6 +342,7 @@
                                         th:value="${user?.firstName}"
                                         required
                                         class="form-input"
+                                        placeholder="Digite seu nome"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -272,6 +354,7 @@
                                         th:value="${user?.lastName}"
                                         required
                                         class="form-input"
+                                        placeholder="Digite seu sobrenome"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -283,6 +366,7 @@
                                         th:value="${user?.email}"
                                         required
                                         class="form-input"
+                                        placeholder="seu@email.com"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -294,6 +378,7 @@
                                         th:value="${user?.phoneNumber}"
                                         required
                                         class="form-input"
+                                        placeholder="(00) 00000-0000"
                                     />
                                 </div>
                             </div>
@@ -302,7 +387,7 @@
                         <!-- Endereço de Entrega -->
                         <div class="form-section">
                             <div class="section-header">
-                                <span class="icon">📍</span>
+                                <div class="section-icon">📍</div>
                                 <h2 class="section-title">Endereço de Entrega</h2>
                             </div>
                             
@@ -328,6 +413,7 @@
                                         th:value="${user?.city}"
                                         required
                                         class="form-input"
+                                        placeholder="Nome da cidade"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -338,6 +424,7 @@
                                         type="text"
                                         required
                                         class="form-input"
+                                        placeholder="Estado/Província"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -348,6 +435,7 @@
                                         type="text"
                                         required
                                         class="form-input"
+                                        placeholder="00000-000"
                                     />
                                 </div>
                             </div>
@@ -356,8 +444,9 @@
                         <!-- Dados de Pagamento -->
                         <div class="form-section">
                             <div class="section-header">
-                                <span class="icon">💳</span>
+                                <div class="section-icon">💳</div>
                                 <h2 class="section-title">Dados de Pagamento</h2>
+                                <span class="badge">Seguro</span>
                             </div>
                             
                             <div class="form-grid">
@@ -369,6 +458,7 @@
                                         type="text"
                                         required
                                         class="form-input"
+                                        placeholder="Nome como aparece no cartão"
                                     />
                                 </div>
                                 <div class="form-group form-grid-full">
@@ -380,6 +470,7 @@
                                         required
                                         class="form-input"
                                         placeholder="1234 5678 9012 3456"
+                                        maxlength="19"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -391,6 +482,7 @@
                                         required
                                         class="form-input"
                                         placeholder="MM/AA"
+                                        maxlength="5"
                                     />
                                 </div>
                                 <div class="form-group">
@@ -402,6 +494,7 @@
                                         required
                                         class="form-input"
                                         placeholder="123"
+                                        maxlength="4"
                                     />
                                 </div>
                             </div>
@@ -412,7 +505,7 @@
                 <!-- Resumo do Pedido -->
                 <div>
                     <div class="order-summary">
-                        <h2 class="section-title" style="margin-bottom: 24px;">Resumo do Pedido</h2>
+                        <h2 class="summary-title">Resumo do Pedido</h2>
                         
                         <!-- Produto -->
                         <div class="product-item" th:if="${product}">
@@ -425,26 +518,26 @@
                                 <h3 class="product-name" th:text="${product.name}">Nome do Produto</h3>
                                 <p class="product-quantity">Quantidade: <span th:text="${quantity}">1</span></p>
                             </div>
-                            <span class="product-price">R$ <span th:text="${#numbers.formatDecimal(product.price, 0, 2)}">0,00</span></span>
+                            <span class="product-price">$<span th:text="${#numbers.formatDecimal(product.price, 0, 2)}">0,00</span></span>
                         </div>
 
                         <!-- Cálculos -->
-                        <div style="margin-bottom: 24px;">
+                        <div class="summary-calculations">
                             <div class="summary-row">
                                 <span>Subtotal</span>
-                                <span>R$ <span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></span>
+                                <span>$<span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></span>
                             </div>
                             <div class="summary-row">
                                 <span>Frete</span>
-                                <span>R$ <span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></span>
+                                <span>$<span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></span>
                             </div>
                             <div class="summary-row">
                                 <span>IVA (21%)</span>
-                                <span>R$ <span th:text="${#numbers.formatDecimal(tax, 0, 2)}">0,00</span></span>
+                                <span>$<span th:text="${#numbers.formatDecimal(tax, 0, 2)}">0,00</span></span>
                             </div>
                             <div class="summary-total">
                                 <span>Total</span>
-                                <span>R$ <span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></span>
+                                <span>$<span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></span>
                             </div>
                         </div>
 
@@ -455,8 +548,7 @@
                             class="checkout-button"
                             onclick="document.querySelector('form').submit()"
                         >
-                            <span>🔒</span>
-                            Finalizar Compra
+                            🔒 Finalizar Compra
                         </button>
 
                         <p class="security-text">
@@ -467,5 +559,83 @@
             </div>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mascarar campos
+            const phoneInput = document.getElementById('phone');
+            const zipCodeInput = document.getElementById('zipCode');
+            const cardNumberInput = document.getElementById('cardNumber');
+            const expiryDateInput = document.getElementById('expiryDate');
+            const cvvInput = document.getElementById('cvv');
+
+            // Máscara de telefone
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 11) {
+                        value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+                    } else if (value.length >= 7) {
+                        value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+                    } else if (value.length >= 3) {
+                        value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+                    } else if (value.length >= 1) {
+                        value = value.replace(/^(\d{0,2})/, '($1');
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Máscara de CEP
+            if (zipCodeInput) {
+                zipCodeInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 6) {
+                        value = value.replace(/^(\d{5})(\d{0,3}).*/, '$1-$2');
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Máscara de cartão de crédito
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                    e.target.value = value;
+                });
+            }
+
+            // Máscara de data de expiração
+            if (expiryDateInput) {
+                expiryDateInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 3) {
+                        value = value.replace(/^(\d{2})(\d{0,2}).*/, '$1/$2');
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Apenas números no CVV
+            if (cvvInput) {
+                cvvInput.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                });
+            }
+
+            // Loading no botão de submit
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = document.querySelector('.checkout-button');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '⏳ Processando...';
+                        submitBtn.disabled = true;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html> 

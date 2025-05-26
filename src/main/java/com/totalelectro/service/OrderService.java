@@ -7,7 +7,11 @@ public interface OrderService {
     
     List<Order> findAll();
     
+    List<Order> findAllWithProducts();
+    
     Order findById(Long id);
+    
+    Order findByIdWithProducts(Long id);
     
     List<Order> findByUserEmail(String email);
     
@@ -20,4 +24,6 @@ public interface OrderService {
     void completeOrder(Long id);
     
     boolean isOrderOwner(Long orderId, String userEmail);
+    
+    Double getCurrentMonthSales();
 } 

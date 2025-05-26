@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Pedidos - Total Electro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 16px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+            text-decoration: none;
+            color: #495057;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .filter-input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .orders-section {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .orders-count {
+            font-size: 14px;
+            color: #6c757d;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .orders-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .orders-table td {
+            font-size: 14px;
+            color: #212529;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .status-pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completada {
+            background: #d1edff;
+            color: #004085;
+        }
+
+        .status-cancelada {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            color: #212529;
+        }
+
+        .customer-email {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .order-products {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 1200px) {
+            .orders-table {
+                font-size: 12px;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 12px 16px;
+            }
+
+            .order-products {
+                max-width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 20px 16px;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 8px 12px;
+            }
+
+            .actions-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .order-products {
+                max-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="/admin" class="back-btn">←</a>
+                <h1 class="page-title">Gerenciar Pedidos</h1>
+            </div>
+            <div>
+                <a href="/admin" class="btn btn-outline">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Buscar por cliente</label>
+                    <input type="text" class="filter-input" placeholder="Nome ou email..." id="customerFilter">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-input" id="statusFilter">
+                        <option value="">Todos os status</option>
+                        <option value="PENDIENTE">Pendente</option>
+                        <option value="COMPLETADA">Completada</option>
+                        <option value="CANCELADA">Cancelada</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Data de</label>
+                    <input type="date" class="filter-input" id="dateFromFilter">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Data até</label>
+                    <input type="date" class="filter-input" id="dateToFilter">
+                </div>
+                <div class="filter-group">
+                    <button class="btn btn-primary" onclick="applyFilters()">🔍 Filtrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Pedidos -->
+        <div class="orders-section">
+            <div class="section-header">
+                <h2 class="section-title">Todos os Pedidos</h2>
+                <span class="orders-count" th:text="${#lists.size(orders)} + ' pedidos'">0 pedidos</span>
+            </div>
+            
+            <div th:if="${orders.empty}" class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p>Nenhum pedido encontrado</p>
+            </div>
+
+            <div th:unless="${orders.empty}" class="table-responsive">
+                <table class="orders-table" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Produtos</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td>
+                                <strong th:text="'#' + ${order.id}">#001</strong>
+                            </td>
+                            <td>
+                                <div class="customer-info">
+                                    <span class="customer-name" th:text="${order.firstName + ' ' + order.lastName}">Nome do Cliente</span>
+                                    <span class="customer-email" th:text="${order.email}">email@exemplo.com</span>
+                                </div>
+                            </td>
+                            <td th:text="${#temporals.format(order.date, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                            <td>
+                                <div class="order-products" th:text="${#lists.size(order.products)} + ' produto(s)'">
+                                    1 produto(s)
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="'status-' + ${#strings.toLowerCase(order.status)}"
+                                      th:text="${order.status}">
+                                    PENDENTE
+                                </span>
+                            </td>
+                            <td>
+                                <strong th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 0, 2)}">$0.00</strong>
+                            </td>
+                            <td>
+                                <div class="actions-group">
+                                    <a th:href="@{'/admin/orders/' + ${order.id}}" class="btn btn-outline btn-sm">
+                                        👁️ Ver
+                                    </a>
+                                    <form th:if="${order.status.name() == 'PENDIENTE'}" 
+                                          th:action="@{'/admin/orders/' + ${order.id} + '/complete'}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-success btn-sm"
+                                                onclick="return confirm('Marcar pedido como completado?')">
+                                            ✅ Completar
+                                        </button>
+                                    </form>
+                                    <form th:if="${order.status.name() == 'PENDIENTE'}" 
+                                          th:action="@{'/admin/orders/' + ${order.id} + '/cancel'}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Cancelar este pedido?')">
+                                            ❌ Cancelar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Filtros básicos
+        function applyFilters() {
+            const customerFilter = document.getElementById('customerFilter').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFromFilter = document.getElementById('dateFromFilter').value;
+            const dateToFilter = document.getElementById('dateToFilter').value;
+            
+            const table = document.getElementById('ordersTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const customerText = row.cells[1].textContent.toLowerCase();
+                const statusText = row.cells[4].textContent.trim();
+                const dateText = row.cells[2].textContent;
+                
+                let showRow = true;
+                
+                // Filtro por cliente
+                if (customerFilter && !customerText.includes(customerFilter)) {
+                    showRow = false;
+                }
+                
+                // Filtro por status
+                if (statusFilter && statusText !== statusFilter) {
+                    showRow = false;
+                }
+                
+                // Filtros de data (implementação básica)
+                // Para uma implementação completa seria melhor usar uma biblioteca de datas
+                
+                row.style.display = showRow ? '' : 'none';
+            }
+            
+            // Atualizar contador
+            const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none').length;
+            document.querySelector('.orders-count').textContent = `${visibleRows} pedidos`;
+        }
+        
+        // Aplicar filtros em tempo real
+        document.getElementById('customerFilter').addEventListener('input', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('dateFromFilter').addEventListener('change', applyFilters);
+        document.getElementById('dateToFilter').addEventListener('change', applyFilters);
+    </script>
+</body>
+</html> 
