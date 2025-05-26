@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Total Electro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .checkout-container {
+            min-height: 100vh;
+            background: #f9fafb;
+        }
+        
+        .checkout-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            color: #374151;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #f3f4f6;
+            text-decoration: none;
+            color: #374151;
+        }
+        
+        .checkout-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .checkout-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 32px;
+        }
+        
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+        
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-grid-full {
+            grid-column: span 2;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #374151;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #f36f21;
+            box-shadow: 0 0 0 3px rgba(243, 111, 33, 0.1);
+        }
+        
+        .order-summary {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            position: sticky;
+            top: 32px;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .product-image {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .product-info {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .product-quantity {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .product-price {
+            font-weight: 600;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.125rem;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 12px;
+        }
+        
+        .checkout-button {
+            width: 100%;
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .checkout-button:hover {
+            background: #059669;
+        }
+        
+        .security-text {
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 16px;
+        }
+        
+        .icon {
+            width: 20px;
+            height: 20px;
+            color: #f36f21;
+        }
+        
+        @media (max-width: 1024px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <!-- Header simplificado -->
+        <header class="checkout-header">
+            <div class="container mx-auto px-4 py-4">
+                <a href="/" class="back-button">
+                    <span>←</span>
+                    <span>Voltar à loja</span>
+                </a>
+            </div>
+        </header>
+
+        <main class="checkout-main">
+            <h1 class="checkout-title">Finalizar Compra</h1>
+            
+            <div class="checkout-grid">
+                <!-- Formulário de checkout -->
+                <div>
+                    <form th:action="@{/checkout/process}" method="post">
+                        <input type="hidden" name="productId" th:value="${product?.id}">
+                        <input type="hidden" name="quantity" th:value="${quantity}">
+                        
+                        <!-- Dados Pessoais -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <span class="icon">👤</span>
+                                <h2 class="section-title">Dados Pessoais</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="firstName" class="form-label">Nome</label>
+                                    <input
+                                        id="firstName"
+                                        name="firstName"
+                                        type="text"
+                                        th:value="${user?.firstName}"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName" class="form-label">Sobrenome</label>
+                                    <input
+                                        id="lastName"
+                                        name="lastName"
+                                        type="text"
+                                        th:value="${user?.lastName}"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        th:value="${user?.email}"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">Telefone</label>
+                                    <input
+                                        id="phone"
+                                        name="phone"
+                                        type="tel"
+                                        th:value="${user?.phoneNumber}"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Endereço de Entrega -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <span class="icon">📍</span>
+                                <h2 class="section-title">Endereço de Entrega</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group form-grid-full">
+                                    <label for="address" class="form-label">Endereço completo</label>
+                                    <input
+                                        id="address"
+                                        name="address"
+                                        type="text"
+                                        th:value="${user?.address}"
+                                        required
+                                        class="form-input"
+                                        placeholder="Rua, número, complemento"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="city" class="form-label">Cidade</label>
+                                    <input
+                                        id="city"
+                                        name="city"
+                                        type="text"
+                                        th:value="${user?.city}"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="state" class="form-label">Estado</label>
+                                    <input
+                                        id="state"
+                                        name="state"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="zipCode" class="form-label">CEP</label>
+                                    <input
+                                        id="zipCode"
+                                        name="zipCode"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dados de Pagamento -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <span class="icon">💳</span>
+                                <h2 class="section-title">Dados de Pagamento</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group form-grid-full">
+                                    <label for="cardName" class="form-label">Nome no cartão</label>
+                                    <input
+                                        id="cardName"
+                                        name="cardName"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group form-grid-full">
+                                    <label for="cardNumber" class="form-label">Número do cartão</label>
+                                    <input
+                                        id="cardNumber"
+                                        name="cardNumber"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="1234 5678 9012 3456"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiryDate" class="form-label">Data de expiração</label>
+                                    <input
+                                        id="expiryDate"
+                                        name="expiryDate"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="MM/AA"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input
+                                        id="cvv"
+                                        name="cvv"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="123"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resumo do Pedido -->
+                <div>
+                    <div class="order-summary">
+                        <h2 class="section-title" style="margin-bottom: 24px;">Resumo do Pedido</h2>
+                        
+                        <!-- Produto -->
+                        <div class="product-item" th:if="${product}">
+                            <img
+                                th:src="${product.imageUrl ?: '/images/no-image.png'}"
+                                th:alt="${product.name}"
+                                class="product-image"
+                            />
+                            <div class="product-info">
+                                <h3 class="product-name" th:text="${product.name}">Nome do Produto</h3>
+                                <p class="product-quantity">Quantidade: <span th:text="${quantity}">1</span></p>
+                            </div>
+                            <span class="product-price">R$ <span th:text="${#numbers.formatDecimal(product.price, 0, 2)}">0,00</span></span>
+                        </div>
+
+                        <!-- Cálculos -->
+                        <div style="margin-bottom: 24px;">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>R$ <span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Frete</span>
+                                <span>R$ <span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>IVA (21%)</span>
+                                <span>R$ <span th:text="${#numbers.formatDecimal(tax, 0, 2)}">0,00</span></span>
+                            </div>
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span>R$ <span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Botão de finalizar -->
+                        <button 
+                            type="submit"
+                            form="checkout-form"
+                            class="checkout-button"
+                            onclick="document.querySelector('form').submit()"
+                        >
+                            <span>🔒</span>
+                            Finalizar Compra
+                        </button>
+
+                        <p class="security-text">
+                            Seus dados estão protegidos com criptografia SSL
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html> 

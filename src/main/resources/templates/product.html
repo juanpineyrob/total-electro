@@ -44,41 +44,107 @@
     </nav>
 
     <!-- PRODUTO -->
-    <div class="product-detail">
-        <div class="product-images">
-            <img th:if="${product.imageUrl != null}" 
-                 th:src="${product.imageUrl}" 
-                 th:alt="${product.name}" 
-                 class="main-image">
-            <div th:unless="${product.imageUrl != null}" class="no-image">
-                <i class="bi bi-image"></i>
-                <p>Imagen no disponible</p>
+    <div class="product-container">
+        <div class="product-layout">
+            <!-- Coluna da Imagem -->
+            <div class="product-image-section">
+                <div class="product-heart">
+                    <span>♡</span>
+                </div>
+                <div class="product-main-image">
+                    <img th:if="${product.imageUrl != null}" 
+                         th:src="${product.imageUrl}" 
+                         th:alt="${product.name}" 
+                         class="main-product-img">
+                    <div th:unless="${product.imageUrl != null}" class="no-image-placeholder">
+                        <i class="bi bi-image"></i>
+                        <p>Imagen no disponible</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="product-info-section">
+                <div class="product-title-area">
+                    <h1 th:text="${product.name}">Nome do Produto</h1>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <span>☆☆☆☆☆</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-price-area">
+                    <div class="price-display">
+                        <span class="price-label">R$</span>
+                        <span class="price-value" th:text="${product.price}">1.000</span>
+                        <span class="price-tax">IVA Incluído</span>
+                    </div>
+                </div>
+
+                <div class="product-features">
+                    <h3>Características principais</h3>
+                    <ul>
+                        <li>• Temperatura máxima: 150°C</li>
+                        <li>• Uso industrial y eléctrico</li>
+                        <li>• Aislamiento resistente al calor</li>
+                        <li>• Alta durabilidad y fiabilidad</li>
+                    </ul>
+                </div>
+
+                <div class="product-actions-area">
+                    <div class="quantity-selector">
+                        <button class="qty-btn minus">-</button>
+                        <input type="number" value="1" min="1" class="qty-input">
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-buy" onclick="buyProduct()">Comprar</button>
+                        <button class="btn-freight">Calcular frete</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="product-info">
-            <h1 th:text="${product.name}">Nome do Produto</h1>
-            <div class="product-price">
-                <span class="price" th:text="'R$ ' + ${product.price}">R$ 0,00</span>
+
+        <!-- Seção de Abas -->
+        <div class="product-tabs-section">
+            <div class="tab-headers">
+                <button class="tab-header active" data-tab="description">Descripción</button>
+                <button class="tab-header" data-tab="comments">Comentarios</button>
+                <button class="tab-header" data-tab="opinions">Opiniones</button>
             </div>
-            <div class="product-description">
-                <h3>Descrição Curta</h3>
-                <p th:text="${product.short_description}">Descrição curta do produto</p>
-                <h3>Descrição Detalhada</h3>
-                <p th:text="${product.long_description}">Descrição detalhada do produto</p>
-            </div>
-            <div class="product-dimensions">
-                <h3>Dimensões</h3>
-                <p th:text="${product.dimensions}">Dimensões do produto</p>
-            </div>
-            <div class="product-actions">
-                <div class="quantity">
-                    <button class="quantity-btn">-</button>
-                    <input type="number" value="1" min="1">
-                    <button class="quantity-btn">+</button>
+            
+            <div class="tab-content">
+                <div class="tab-panel active" id="description">
+                    <h3>Descripción del producto</h3>
+                    <p th:text="${product.long_description}">Este cable Omerin de alta temperatura está diseñado para soportar condiciones extremas, ofreciendo una excelente resistencia al calor y garantizando un rendimiento superior en entornos exigentes. Con una resistencia térmica de hasta 150°C, es perfecto para aplicaciones industriales, equipos eléctricos, sistemas de calefacción y otros entornos donde se requiere una alta capacidad de resistencia térmica.</p>
+                    
+                    <h4>Características técnicas:</h4>
+                    <ul>
+                        <li><strong>Alta resistencia al calor:</strong> Soporta temperaturas de hasta 150°C, ideal para entornos de trabajo con temperaturas elevadas.</li>
+                        <li><strong>Máxima calidad:</strong> Fabricado con materiales de última tecnología que aseguran una larga vida útil y un rendimiento confiable.</li>
+                        <li><strong>Versatilidad de uso:</strong> Perfecto para aplicaciones industriales, maquinaria pesada, instalaciones eléctricas y más.</li>
+                        <li><strong>Aislante de alta durabilidad:</strong> Su aislamiento asegura la protección y otros riesgos eléctricos en condiciones de alta temperatura.</li>
+                    </ul>
+                    
+                    <p>Este cable es una opción confiable para aquellos que necesitan una solución de alta calidad para sus proyectos más exigentes. ¡Asegura la fiabilidad de tus instalaciones con el cable Omerin de alta temperatura!</p>
+                    
+                    <div class="product-specs">
+                        <h4>Especificaciones:</h4>
+                        <p><strong>Dimensiones:</strong> <span th:text="${product.dimensions}">Dimensiones del producto</span></p>
+                    </div>
                 </div>
-                <button class="add-to-cart">Adicionar ao Carrinho</button>
-                <a th:href="@{/login}" class="add-to-cart">Faça login para comprar</a>
-                <button class="add-to-favorites">&#10084; Adicionar aos Favoritos</button>
+                
+                <div class="tab-panel" id="comments">
+                    <h3>Comentarios</h3>
+                    <p>Aquí aparecerán los comentarios de los usuarios sobre este producto.</p>
+                </div>
+                
+                <div class="tab-panel" id="opinions">
+                    <h3>Opiniones</h3>
+                    <p>Aquí aparecerán las opiniones y reseñas de los usuarios.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -115,5 +181,53 @@
             <span>Todos os direitos reservados</span>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Funcionalidade dos botões de quantidade
+            const qtyInput = document.querySelector('.qty-input');
+            const minusBtn = document.querySelector('.qty-btn.minus');
+            const plusBtn = document.querySelector('.qty-btn.plus');
+            
+            minusBtn.addEventListener('click', function() {
+                let value = parseInt(qtyInput.value) || 1;
+                if (value > 1) {
+                    qtyInput.value = value - 1;
+                }
+            });
+            
+            plusBtn.addEventListener('click', function() {
+                let value = parseInt(qtyInput.value) || 1;
+                qtyInput.value = value + 1;
+            });
+            
+            // Funcionalidade das abas
+            const tabHeaders = document.querySelectorAll('.tab-header');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Remove active class from all headers and panels
+                    tabHeaders.forEach(h => h.classList.remove('active'));
+                    tabPanels.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked header and corresponding panel
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+        
+        // Função para comprar produto
+        function buyProduct() {
+            const productId = window.location.pathname.split('/').pop(); // Pega o ID da URL
+            const quantity = document.querySelector('.qty-input').value || 1;
+            
+            // Redireciona para o checkout com os parâmetros
+            window.location.href = `/checkout?productId=${productId}&quantity=${quantity}`;
+        }
+    </script>
 </body>
 </html> 
