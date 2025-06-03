@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Header Fragment -->
+<div th:fragment="header">
+    <style>
+        /* Estilo común para los botones "Carrinho", "Sair" y "Minha conta" (igual que "Buscar") */
+        .header-btn { font-family: 'Roboto', sans-serif; font-weight: bold; }
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .cart-count {
+          background: #ff4444;
+          color: white;
+          border-radius: 50%;
+          padding: 0.2rem 0.5rem;
+          font-size: 0.8rem;
+          margin-left: 0.5rem;
+          min-width: 1.5rem;
+          text-align: center;
+          display: inline-block;
+        }
+    </style>
+
+    <!-- Estado de Autenticación -->
+    <div class="container mt-4" sec:authorize="isAuthenticated()">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Estado de Autenticação</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Usuario:</strong> <span sec:authentication="name"></span></p>
+                <p><strong>Roles:</strong> <span sec:authentication="principal.authorities"></span></p>
+                <p><strong>Estado:</strong> <span class="text-success">Autenticado</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="top-header">
+        <div class="logo-header">
+            <a href="/"><img th:src="@{/images/logo.png}" alt="Total Electro"></a>
+        </div>
+        <div class="search-bar">
+            <form th:action="@{/product/search}" method="get">
+                <input type="text" name="name" placeholder="Pesquisar...">
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+        <div class="header-actions">
+            <button class="lang">🇧🇷 <span class="material-symbols-outlined">keyboard_arrow_down</span></button>
+            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
+            <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
+                <button type="submit" class="header-btn">Sair</button>
+            </form>
+            <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
+                <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
+                Carrinho 
+                <span class="cart-count" id="cart-count">0</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="main-menu">
+        <div class="menu-items">
+            <a th:href="@{/product/category/iluminacion}">
+                Iluminação
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                <div class="submenu">
+                    <a th:href="@{/product/subcategory/lampadas}">Lâmpadas</a>
+                    <a th:href="@{/product/subcategory/lustres}">Lustres</a>
+                    <a th:href="@{/product/subcategory/plafones}">Plafones</a>
+                    <a th:href="@{/product/subcategory/led}">LED</a>
+                </div>
+            </a>
+            <a th:href="@{/product/category/cables-y-accessorios}">
+                Cabos e acessórios
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                <div class="submenu">
+                    <a th:href="@{/product/subcategory/cables}">Cabos</a>
+                    <a th:href="@{/product/subcategory/conectores}">Conectores</a>
+                    <a th:href="@{/product/subcategory/canaletas}">Canaletas</a>
+                </div>
+            </a>
+            <a th:href="@{/product/category/herramientas-electricas}">
+                Ferramentas elétricas
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                <div class="submenu">
+                    <a th:href="@{/product/subcategory/furadeiras}">Furadeiras</a>
+                    <a th:href="@{/product/subcategory/parafusadeiras}">Parafusadeiras</a>
+                    <a th:href="@{/product/subcategory/multimetros}">Multímetros</a>
+                </div>
+            </a>
+            <a th:href="@{/product/category/automatizacion-y-domoticas}">
+                Automação e domótica
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                <div class="submenu">
+                    <a th:href="@{/product/subcategory/sensores}">Sensores</a>
+                    <a th:href="@{/product/subcategory/controladores}">Controladores</a>
+                    <a th:href="@{/product/subcategory/interfones}">Interfones</a>
+                </div>
+            </a>
+            <a th:href="@{/product/category/seguridad-electrica}">
+                Segurança elétrica
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                <div class="submenu">
+                    <a th:href="@{/product/subcategory/disjuntores}">Disjuntores</a>
+                    <a th:href="@{/product/subcategory/dps}">DPS</a>
+                    <a th:href="@{/product/subcategory/quadros}">Quadros</a>
+                </div>
+            </a>
+        </div>
+        <div class="menu-offers">
+            <button>
+                Ofertas e promoções
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html> 

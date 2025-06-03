@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Footer Fragment -->
+<div th:fragment="footer">
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <strong>Informações de contato</strong><br>
+                Rivera<br>
+                Sarandí 821, 40000, Rivera, Uruguai<br>
+                Tel.: +598 4623 5798<br>
+                Email: total-electro@gmail.com
+            </div>
+            <div class="footer-col footer-logo-social">
+                <img th:src="@{/images/logo.png}" alt="Total Electro">
+                <div class="footer-socials">
+                    <img th:src="@{/images/social/facebook.png}" alt="Facebook">
+                    <img th:src="@{/images/social/instagram.png}" alt="Instagram">
+                    <img th:src="@{/images/social/whatsapp.png}" alt="WhatsApp">
+                </div>
+            </div>
+            <div class="footer-col">
+                <strong>Perguntas frequentes</strong><br>
+                Formas de pagamento:<br>
+                <span class="footer-payments">
+                    <img th:src="@{/images/payments/visa.png}" alt="Visa" class="visa-logo">
+                    <img th:src="@{/images/payments/master.png}" alt="Mastercard" class="mastercard-logo">
+                </span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2024 Total Electro</span>
+            <span>Todos os direitos reservados</span>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html> 

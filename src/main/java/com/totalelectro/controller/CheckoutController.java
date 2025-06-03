@@ -4,9 +4,11 @@ import com.totalelectro.model.Order;
 import com.totalelectro.model.OrderStatus;
 import com.totalelectro.model.Product;
 import com.totalelectro.model.User;
+import com.totalelectro.model.CartItem;
 import com.totalelectro.service.OrderService;
 import com.totalelectro.service.ProductService;
 import com.totalelectro.service.UserService;
+import com.totalelectro.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 @Controller
 @RequestMapping("/checkout")
@@ -28,6 +31,7 @@ public class CheckoutController {
     private final ProductService productService;
     private final UserService userService;
     private final OrderService orderService;
+    private final CartService cartService;
 
     @GetMapping
     public String showCheckout(@RequestParam(required = false) Long productId,
@@ -63,6 +67,43 @@ public class CheckoutController {
         model.addAttribute("shipping", shipping);
         model.addAttribute("tax", tax);
         model.addAttribute("total", total);
+        
+        return "checkout";
+    }
+
+    @GetMapping("/cart")
+    public String showCartCheckout(Model model) {
+        
+        // Verificar se o usuário está autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
+        
+        if (!isAuthenticated) {
+            return "redirect:/login";
+        }
+        
+        String userEmail = auth.getName();
+        User user = userService.findByEmail(userEmail);
+        List<CartItem> cartItems = cartService.getCartItems(userEmail);
+        
+        if (cartItems.isEmpty()) {
+            return "redirect:/cart";
+        }
+        
+        // Calcular valores
+        double subtotal = cartService.getCartTotal(userEmail);
+        double shipping = 50.0;
+        double tax = subtotal * 0.21; // 21% IVA
+        double total = subtotal + shipping + tax;
+        
+        model.addAttribute("user", user);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("shipping", shipping);
+        model.addAttribute("tax", tax);
+        model.addAttribute("total", total);
+        model.addAttribute("isCartCheckout", true);
         
         return "checkout";
     }
@@ -139,6 +180,75 @@ public class CheckoutController {
                 Order savedOrder = orderService.save(order, user.getEmail());
                 redirectAttributes.addFlashAttribute("success", "Pedido realizado com sucesso! Número do pedido: #" + savedOrder.getId());
             }
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao processar pedido: " + e.getMessage());
+        }
+        
+        return "redirect:/";
+    }
+
+    @PostMapping("/process-cart")
+    public String processCartCheckout(@RequestParam String firstName,
+                                     @RequestParam String lastName,
+                                     @RequestParam String email,
+                                     @RequestParam String phone,
+                                     @RequestParam String address,
+                                     @RequestParam String city,
+                                     @RequestParam String state,
+                                     @RequestParam String zipCode,
+                                     RedirectAttributes redirectAttributes) {
+        
+        try {
+            // Verificar se o usuário está logado
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
+            
+            if (!isAuthenticated) {
+                redirectAttributes.addFlashAttribute("error", "Usuário não autenticado");
+                return "redirect:/login";
+            }
+            
+            String userEmail = auth.getName();
+            List<CartItem> cartItems = cartService.getCartItems(userEmail);
+            
+            if (cartItems.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Carrinho vazio");
+                return "redirect:/cart";
+            }
+            
+            // Calcular valores
+            double subtotal = cartService.getCartTotal(userEmail);
+            double shipping = 50.0;
+            double tax = subtotal * 0.21; // 21% IVA
+            double total = subtotal + shipping + tax;
+            
+            // Criar o pedido
+            Order order = new Order();
+            order.setTotalPrice(total);
+            order.setDate(LocalDateTime.now());
+            order.setStatus(OrderStatus.PENDIENTE);
+            order.setFirstName(firstName);
+            order.setLastName(lastName);
+            order.setEmail(email);
+            order.setPhoneNumber(phone);
+            order.setAddress(address);
+            order.setCity(city);
+            
+            // Adicionar produtos do carrinho ao pedido
+            Set<Product> products = new HashSet<>();
+            for (CartItem cartItem : cartItems) {
+                products.add(cartItem.getProduct());
+            }
+            order.setProducts(products);
+            
+            // Salvar o pedido
+            Order savedOrder = orderService.save(order, userEmail);
+            
+            // Limpar o carrinho após o checkout
+            cartService.clearCart(userEmail);
+            
+            redirectAttributes.addFlashAttribute("success", "Pedido realizado com sucesso! Número do pedido: #" + savedOrder.getId());
             
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erro ao processar pedido: " + e.getMessage());

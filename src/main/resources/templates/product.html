@@ -3,11 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${product.name} + ' - Total Electro'">Produto - Total Electro</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos para os botões de ação */
+        .btn-add-to-cart {
+            background: linear-gradient(135deg, #f36f21 0%, #e05a0c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .btn-add-to-cart:hover {
+            background: linear-gradient(135deg, #e05a0c 0%, #d1520a 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 111, 33, 0.3);
+        }
+
+        .btn-add-to-cart:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-add-to-cart.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-add-to-cart.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Toast de notificação */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .toast.error {
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .toast .toast-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .toast .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .toast .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* Melhorias nos botões de ação */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn-buy-now {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .btn-buy-now:hover {
+            background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+        }
+    </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- HEADER -->
     <div class="top-header">
         <div class="logo-header">
@@ -25,7 +162,10 @@
             <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
                 <button type="submit" class="btn btn-link text-danger p-0 border-0" style="text-decoration: none;">Sair</button>
             </form>
-            <a href="#" class="cart"><img th:src="@{/images/cart-outline.png}" alt="Carrinho"><span class="cart-count">3</span></a>
+            <a th:href="@{/cart}" class="cart">
+                <img th:src="@{/images/cart-outline.png}" alt="Carrinho">
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
         </div>
     </div>
 
@@ -94,13 +234,27 @@
 
                 <div class="product-actions-area">
                     <div class="quantity-selector">
-                        <button class="qty-btn minus">-</button>
-                        <input type="number" value="1" min="1" class="qty-input">
-                        <button class="qty-btn plus">+</button>
+                        <button class="qty-btn minus" onclick="decreaseQuantity()">-</button>
+                        <input type="number" value="1" min="1" class="qty-input" id="quantityInput">
+                        <button class="qty-btn plus" onclick="increaseQuantity()">+</button>
                     </div>
                     
                     <div class="action-buttons">
-                        <button class="btn-buy" onclick="buyProduct()">Comprar</button>
+                        <button class="btn-add-to-cart" 
+                                th:data-product-id="${product.id}"
+                                th:data-product-name="${product.name}"
+                                onclick="addToCart()">
+                            <i class="fas fa-shopping-cart"></i>
+                            Adicionar ao Carrinho
+                        </button>
+                        
+                        <button class="btn-add-to-cart btn-buy-now" 
+                                th:data-product-id="${product.id}"
+                                onclick="buyNow()">
+                            <i class="fas fa-bolt"></i>
+                            Comprar Agora
+                        </button>
+                        
                         <button class="btn-freight">Calcular frete</button>
                     </div>
                 </div>
@@ -183,51 +337,264 @@
     </footer>
 
     <script>
+        // Variáveis globais
+        const productId = document.querySelector('.btn-add-to-cart').dataset.productId;
+        const productName = document.querySelector('.btn-add-to-cart').dataset.productName;
+
+        // Funções de quantidade
+        function increaseQuantity() {
+            const qtyInput = document.getElementById('quantityInput');
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        }
+
+        function decreaseQuantity() {
+            const qtyInput = document.getElementById('quantityInput');
+            if (parseInt(qtyInput.value) > 1) {
+                qtyInput.value = parseInt(qtyInput.value) - 1;
+            }
+        }
+
+        // Função para adicionar ao carrinho
+        function addToCart() {
+            const quantity = document.getElementById('quantityInput').value;
+            const button = document.querySelector('.btn-add-to-cart');
+            
+            console.log('Tentando adicionar produto ao carrinho:', { productId, productName, quantity });
+            
+            // Adicionar estado de loading
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            // Obter o token CSRF
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+            
+            // Adicionar CSRF token se disponível
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.content] = csrfToken.content;
+                console.log('CSRF token adicionado:', csrfHeader.content, csrfToken.content);
+            } else {
+                console.warn('CSRF tokens não encontrados');
+            }
+            
+            console.log('Fazendo requisição para /cart/add com headers:', headers);
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: headers,
+                body: `productId=${productId}&quantity=${quantity}`
+            })
+            .then(response => {
+                console.log('Resposta recebida:', response.status, response.statusText);
+                return response.text();
+            })
+            .then(data => {
+                console.log('Dados da resposta:', data);
+                button.classList.remove('loading');
+                button.disabled = false;
+                
+                if (data.startsWith('success')) {
+                    const cartCount = data.split(':')[1];
+                    updateCartCount(cartCount);
+                    showToast('success', 'Produto adicionado!', `${quantity}x ${productName} foi adicionado ao carrinho.`);
+                } else if (data.startsWith('error')) {
+                    const errorMessage = data.split(':')[1];
+                    console.error('Erro do servidor:', errorMessage);
+                    if (errorMessage.includes('logado')) {
+                        showToast('error', 'Login necessário', 'Você precisa estar logado para adicionar produtos ao carrinho.');
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                    } else {
+                        showToast('error', 'Erro', errorMessage);
+                    }
+                } else {
+                    console.error('Resposta inesperada:', data);
+                    showToast('error', 'Erro', 'Resposta inesperada do servidor');
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                button.classList.remove('loading');
+                button.disabled = false;
+                showToast('error', 'Erro', 'Erro ao adicionar produto ao carrinho: ' + error.message);
+            });
+        }
+
+        // Função comprar agora (adiciona ao carrinho e vai para checkout)
+        function buyNow() {
+            const quantity = document.getElementById('quantityInput').value;
+            const button = document.querySelector('.btn-buy-now');
+            
+            console.log('Tentando comprar agora:', { productId, productName, quantity });
+            
+            // Adicionar estado de loading
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            // Obter o token CSRF
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+            
+            // Adicionar CSRF token se disponível
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.content] = csrfToken.content;
+            }
+            
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: headers,
+                body: `productId=${productId}&quantity=${quantity}`
+            })
+            .then(response => {
+                console.log('Resposta buy now recebida:', response.status, response.statusText);
+                return response.text();
+            })
+            .then(data => {
+                console.log('Dados da resposta buy now:', data);
+                button.classList.remove('loading');
+                button.disabled = false;
+                
+                if (data.startsWith('success')) {
+                    // Redirecionar para checkout
+                    window.location.href = '/checkout/cart';
+                } else if (data.startsWith('error')) {
+                    const errorMessage = data.split(':')[1];
+                    console.error('Erro do servidor buy now:', errorMessage);
+                    if (errorMessage.includes('logado')) {
+                        showToast('error', 'Login necessário', 'Você precisa estar logado para comprar produtos.');
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                    } else {
+                        showToast('error', 'Erro', errorMessage);
+                    }
+                } else {
+                    console.error('Resposta inesperada buy now:', data);
+                    showToast('error', 'Erro', 'Resposta inesperada do servidor');
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição buy now:', error);
+                button.classList.remove('loading');
+                button.disabled = false;
+                showToast('error', 'Erro', 'Erro ao processar compra: ' + error.message);
+            });
+        }
+
+        // Função para atualizar contador do carrinho
+        function updateCartCount(count) {
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+                
+                // Animação de destaque
+                cartCountElement.style.transform = 'scale(1.5)';
+                cartCountElement.style.background = '#28a745';
+                setTimeout(() => {
+                    cartCountElement.style.transform = 'scale(1)';
+                    cartCountElement.style.background = '#fff';
+                }, 300);
+            }
+        }
+
+        // Função para mostrar toast de notificação
+        function showToast(type, title, message) {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <span><i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${title}</span>
+                    <button class="toast-close" onclick="hideToast(this)">&times;</button>
+                </div>
+                <div class="toast-body">${message}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Mostrar toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Auto-hide após 5 segundos
+            setTimeout(() => {
+                hideToast(toast.querySelector('.toast-close'));
+            }, 5000);
+        }
+
+        // Função para esconder toast
+        function hideToast(button) {
+            const toast = button.closest('.toast');
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+
+        // Funcionalidade das abas
         document.addEventListener('DOMContentLoaded', function() {
-            // Funcionalidade dos botões de quantidade
+            // Funcionalidade dos botões de quantidade (mantendo código existente)
             const qtyInput = document.querySelector('.qty-input');
             const minusBtn = document.querySelector('.qty-btn.minus');
             const plusBtn = document.querySelector('.qty-btn.plus');
             
-            minusBtn.addEventListener('click', function() {
-                let value = parseInt(qtyInput.value) || 1;
-                if (value > 1) {
-                    qtyInput.value = value - 1;
-                }
-            });
+            if (minusBtn) {
+                minusBtn.addEventListener('click', function() {
+                    let value = parseInt(qtyInput.value) || 1;
+                    if (value > 1) {
+                        qtyInput.value = value - 1;
+                    }
+                });
+            }
             
-            plusBtn.addEventListener('click', function() {
-                let value = parseInt(qtyInput.value) || 1;
-                qtyInput.value = value + 1;
-            });
-            
+            if (plusBtn) {
+                plusBtn.addEventListener('click', function() {
+                    let value = parseInt(qtyInput.value) || 1;
+                    qtyInput.value = value + 1;
+                });
+            }
+
             // Funcionalidade das abas
             const tabHeaders = document.querySelectorAll('.tab-header');
             const tabPanels = document.querySelectorAll('.tab-panel');
-            
+
             tabHeaders.forEach(header => {
                 header.addEventListener('click', function() {
-                    const tabId = this.dataset.tab;
-                    
-                    // Remove active class from all headers and panels
+                    const targetTab = this.dataset.tab;
+
+                    // Remover classe active de todos os headers e panels
                     tabHeaders.forEach(h => h.classList.remove('active'));
                     tabPanels.forEach(p => p.classList.remove('active'));
-                    
-                    // Add active class to clicked header and corresponding panel
+
+                    // Adicionar classe active ao header clicado e ao panel correspondente
                     this.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
                 });
             });
+
+            // Carregar contador do carrinho
+            fetch('/cart/count')
+                .then(response => response.text())
+                .then(count => {
+                    updateCartCount(count);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar contador do carrinho:', error);
+                });
         });
-        
-        // Função para comprar produto
-        function buyProduct() {
-            const productId = window.location.pathname.split('/').pop(); // Pega o ID da URL
-            const quantity = document.querySelector('.qty-input').value || 1;
-            
-            // Redireciona para o checkout com os parâmetros
-            window.location.href = `/checkout?productId=${productId}&quantity=${quantity}`;
-        }
     </script>
+
 </body>
 </html> 
