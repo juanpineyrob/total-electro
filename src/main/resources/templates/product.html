@@ -157,12 +157,9 @@
             </form>
         </div>
         <div class="header-actions">
-            <button class="lang">🇧🇷</button>
-            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account">Minha conta</a>
-            <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
-                <button type="submit" class="btn btn-link text-danger p-0 border-0" style="text-decoration: none;">Sair</button>
-            </form>
-            <a th:href="@{/cart}" class="cart">
+            <button class="lang">🇧🇷 <span class="material-symbols-outlined">keyboard_arrow_down</span></button>
+            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
+            <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
                 <img th:src="@{/images/cart-outline.png}" alt="Carrinho">
                 <span class="cart-count" id="cartCount">0</span>
             </a>

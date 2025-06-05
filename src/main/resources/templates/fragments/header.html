@@ -8,7 +8,7 @@
 <!-- Header Fragment -->
 <div th:fragment="header">
     <style>
-        /* Estilo común para los botones "Carrinho", "Sair" y "Minha conta" (igual que "Buscar") */
+        /* Estilo común para los botones "Carrinho" y "Minha conta" (igual que "Buscar") */
         .header-btn { font-family: 'Roboto', sans-serif; font-weight: bold; }
         .material-symbols-outlined {
           font-variation-settings:
@@ -58,9 +58,6 @@
         <div class="header-actions">
             <button class="lang">🇧🇷 <span class="material-symbols-outlined">keyboard_arrow_down</span></button>
             <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
-            <form th:action="@{/logout}" method="post" class="d-inline" sec:authorize="isAuthenticated()">
-                <button type="submit" class="header-btn">Sair</button>
-            </form>
             <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
                 <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
                 Carrinho 
