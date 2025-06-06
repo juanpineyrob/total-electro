@@ -322,8 +322,9 @@
                 <!-- Formulário de checkout -->
                 <div>
                     <form th:action="@{/checkout/process}" method="post">
-                        <input type="hidden" name="productId" th:value="${product?.id}">
-                        <input type="hidden" name="quantity" th:value="${quantity}">
+                        <!-- Solo enviar productId y quantity si no es un checkout desde el carrito -->
+                        <input type="hidden" name="productId" th:if="${!isCartCheckout}" th:value="${product?.id}">
+                        <input type="hidden" name="quantity" th:if="${!isCartCheckout}" th:value="${quantity}">
                         
                         <!-- Dados Pessoais -->
                         <div class="form-section">
