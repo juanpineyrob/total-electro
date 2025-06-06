@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Compra - Total Electro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
+        }
+        
+        .confirmation-container {
+            min-height: 100vh;
+            padding: 32px 20px;
+        }
+        
+        .confirmation-header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 24px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 32px;
+        }
+        
+        .success-icon {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .success-icon img {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .confirmation-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 16px;
+        }
+        
+        .confirmation-subtitle {
+            font-size: 18px;
+            color: #6c757d;
+            font-weight: 400;
+        }
+        
+        .confirmation-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+        
+        .confirmation-details, .confirmation-items {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            padding: 32px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .confirmation-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .confirmation-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .confirmation-label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .confirmation-value {
+            font-size: 16px;
+            color: #212529;
+        }
+        
+        .delivery-info {
+            background: #e9ecef;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+        
+        .delivery-date {
+            font-weight: 600;
+            color: #212529;
+            font-size: 18px;
+        }
+        
+        .order-items {
+            margin-top: 24px;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            margin-right: 16px;
+            object-fit: cover;
+        }
+        
+        .order-item-details {
+            flex: 1;
+        }
+        
+        .order-item-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .order-item-price {
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .order-total {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .total-label {
+            font-weight: 500;
+        }
+        
+        .total-value {
+            font-weight: 600;
+        }
+        
+        .grand-total {
+            font-size: 20px;
+            color: #212529;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .continue-shopping {
+            text-align: center;
+            margin-top: 32px;
+        }
+        
+        .continue-shopping a {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .continue-shopping a:hover {
+            background: #0056b3;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .confirmation-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .confirmation-title {
+                font-size: 24px;
+            }
+            
+            .confirmation-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <header class="confirmation-header">
+            <div class="success-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Sucesso">
+            </div>
+            <h1 class="confirmation-title">Compra Realizada com Sucesso!</h1>
+            <p class="confirmation-subtitle">Obrigado por comprar na Total Electro</p>
+        </header>
+        
+        <div class="confirmation-content">
+            <div class="confirmation-details">
+                <h2 class="section-title">Detalhes do Pedido</h2>
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Número do Pedido</div>
+                    <div class="confirmation-value" th:text="${order.id}">#12345</div>
+                </div>
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Data de Compra</div>
+                    <div class="confirmation-value" th:text="${#temporals.format(order.date, 'dd/MM/yyyy HH:mm')}">01/01/2023 12:00</div>
+                </div>
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Status do Pedido</div>
+                    <div class="confirmation-value">
+                        <span class="status-badge">Confirmado</span>
+                    </div>
+                </div>
+                
+                <div class="delivery-info">
+                    <div class="confirmation-label">Data Estimada de Entrega</div>
+                    <div class="delivery-date" th:text="${#temporals.format(estimatedDeliveryDate, 'dd/MM/yyyy')}">06/01/2023</div>
+                </div>
+            </div>
+            
+            <div class="confirmation-items">
+                <h2 class="section-title">Resumo do Pedido</h2>
+                <div class="order-items">
+                    <div class="order-item" th:each="product : ${products}">
+                        <img class="order-item-image" th:src="${product.imageUrl}" alt="Produto">
+                        <div class="order-item-details">
+                            <div class="order-item-name" th:text="${product.name}">Nome do Produto</div>
+                            <div class="order-item-price">
+                                <span th:text="${#numbers.formatDecimal(product.price, 0, 2)}">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-total">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal</span>
+                        <span class="total-value" th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">R$ 0,00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Frete</span>
+                        <span class="total-value">Grátis</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span class="total-label">Total</span>
+                        <span class="total-value" th:text="${#numbers.formatDecimal(total, 0, 2)}">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="continue-shopping">
+            <a href="/">Continuar Comprando</a>
+        </div>
+    </div>
+</body>
+</html> 

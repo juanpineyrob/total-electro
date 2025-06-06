@@ -109,8 +109,8 @@ public class CheckoutController {
     }
     
     @PostMapping("/process")
-    public String processCheckout(@RequestParam Long productId,
-                                 @RequestParam int quantity,
+    public String processCheckout(@RequestParam(required = false) Long productId,
+                                 @RequestParam(required = false) Integer quantity,
                                  @RequestParam String firstName,
                                  @RequestParam String lastName,
                                  @RequestParam String email,
@@ -122,15 +122,18 @@ public class CheckoutController {
                                  RedirectAttributes redirectAttributes) {
         
         try {
-            // Buscar o produto
-            Product product = productService.getProductById(productId);
-            if (product == null) {
-                redirectAttributes.addFlashAttribute("error", "Produto não encontrado");
-                return "redirect:/";
+            // Buscar el producto
+            Product product = null;
+            if (productId != null) {
+                product = productService.getProductById(productId);
+                if (product == null) {
+                    redirectAttributes.addFlashAttribute("error", "Produto não encontrado");
+                    return "redirect:/";
+                }
             }
             
             // Calcular valores
-            double subtotal = product.getPrice().doubleValue() * quantity;
+            double subtotal = product != null && quantity != null ? product.getPrice().doubleValue() * quantity : 0;
             double shipping = 50.0;
             double tax = subtotal * 0.21; // 21% IVA
             double total = subtotal + shipping + tax;
@@ -149,17 +152,19 @@ public class CheckoutController {
             
             // Adicionar o produto ao pedido
             Set<Product> products = new HashSet<>();
-            products.add(product);
+            if (product != null) {
+                products.add(product);
+            }
             order.setProducts(products);
             
             // Verificar se o usuário está logado
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
             
+            Order savedOrder;
             if (isAuthenticated) {
                 // Usuário logado - usar o serviço que associa automaticamente
-                Order savedOrder = orderService.save(order, auth.getName());
-                redirectAttributes.addFlashAttribute("success", "Pedido realizado com sucesso! Número do pedido: #" + savedOrder.getId());
+                savedOrder = orderService.save(order, auth.getName());
             } else {
                 // Usuário não logado - buscar usuário existente ou criar um temporário
                 User user = userService.findByEmailOrNull(email);
@@ -177,15 +182,17 @@ public class CheckoutController {
                 }
                 
                 order.setUser(user);
-                Order savedOrder = orderService.save(order, user.getEmail());
-                redirectAttributes.addFlashAttribute("success", "Pedido realizado com sucesso! Número do pedido: #" + savedOrder.getId());
+                savedOrder = orderService.save(order, user.getEmail());
             }
+            
+            // Redirigir a la página de confirmación
+            redirectAttributes.addFlashAttribute("order", savedOrder);
+            return "redirect:/checkout/confirmation";
             
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erro ao processar pedido: " + e.getMessage());
+            return "redirect:/";
         }
-        
-        return "redirect:/";
     }
 
     @PostMapping("/process-cart")
@@ -255,5 +262,28 @@ public class CheckoutController {
         }
         
         return "redirect:/";
+    }
+
+    @GetMapping("/confirmation")
+    public String showConfirmation(Model model, RedirectAttributes redirectAttributes) {
+        Order order = (Order) model.getAttribute("order");
+        if (order == null) {
+            redirectAttributes.addFlashAttribute("error", "Não foi possível encontrar os detalhes do pedido.");
+            return "redirect:/";
+        }
+
+        // Calcular fecha estimada de entrega (5 días después de la compra)
+        LocalDateTime estimatedDeliveryDate = order.getDate().plusDays(5);
+        
+        // Añadir datos al modelo
+        model.addAttribute("order", order);
+        model.addAttribute("estimatedDeliveryDate", estimatedDeliveryDate);
+        model.addAttribute("products", order.getProducts());
+        model.addAttribute("subtotal", order.getTotalPrice());
+        model.addAttribute("shipping", 0.0); // Envío gratis
+        model.addAttribute("total", order.getTotalPrice());
+        model.addAttribute("status", "Confirmado");
+        
+        return "checkout-confirmation";
     }
 } 
