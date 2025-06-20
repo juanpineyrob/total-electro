@@ -17,6 +17,21 @@
           'GRAD' 0,
           'opsz' 24
         }
+        .lang {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .lang:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
         .cart-count {
           background: #ff4444;
           color: white;
@@ -29,20 +44,6 @@
           display: inline-block;
         }
     </style>
-
-    <!-- Estado de Autenticación -->
-    <div class="container mt-4" sec:authorize="isAuthenticated()">
-        <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Estado de Autenticação</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Usuario:</strong> <span sec:authentication="name"></span></p>
-                <p><strong>Roles:</strong> <span sec:authentication="principal.authorities"></span></p>
-                <p><strong>Estado:</strong> <span class="text-success">Autenticado</span></p>
-            </div>
-        </div>
-    </div>
 
     <!-- HEADER -->
     <div class="top-header">
@@ -57,10 +58,10 @@
         </div>
         <div class="header-actions">
             <button class="lang">🇧🇷 <span class="material-symbols-outlined">keyboard_arrow_down</span></button>
-            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn">Minha conta</a>
+            <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn">Entrar</a>
             <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
                 <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
-                Carrinho 
                 <span class="cart-count" id="cart-count">0</span>
             </a>
         </div>

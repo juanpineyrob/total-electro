@@ -17,6 +17,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -98,6 +99,16 @@ public class  SecurityConfig {
                     .failureUrl("/login?error=true")
                     .permitAll();
                 logger.info("Login form configurado");
+            })
+            .exceptionHandling(exception -> {
+                exception
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        if (request.getRequestURI().startsWith("/profile")) {
+                            response.sendRedirect("/login");
+                        } else {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        }
+                    });
             })
             .logout(logout -> {
                 logger.info("Configurando logout");

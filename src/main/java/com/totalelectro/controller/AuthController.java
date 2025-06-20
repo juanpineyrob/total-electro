@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,17 @@ public class AuthController {
     private UserService userService;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Authentication authentication, HttpServletRequest request) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/profile";
+        }
+        
+        // Guardar la URL de referencia para redirigir después del login
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.contains("/login")) {
+            request.getSession().setAttribute("url_prior_login", referer);
+        }
+        
         return "login";
     }
 

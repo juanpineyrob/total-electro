@@ -120,21 +120,30 @@ body {
   height: 28px;
 }
 
-.header-actions .cart-count {
+.header-actions .cart-count, .cart-count {
   position: absolute;
-  top: -6px;
+  top: -8px;
   right: -10px;
-  background: #fff;
-  color: #f36f21;
+  background: #f36f21;
+  color: #fff;
   border-radius: 50%;
-  font-size: 13px;
-  width: 18px;
-  height: 18px;
+  font-size: 15px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  border: 2px solid #f36f21;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(243, 111, 33, 0.25);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  z-index: 2;
+}
+
+.header-actions .cart:hover .cart-count, .cart:hover .cart-count {
+  background: #e05a0c;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(243, 111, 33, 0.35);
 }
 
 .header-actions .btn-link {
@@ -194,14 +203,11 @@ nav.main-menu {
 }
 
 .menu-items a .material-symbols-outlined {
-  font-size: 20px;
-  color: #000;
-  transition: transform 0.2s ease;
+  display: none;
 }
 
 .menu-items a:hover .material-symbols-outlined {
   color: #f36f21;
-  transform: rotate(180deg);
 }
 
 .menu-items a:hover {
@@ -255,9 +261,7 @@ nav.main-menu {
 }
 
 .menu-offers button .material-symbols-outlined {
-  font-size: 20px;
-  color: #fff;
-  transition: transform 0.2s ease;
+  display: none;
 }
 
 .menu-offers button:hover .material-symbols-outlined {

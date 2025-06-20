@@ -602,26 +602,106 @@
                 cardNumberInput.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
                     value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
-                    e.target.value = value;
+                    e.target.value = value.substr(0, 19);
+                });
+                // Validación Luhn al salir del campo
+                cardNumberInput.addEventListener('blur', function(e) {
+                    const value = e.target.value.replace(/\s/g, '');
+                    if (value.length < 16 || !luhnCheck(value)) {
+                        alert('Número de cartão inválido.');
+                        e.target.focus();
+                    }
                 });
             }
 
-            // Máscara de data de expiração
+            // Validar solo letras y espacios en nombre del titular
+            const cardNameInput = document.getElementById('cardName');
+            if (cardNameInput) {
+                cardNameInput.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+                });
+            }
+
+            // Máscara de data de expiração y validación
             if (expiryDateInput) {
                 expiryDateInput.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
                     if (value.length >= 3) {
                         value = value.replace(/^(\d{2})(\d{0,2}).*/, '$1/$2');
                     }
-                    e.target.value = value;
+                    e.target.value = value.substr(0, 5);
+                });
+                expiryDateInput.addEventListener('blur', function(e) {
+                    if (!validateExpiryDate(e.target.value)) {
+                        alert('Data de expiração inválida. Use MM/AA e não pode ser passada.');
+                        e.target.focus();
+                    }
                 });
             }
 
             // Apenas números no CVV
             if (cvvInput) {
                 cvvInput.addEventListener('input', function(e) {
-                    e.target.value = e.target.value.replace(/\D/g, '');
+                    e.target.value = e.target.value.replace(/\D/g, '').substr(0, 4);
                 });
+            }
+
+            // Autocompletar cidade e estado pelo CEP (ViaCEP)
+            if (zipCodeInput) {
+                zipCodeInput.addEventListener('blur', function(e) {
+                    const cep = e.target.value.replace(/\D/g, '');
+                    if (cep.length === 8) {
+                        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (!data.erro) {
+                                    document.getElementById('city').value = data.localidade;
+                                    document.getElementById('state').value = data.uf;
+                                    document.getElementById('city').readOnly = true;
+                                    document.getElementById('state').readOnly = true;
+                                } else {
+                                    alert('CEP não encontrado!');
+                                    document.getElementById('city').value = '';
+                                    document.getElementById('state').value = '';
+                                    document.getElementById('city').readOnly = false;
+                                    document.getElementById('state').readOnly = false;
+                                }
+                            })
+                            .catch(() => {
+                                alert('Erro ao consultar o CEP.');
+                                document.getElementById('city').value = '';
+                                document.getElementById('state').value = '';
+                                document.getElementById('city').readOnly = false;
+                                document.getElementById('state').readOnly = false;
+                            });
+                    } else {
+                        document.getElementById('city').readOnly = false;
+                        document.getElementById('state').readOnly = false;
+                    }
+                });
+            }
+
+            // Função de validação Luhn
+            function luhnCheck(num) {
+                let arr = (num + '').split('').reverse().map(x => parseInt(x));
+                let sum = arr.reduce((acc, val, idx) => {
+                    if (idx % 2) {
+                        val *= 2;
+                        if (val > 9) val -= 9;
+                    }
+                    return acc + val;
+                }, 0);
+                return sum % 10 === 0;
+            }
+
+            // Validação de data de expiração MM/AA
+            function validateExpiryDate(value) {
+                if (!/^(0[1-9]|1[0-2])\/(\d{2})$/.test(value)) return false;
+                const [mes, ano] = value.split('/').map(Number);
+                const agora = new Date();
+                const anoAtual = agora.getFullYear() % 100;
+                const mesAtual = agora.getMonth() + 1;
+                return (ano > anoAtual) || (ano === anoAtual && mes >= mesAtual);
             }
 
             // Loading no botão de submit

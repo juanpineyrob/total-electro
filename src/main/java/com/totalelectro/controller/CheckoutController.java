@@ -120,6 +120,16 @@ public class CheckoutController {
                                  @RequestParam String state,
                                  @RequestParam String zipCode,
                                  RedirectAttributes redirectAttributes) {
+        // Validación de email
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            redirectAttributes.addFlashAttribute("error", "E-mail inválido");
+            return "redirect:/checkout";
+        }
+        // Validación de CEP
+        if (zipCode == null || !zipCode.matches("^\\d{5}-?\\d{3}$")) {
+            redirectAttributes.addFlashAttribute("error", "CEP inválido");
+            return "redirect:/checkout";
+        }
         
         try {
             // Buscar o produto

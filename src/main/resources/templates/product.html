@@ -10,7 +10,32 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
+        /* Estilos para el botón de idioma */
+        .lang {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .lang:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
         /* Estilos para os botões de ação */
         .btn-add-to-cart {
             background: linear-gradient(135deg, #f36f21 0%, #e05a0c 100%);
@@ -157,10 +182,11 @@
             </form>
         </div>
         <div class="header-actions">
-            <button class="lang">🇧🇷 <span class="material-symbols-outlined">keyboard_arrow_down</span></button>
-            <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
+            <button class="lang">🇧🇷<span class="material-symbols-outlined">keyboard_arrow_down</span></button>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn">Minha conta</a>
+            <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn">Minha conta</a>
             <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
-                <img th:src="@{/images/cart-outline.png}" alt="Carrinho">
+                <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
                 <span class="cart-count" id="cartCount">0</span>
             </a>
         </div>
