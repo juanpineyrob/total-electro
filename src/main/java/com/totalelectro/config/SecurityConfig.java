@@ -88,6 +88,9 @@ public class  SecurityConfig {
                 logger.info("- /product/** está permitida");
                 logger.info("Autorizaciones HTTP configuradas");
             })
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/admin/users/*/update") // Ignorar CSRF para endpoints AJAX específicos
+            )
             .formLogin(form -> {
                 logger.info("Configurando login form");
                 form

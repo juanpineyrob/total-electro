@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Usuários - Total Electro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 16px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+            text-decoration: none;
+            color: #495057;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .filter-input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .users-section {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .users-count {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 16px 24px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .users-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .users-table td {
+            font-size: 14px;
+            color: #212529;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .role-admin {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .role-user {
+            background: #d1edff;
+            color: #004085;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .modal-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        /* View User Panel Styles */
+        .user-details {
+            padding: 0;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .user-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .user-info h4 {
+            margin: 0;
+            color: #212529;
+            font-weight: 600;
+        }
+
+        .user-info p {
+            margin: 0;
+            color: #6c757d;
+        }
+
+        .form-label.fw-bold {
+            color: #495057;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .user-details p {
+            color: #212529;
+            font-size: 16px;
+        }
+
+        /* Spinner styles */
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        /* View Modal Styles */
+        .view-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .view-modal.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .view-modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .view-modal.is-visible .view-modal-content {
+            transform: scale(1);
+        }
+
+        .view-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-modal-header .panel-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .view-modal-header .btn-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .view-modal-header .btn-close:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .view-modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .view-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Enhanced user details styles for modal */
+        .user-details {
+            padding: 0;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 24px;
+        }
+
+        .user-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .user-info h4 {
+            margin: 0 0 8px 0;
+            color: #212529;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .user-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 16px;
+        }
+
+        .user-details .row {
+            margin-bottom: 20px;
+        }
+
+        .user-details .form-label.fw-bold {
+            color: #495057;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-details p {
+            color: #212529;
+            font-size: 16px;
+            margin: 0;
+            padding: 8px 0;
+        }
+
+        .user-details .role-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-admin {
+            background: #dc3545;
+            color: white;
+        }
+
+        .role-user {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Edit Modal Styles */
+        .edit-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .edit-modal.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .edit-modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .edit-modal.is-visible .edit-modal-content {
+            transform: scale(1);
+        }
+
+        .edit-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-modal-header .panel-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .edit-modal-header .btn-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .edit-modal-header .btn-close:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .edit-modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .edit-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Form styles for edit modal */
+        .edit-modal .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .edit-modal .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .edit-modal .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        .edit-modal .form-check {
+            margin-bottom: 8px;
+        }
+
+        .edit-modal .form-check-input {
+            margin-right: 8px;
+        }
+
+        .edit-modal .form-check-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        /* Delete Modal Styles */
+        .delete-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .delete-modal.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .delete-modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .delete-modal.is-visible .delete-modal-content {
+            transform: scale(1);
+        }
+
+        .delete-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #dee2e6;
+            background: #fff5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-modal-header .panel-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .delete-modal-header .btn-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .delete-modal-header .btn-close:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .delete-modal-body {
+            padding: 24px;
+        }
+
+        .delete-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #dee2e6;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .delete-warning {
+            text-align: center;
+        }
+
+        .warning-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .warning-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 12px;
+        }
+
+        .warning-text {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .user-info-delete {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .user-avatar-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .user-details-delete {
+            flex: 1;
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #212529;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .user-email {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            border-color: #bd2130;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 20px 16px;
+            }
+
+            .users-table {
+                font-size: 12px;
+            }
+
+            .users-table th,
+            .users-table td {
+                padding: 12px 8px;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            /* Mobile modal styles */
+            .view-modal-content {
+                width: 95%;
+                max-width: none;
+                margin: 20px;
+            }
+
+            .view-modal-header {
+                padding: 16px 20px;
+            }
+
+            .view-modal-body {
+                padding: 20px;
+            }
+
+            .view-modal-footer {
+                padding: 12px 20px;
+            }
+
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+
+            .user-avatar-large {
+                width: 80px;
+                height: 80px;
+                font-size: 24px;
+            }
+
+            .user-info h4 {
+                font-size: 20px;
+            }
+
+            /* Mobile edit modal styles */
+            .edit-modal-content {
+                width: 95%;
+                max-width: none;
+                margin: 20px;
+            }
+
+            .edit-modal-header {
+                padding: 16px 20px;
+            }
+
+            .edit-modal-body {
+                padding: 20px;
+            }
+
+            .edit-modal-footer {
+                padding: 12px 20px;
+            }
+
+            .edit-modal .row {
+                margin: 0;
+            }
+
+            .edit-modal .col-md-6 {
+                padding: 0 8px;
+            }
+
+            /* Mobile delete modal styles */
+            .delete-modal-content {
+                width: 95%;
+                max-width: none;
+                margin: 20px;
+            }
+
+            .delete-modal-header {
+                padding: 16px 20px;
+            }
+
+            .delete-modal-body {
+                padding: 20px;
+            }
+
+            .delete-modal-footer {
+                padding: 12px 20px;
+            }
+
+            .warning-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .warning-title {
+                font-size: 16px;
+            }
+
+            .user-info-delete {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .user-avatar-small {
+                align-self: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="/admin" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="page-title">Gerenciar Usuários</h1>
+            </div>
+            <div class="header-actions">
+                <a href="/admin" class="btn btn-outline">Voltar ao Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(users)}">0</div>
+                <div class="stat-label">Total de Usuários</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(users.?[roles.![name].contains('USER')])}">0</div>
+                <div class="stat-label">Usuários Comuns</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(users.?[roles.![name].contains('ADMIN')])}">0</div>
+                <div class="stat-label">Administradores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(users.?[roles.![name].size() > 1])}">0</div>
+                <div class="stat-label">Múltiplos Roles</div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Buscar Usuários</label>
+                    <input type="text" class="filter-input" id="searchInput" placeholder="Nome, email ou cidade...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Filtrar por Role</label>
+                    <select class="filter-input" id="roleFilter">
+                        <option value="">Todos os Roles</option>
+                        <option value="USER">Usuário</option>
+                        <option value="ADMIN">Administrador</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">&nbsp;</label>
+                    <button class="btn btn-outline" onclick="clearFilters()">
+                        <i class="fas fa-times"></i>
+                        Limpar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div class="users-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Lista de Usuários</h2>
+                    <div class="users-count" th:text="${#lists.size(users)} + ' usuários encontrados'">0 usuários encontrados</div>
+                </div>
+            </div>
+            
+            <div th:if="${users.empty}" class="empty-state">
+                <div class="empty-icon">👥</div>
+                <p>Nenhum usuário encontrado</p>
+            </div>
+
+            <div th:unless="${users.empty}" class="table-responsive">
+                <table class="users-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Email</th>
+                            <th>Cidade</th>
+                            <th>Telefone</th>
+                            <th>Roles</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}" th:data-user-id="${user?.id}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-3">
+                                        <span th:text="${user?.firstName?.substring(0,1)} + ${user?.lastName?.substring(0,1)}"></span>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" th:text="${user?.firstName + ' ' + user?.lastName}"></div>
+                                        <small class="text-muted" th:text="${user?.address}"></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:text="${user?.email}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${user?.city}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${user?.phoneNumber}"></span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <span th:each="role : ${user?.roles}"
+                                          th:class="${'role-badge ' + (role?.name == 'ADMIN' ? 'role-admin' : 'role-user')}"
+                                          th:text="${role?.name}"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline"
+                                            th:onclick="'viewUser(\'' + ${user?.id} + '\')'"
+                                            title="Ver Detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline"
+                                            th:onclick="'editUser(\'' + ${user?.id} + '\')'"
+                                            title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline"
+                                            th:onclick="'deleteUser(\'' + ${user?.id} + '\')'"
+                                            title="Deletar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Panel -->
+    <div class="edit-modal" id="editUserPanel">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h5 class="panel-title">Editar Usuário</h5>
+                <button type="button" class="btn-close" onclick="closeEditPanel()"></button>
+            </div>
+            <div class="edit-modal-body">
+                <form id="editUserForm" onsubmit="event.preventDefault(); saveUser();">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editFirstName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" name="firstName" id="editFirstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editLastName" class="form-label">Sobrenome</label>
+                            <input type="text" class="form-control" name="lastName" id="editLastName" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="editEmail" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editCity" class="form-label">Cidade</label>
+                            <input type="text" class="form-control" name="city" id="editCity" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editPhone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" name="phoneNumber" id="editPhone" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAddress" class="form-label">Endereço</label>
+                        <textarea class="form-control" name="address" id="editAddress" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editRoleUser" name="roles" value="USER">
+                            <label class="form-check-label" for="editRoleUser">Usuário</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editRoleAdmin" name="roles" value="ADMIN">
+                            <label class="form-check-label" for="editRoleAdmin">Administrador</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="edit-modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeEditPanel()">Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="editUserForm">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Panel -->
+    <div class="view-modal" id="viewUserPanel">
+        <div class="view-modal-content">
+            <div class="view-modal-header">
+                <h5 class="panel-title">Detalhes do Usuário</h5>
+                <button type="button" class="btn-close" onclick="closeViewPanel()"></button>
+            </div>
+            <div class="view-modal-body">
+                <div id="viewUserContent">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="view-modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeViewPanel()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Modal -->
+    <div class="delete-modal" id="deleteUserModal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <h5 class="panel-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close" onclick="closeDeleteModal()"></button>
+            </div>
+            <div class="delete-modal-body">
+                <div class="delete-warning">
+                    <div class="warning-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h6 class="warning-title">Tem certeza que deseja excluir este usuário?</h6>
+                    <p class="warning-text">
+                        Esta ação <strong>não pode ser desfeita</strong>. Todos os dados do usuário serão permanentemente removidos do sistema.
+                    </p>
+                    <div class="user-info-delete">
+                        <div class="user-avatar-small">
+                            <span id="deleteUserInitials"></span>
+                        </div>
+                        <div class="user-details-delete">
+                            <div class="user-name" id="deleteUserName"></div>
+                            <div class="user-email" id="deleteUserEmail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="delete-modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash-alt"></i>
+                    Excluir Usuário
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUserId = null;
+        let deleteUserId = null;
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            filterUsers();
+        });
+
+        document.getElementById('roleFilter').addEventListener('change', function() {
+            filterUsers();
+        });
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const rows = document.querySelectorAll('#usersTable tbody tr');
+
+            rows.forEach(row => {
+                const name = row.querySelector('td:first-child').textContent.toLowerCase();
+                const email = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const roles = Array.from(row.querySelectorAll('.role-badge')).map(badge => badge.textContent);
+
+                const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
+                const matchesRole = !roleFilter || roles.includes(roleFilter);
+
+                row.style.display = matchesSearch && matchesRole ? '' : 'none';
+            });
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('roleFilter').value = '';
+            filterUsers();
+        }
+
+        function viewUser(userId) {
+            currentUserId = userId;
+            const viewPanel = document.getElementById('viewUserPanel');
+            
+            // Show loading state
+            document.getElementById('viewUserContent').innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            viewPanel.classList.add('is-visible');
+            
+            // Load user details via AJAX
+            fetch(`/admin/users/${userId}/json`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Falha ao carregar dados do usuário.');
+                    return response.json();
+                })
+                .then(user => {
+                    const content = `
+                        <div class="user-details">
+                            <div class="user-header">
+                                <div class="user-avatar-large">
+                                    <span>${user.firstName ? user.firstName.substring(0,1) : ''}${user.lastName ? user.lastName.substring(0,1) : ''}</span>
+                                </div>
+                                <div class="user-info">
+                                    <h4>${user.firstName || ''} ${user.lastName || ''}</h4>
+                                    <p>${user.email || ''}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Nome</label>
+                                    <p>${user.firstName || ''}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Sobrenome</label>
+                                    <p>${user.lastName || ''}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email</label>
+                                <p>${user.email || ''}</p>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Cidade</label>
+                                    <p>${user.city || ''}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Telefone</label>
+                                    <p>${user.phoneNumber || ''}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Endereço</label>
+                                <p>${user.address || ''}</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Roles</label>
+                                <div class="d-flex gap-1">
+                                    ${user.roles ? user.roles.map(role => 
+                                        `<span class="role-badge ${role.name === 'ADMIN' ? 'role-admin' : 'role-user'}">${role.name}</span>`
+                                    ).join('') : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('viewUserContent').innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('viewUserContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Erro ao carregar detalhes do usuário: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+
+        function closeEditPanel() {
+            document.getElementById('editUserPanel').classList.remove('is-visible');
+        }
+
+        function editUser(userId) {
+            currentUserId = userId;
+            fetch(`/admin/users/${userId}/json`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Falha ao carregar dados do usuário.');
+                    return response.json();
+                })
+                .then(user => {
+                    document.getElementById('editFirstName').value = user.firstName || '';
+                    document.getElementById('editLastName').value = user.lastName || '';
+                    document.getElementById('editEmail').value = user.email || '';
+                    document.getElementById('editCity').value = user.city || '';
+                    document.getElementById('editPhone').value = user.phoneNumber || '';
+                    document.getElementById('editAddress').value = user.address || '';
+                    
+                    document.getElementById('editRoleUser').checked = user.roles.some(r => r.name === 'USER');
+                    document.getElementById('editRoleAdmin').checked = user.roles.some(r => r.name === 'ADMIN');
+                    
+                    document.getElementById('editUserPanel').classList.add('is-visible');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', error.message);
+                });
+        }
+
+        function saveUser() {
+            console.log('Iniciando saveUser...');
+            
+            const roles = [];
+            if (document.getElementById('editRoleUser').checked) roles.push('USER');
+            if (document.getElementById('editRoleAdmin').checked) roles.push('ADMIN');
+
+            const userData = {
+                firstName: document.getElementById('editFirstName').value,
+                lastName: document.getElementById('editLastName').value,
+                email: document.getElementById('editEmail').value,
+                city: document.getElementById('editCity').value,
+                address: document.getElementById('editAddress').value,
+                phoneNumber: document.getElementById('editPhone').value,
+                roles: roles
+            };
+
+            console.log('Dados do usuário:', userData);
+            console.log('ID do usuário:', currentUserId);
+
+            fetch(`/admin/users/${currentUserId}/update`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    return response.json().then(err => { 
+                        console.log('Erro do servidor:', err);
+                        throw new Error(err.error || 'Erro ao salvar.')});
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Sucesso:', data);
+                showAlert('success', data.message);
+                closeEditPanel();
+                // Dynamically update the table row
+                updateTableRow(currentUserId, userData);
+            })
+            .catch(error => {
+                console.error('Erro completo:', error);
+                showAlert('danger', error.message);
+            });
+        }
+
+        function updateTableRow(userId, data) {
+            const row = document.querySelector(`tr[data-user-id='${userId}']`);
+            if (!row) return;
+
+            row.querySelector('.fw-bold').textContent = `${data.firstName} ${data.lastName}`;
+            row.querySelector('.text-muted').textContent = data.address;
+            // Update email
+            row.cells[1].textContent = data.email;
+            // Update city
+            row.cells[2].textContent = data.city;
+            // Update phone
+            row.cells[3].textContent = data.phoneNumber;
+            // Update roles
+            const rolesContainer = row.cells[4].querySelector('.d-flex');
+            rolesContainer.innerHTML = '';
+            data.roles.forEach(roleName => {
+                const badge = document.createElement('span');
+                badge.textContent = roleName;
+                badge.className = `role-badge ${roleName === 'ADMIN' ? 'role-admin' : 'role-user'}`;
+                rolesContainer.appendChild(badge);
+            });
+        }
+
+        function deleteUser(userId) {
+            deleteUserId = userId;
+            
+            // Buscar dados do usuário para mostrar no modal
+            fetch(`/admin/users/${userId}/json`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Falha ao carregar dados do usuário.');
+                    return response.json();
+                })
+                .then(user => {
+                    // Preencher informações do usuário no modal
+                    document.getElementById('deleteUserName').textContent = `${user.firstName} ${user.lastName}`;
+                    document.getElementById('deleteUserEmail').textContent = user.email;
+                    document.getElementById('deleteUserInitials').textContent = 
+                        `${user.firstName ? user.firstName.substring(0,1) : ''}${user.lastName ? user.lastName.substring(0,1) : ''}`;
+                    
+                    // Mostrar modal
+                    document.getElementById('deleteUserModal').classList.add('is-visible');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Erro ao carregar dados do usuário');
+                });
+        }
+
+        function confirmDelete() {
+            if (!deleteUserId) return;
+
+            console.log('Iniciando exclusão do usuário:', deleteUserId);
+
+            // Mostrar loading no botão
+            const deleteBtn = document.querySelector('#deleteUserModal .btn-danger');
+            const originalText = deleteBtn.innerHTML;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+            deleteBtn.disabled = true;
+
+            // Enviar requisição de exclusão
+            fetch(`/admin/users/${deleteUserId}/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        console.log('Erro do servidor:', err);
+                        throw new Error(err.error || 'Erro ao excluir usuário');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Sucesso na exclusão:', data);
+                showAlert('success', data.message);
+                closeDeleteModal();
+                
+                // Remover linha da tabela
+                const row = document.querySelector(`tr[data-user-id='${deleteUserId}']`);
+                if (row) {
+                    console.log('Removendo linha da tabela');
+                    row.remove();
+                } else {
+                    console.log('Linha não encontrada na tabela');
+                }
+                
+                // Atualizar contador de usuários
+                updateUserCount();
+            })
+            .catch(error => {
+                console.error('Erro completo na exclusão:', error);
+                showAlert('danger', error.message);
+            })
+            .finally(() => {
+                // Restaurar botão
+                deleteBtn.innerHTML = originalText;
+                deleteBtn.disabled = false;
+            });
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteUserModal').classList.remove('is-visible');
+            deleteUserId = null;
+        }
+
+        function updateUserCount() {
+            const table = document.getElementById('usersTable');
+            const visibleRows = table.querySelectorAll('tbody tr:not([style*="display: none"])').length;
+            const countElement = document.querySelector('.users-count');
+            if (countElement) {
+                countElement.textContent = `${visibleRows} usuários encontrados`;
+            }
+        }
+
+        // Show success/error messages
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            showAlert('success', urlParams.get('success'));
+        }
+        if (urlParams.get('error')) {
+            showAlert('danger', urlParams.get('error'));
+        }
+
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function closeViewPanel() {
+            document.getElementById('viewUserPanel').classList.remove('is-visible');
+        }
+
+        function closeAllPanels() {
+            closeEditPanel();
+            closeViewPanel();
+            closeDeleteModal();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('viewUserPanel').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeViewPanel();
+            }
+        });
+
+        // Close edit modal when clicking outside
+        document.getElementById('editUserPanel').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditPanel();
+            }
+        });
+
+        // Close delete modal when clicking outside
+        document.getElementById('deleteUserModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html> 

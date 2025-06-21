@@ -7,6 +7,8 @@ import com.totalelectro.repository.RoleRepository;
 import com.totalelectro.repository.UserRepository;
 import com.totalelectro.repository.OrderRepository;
 import com.totalelectro.service.UserService;
+import com.totalelectro.dto.UserUpdateDTO;
+import com.totalelectro.dto.UserDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -134,5 +136,98 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             return new ArrayList<>();
         }
+    }
+    
+    // Métodos para administração
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    }
+    
+    @Override
+    public UserDetailDTO getUserDetailDTO(Long id) {
+        User user = findById(id);
+        return UserDetailDTO.fromUser(user);
+    }
+    
+    @Override
+    @Transactional
+    public void deleteUser(Long id) {
+        User user = findById(id);
+        
+        // Verificar se o usuário tem pedidos
+        List<Order> userOrders = orderRepository.findAllByUserEmailOrderByDateDesc(user.getEmail());
+        if (!userOrders.isEmpty()) {
+            throw new RuntimeException("Não é possível excluir o usuário. Existem " + userOrders.size() + " pedido(s) associado(s) a este usuário.");
+        }
+        
+        userRepository.delete(user);
+    }
+    
+    @Override
+    @Transactional
+    public void updateUser(User user) {
+        User existingUser = findById(user.getId());
+        
+        // Preservar a senha existente
+        String currentPassword = existingUser.getPassword();
+        
+        // Atualizar dados básicos
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setCity(user.getCity());
+        existingUser.setAddress(user.getAddress());
+        existingUser.setPhoneNumber(user.getPhoneNumber());
+        
+        // Restaurar a senha original
+        existingUser.setPassword(currentPassword);
+        
+        // Atualizar roles se fornecidos
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            existingUser.setRoles(user.getRoles());
+        }
+        
+        userRepository.save(existingUser);
+    }
+    
+    @Override
+    @Transactional
+    public void updateUserFromDTO(Long userId, UserUpdateDTO dto) {
+        User user = findById(userId);
+
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setCity(dto.getCity());
+        user.setAddress(dto.getAddress());
+        user.setPhoneNumber(dto.getPhoneNumber());
+
+        if (dto.getRoles() != null) {
+            java.util.Set<Role> newRoles = new java.util.HashSet<>();
+            for (String roleName : dto.getRoles()) {
+                Role role = roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new RuntimeException("Role não encontrado: " + roleName));
+                newRoles.add(role);
+            }
+            user.setRoles(newRoles);
+        }
+        
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void toggleUserStatus(Long id) {
+        // Para implementar ativação/desativação de usuários
+        // Por enquanto, apenas um placeholder
+        User user = findById(id);
+        // Implementar lógica de toggle de status quando necessário
     }
 } 

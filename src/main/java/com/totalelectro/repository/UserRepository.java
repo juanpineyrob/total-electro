@@ -12,6 +12,13 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
+    
+    // Métodos para administração
+    Optional<User> findById(Long id);
+    List<User> findAllByOrderByFirstNameAsc();
+
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.firstName ASC")
+    List<User> findAllWithRoles();
 
     @Query(nativeQuery = true, value = """
             SELECT 
