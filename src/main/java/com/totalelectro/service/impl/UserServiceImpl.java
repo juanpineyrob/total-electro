@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -96,6 +97,9 @@ public class UserServiceImpl implements UserService {
         
         existingUser.setFirstName(updatedUser.getFirstName());
         existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setCity(updatedUser.getCity());
+        existingUser.setAddress(updatedUser.getAddress());
+        existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
         
         // Si el email es diferente, verificar que no exista
         if (!email.equals(updatedUser.getEmail()) && userRepository.existsByEmail(updatedUser.getEmail())) {
@@ -125,6 +129,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Order> getUserOrders(String email) {
-        return orderRepository.findAllByUserEmailOrderByDateDesc(email);
+        try {
+            return orderRepository.findAllByUserEmailOrderByDateDesc(email);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 } 

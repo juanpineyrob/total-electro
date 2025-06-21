@@ -1,6 +1,9 @@
 package com.totalelectro.controller;
 
+import com.totalelectro.dto.UserProfileDTO;
 import com.totalelectro.model.User;
+import com.totalelectro.model.Order;
+import com.totalelectro.model.Role;
 import com.totalelectro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/profile")
@@ -23,41 +27,55 @@ public class ProfileController {
     @GetMapping
     public String showProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userService.findByEmail(userDetails.getUsername());
+        
+        // Criar DTO com os dados do usuário
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        userProfileDTO.setFirstName(user.getFirstName());
+        userProfileDTO.setLastName(user.getLastName());
+        userProfileDTO.setEmail(user.getEmail());
+        userProfileDTO.setCity(user.getCity());
+        userProfileDTO.setAddress(user.getAddress());
+        userProfileDTO.setPhoneNumber(user.getPhoneNumber());
+        
+        // Buscar pedidos do usuário
+        List<Order> orders = userService.getUserOrders(userDetails.getUsername());
+        
         model.addAttribute("user", user);
+        model.addAttribute("userProfileDTO", userProfileDTO);
+        model.addAttribute("orders", orders);
+        
         return "profile/index";
-    }
-
-    @GetMapping("/edit")
-    public String showEditForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        User user = userService.findByEmail(userDetails.getUsername());
-        model.addAttribute("user", user);
-        return "profile/edit";
     }
 
     @PostMapping("/update")
     public String updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
-            @Valid @ModelAttribute User user,
+            @Valid @ModelAttribute UserProfileDTO userProfileDTO,
             BindingResult result,
             RedirectAttributes redirectAttributes) {
         
         if (result.hasErrors()) {
-            return "profile/edit";
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao atualizar o perfil. Verifique os dados.");
+            return "redirect:/profile#info";
         }
 
         try {
-            userService.updateProfile(userDetails.getUsername(), user);
-            redirectAttributes.addFlashAttribute("successMessage", "Perfil actualizado exitosamente");
+            // Converter DTO para User
+            User userToUpdate = new User();
+            userToUpdate.setFirstName(userProfileDTO.getFirstName());
+            userToUpdate.setLastName(userProfileDTO.getLastName());
+            userToUpdate.setEmail(userProfileDTO.getEmail());
+            userToUpdate.setCity(userProfileDTO.getCity());
+            userToUpdate.setAddress(userProfileDTO.getAddress());
+            userToUpdate.setPhoneNumber(userProfileDTO.getPhoneNumber());
+            
+            userService.updateProfile(userDetails.getUsername(), userToUpdate);
+            redirectAttributes.addFlashAttribute("successMessage", "Perfil atualizado com sucesso!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro: " + e.getMessage());
         }
 
-        return "redirect:/profile";
-    }
-
-    @GetMapping("/change-password")
-    public String showChangePasswordForm() {
-        return "profile/change-password";
+        return "redirect:/profile#info";
     }
 
     @PostMapping("/change-password")
@@ -75,17 +93,11 @@ public class ProfileController {
                 newPassword,
                 confirmPassword
             );
-            redirectAttributes.addFlashAttribute("successMessage", "Contraseña actualizada exitosamente");
-            return "redirect:/profile";
+            redirectAttributes.addFlashAttribute("successMessage", "Senha atualizada com sucesso!");
+            return "redirect:/profile#password";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/profile/change-password";
+            return "redirect:/profile#password";
         }
-    }
-
-    @GetMapping("/orders")
-    public String showOrders(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("orders", userService.getUserOrders(userDetails.getUsername()));
-        return "profile/orders";
     }
 } 
