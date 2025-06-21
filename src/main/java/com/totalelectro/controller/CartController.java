@@ -2,7 +2,11 @@ package com.totalelectro.controller;
 
 import com.totalelectro.model.CartItem;
 import com.totalelectro.service.CartService;
+import com.totalelectro.service.ShippingService;
+import com.totalelectro.dto.ShippingCalculationDTO;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -10,8 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/cart")
@@ -19,6 +25,8 @@ import java.util.List;
 public class CartController {
 
     private final CartService cartService;
+    private final ShippingService shippingService;
+    private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @GetMapping
     public String viewCart(Model model) {
@@ -31,10 +39,8 @@ public class CartController {
         List<CartItem> cartItems = cartService.getCartItems(userEmail);
         double subtotal = cartService.getCartTotal(userEmail);
 
-        final double SHIPPING_COST = 15.00;
-        final double FREE_SHIPPING_THRESHOLD = 50.00;
-
-        double shippingCost = (subtotal >= FREE_SHIPPING_THRESHOLD) ? 0.0 : SHIPPING_COST;
+        final double FREE_SHIPPING_THRESHOLD = shippingService.getFreeShippingThreshold();
+        double shippingCost = 0.0;
         double total = subtotal + shippingCost;
 
         model.addAttribute("cartItems", cartItems);
@@ -46,6 +52,43 @@ public class CartController {
         model.addAttribute("cartItemCount", cartItems.size());
 
         return "cart/view";
+    }
+
+    @PostMapping("/calculate-shipping")
+    @ResponseBody
+    public ResponseEntity<ShippingCalculationDTO> calculateShipping(@RequestBody Map<String, String> request) {
+        ShippingCalculationDTO result = new ShippingCalculationDTO();
+
+        try {
+            String destinationCep = request.get("destinationAddress");
+
+            if (destinationCep == null || destinationCep.isBlank()) {
+                result.setErrorMessage("CEP de destino é obrigatório.");
+                return ResponseEntity.badRequest().body(result);
+            }
+
+            double distance = shippingService.getDistance(destinationCep);
+            double shippingCost = shippingService.calculateShipping(destinationCep);
+            String estimatedDeliveryTime = calculateEstimatedDeliveryTime(distance);
+
+            result.setOriginAddress("CEP: " + shippingService.getStoreCep());
+            result.setDestinationAddress(destinationCep);
+            result.setDistance(Math.round(distance * 100.0) / 100.0);
+            result.setShippingCost(Math.round(shippingCost * 100.0) / 100.0);
+            result.setEstimatedDeliveryTime(estimatedDeliveryTime);
+            result.setFreeShipping(shippingCost == 0);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            logger.error("Erro no cálculo do frete", e);
+            String message = e.getMessage();
+            if (message == null || message.isBlank()) {
+                message = "Não foi possível calcular o frete. Verifique o CEP e tente novamente.";
+            }
+            result.setErrorMessage(message);
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
     @PostMapping("/add")
@@ -156,5 +199,19 @@ public class CartController {
         }
 
         return "redirect:/checkout/cart";
+    }
+    
+    private String calculateEstimatedDeliveryTime(double distance) {
+        if (distance <= 5) {
+            return "1-2 dias úteis";
+        } else if (distance <= 20) {
+            return "2-3 dias úteis";
+        } else if (distance <= 50) {
+            return "3-5 dias úteis";
+        } else if (distance <= 100) {
+            return "5-7 dias úteis";
+        } else {
+            return "7-10 dias úteis";
+        }
     }
 } 

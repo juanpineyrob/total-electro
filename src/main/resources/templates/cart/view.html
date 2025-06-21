@@ -426,7 +426,11 @@
             
             .quantity-controls {
                 flex-direction: column;
-                gap: 0.3rem;
+                gap: 0.5rem;
+            }
+            
+            .quantity-input {
+                width: 60px;
             }
             
             .cart-summary {
@@ -514,9 +518,9 @@
         }
 
         .free-shipping-promo.success {
-            background-color: #e6ffed;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             color: #155724;
-            border-color: #c3e6cb;
+            border-left: 4px solid var(--success);
         }
 
         .btn-checkout {
@@ -542,6 +546,92 @@
             transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
             color: var(--white);
+        }
+
+        /* Calculadora de Frete */
+        .shipping-calculator-section {
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .shipping-title {
+            color: var(--gray-800);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .shipping-form {
+            margin-bottom: 1rem;
+        }
+
+        .shipping-form .form-control {
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-300);
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .shipping-form .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(243, 111, 33, 0.25);
+        }
+
+        .shipping-form .form-control[readonly] {
+            background-color: var(--gray-100);
+            color: var(--gray-600);
+            cursor: not-allowed;
+        }
+
+        .shipping-form .form-control[readonly]:focus {
+            border-color: var(--gray-300);
+            box-shadow: none;
+        }
+
+        .shipping-form .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .shipping-form .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .shipping-form .btn-primary:disabled {
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .shipping-result .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+        }
+
+        .shipping-result h6 {
+            margin-bottom: 1rem;
+            color: #0c5460;
+        }
+
+        .shipping-result small {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .shipping-result .fw-bold {
+            color: #0c5460;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -636,15 +726,61 @@
                                 <span>Subtotal</span>
                                 <strong th:text="${'R$ ' + #numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
                             </div>
-                            <div class="summary-item">
-                                <span>Frete</span>
-                                <strong th:if="${isFreeShipping}" class="text-success">Grátis</strong>
-                                <strong th:unless="${isFreeShipping}" th:text="${'R$ ' + #numbers.formatDecimal(shippingCost, 1, 'POINT', 2, 'COMMA')}">R$ 15,00</strong>
+                            
+                            <!-- Calculadora de Frete -->
+                            <div class="shipping-calculator-section">
+                                <h5 class="shipping-title">
+                                    <i class="fas fa-shipping-fast me-2"></i>Calcular Frete
+                                </h5>
+                                
+                                <div class="shipping-form">
+                                    <div class="mb-3">
+                                        <label for="destinationCep" class="form-label">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Informe seu CEP para calcular o frete
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="destinationCep" placeholder="00000-000">
+                                            <button class="btn btn-primary" type="button" onclick="calculateShipping()">
+                                                <span class="loading-shipping" style="display: none;">
+                                                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                                                </span>
+                                                <span class="normal-shipping">
+                                                   <i class="fas fa-calculator me-1"></i> Calcular
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Resultado do cálculo de frete -->
+                                <div id="shippingResult" style="display: none;" class="shipping-result mt-3">
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Resultado do Cálculo</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Distância:</small>
+                                                <div id="shippingDistance" class="fw-bold"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Prazo de Entrega:</small>
+                                                <div id="shippingTime" class="fw-bold"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Erro do cálculo de frete -->
+                                <div id="shippingError" style="display: none;" class="alert alert-danger mt-3">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span id="shippingErrorMessage"></span>
+                                </div>
                             </div>
+                            
+                            
                             <hr class="summary-divider">
                             <div class="summary-item total">
                                 <span>Total</span>
-                                <strong th:text="${'R$ ' + #numbers.formatDecimal(cartTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
+                                <strong id="cartTotalDisplay" th:text="${'R$ ' + #numbers.formatDecimal(cartTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
                             </div>
                         </div>
 
@@ -789,6 +925,129 @@
                 item.style.animationDelay = `${index * 0.1}s`;
             });
         });
+        
+        // Função para calcular frete
+        function calculateShipping() {
+            const destinationCep = document.getElementById('destinationCep').value;
+            
+            if (!destinationCep) {
+                showShippingError('Por favor, informe o seu CEP.');
+                return;
+            }
+            
+            // Mostrar loading
+            showShippingLoading(true);
+            hideShippingResult();
+            hideShippingError();
+            
+            fetch('/cart/calculate-shipping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    destinationAddress: destinationCep
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data); // Log para depuração
+                showShippingLoading(false);
+                
+                if (data.errorMessage) {
+                    showShippingError(data.errorMessage);
+                } else {
+                    showShippingResult(data);
+                    updateShippingCost(data.shippingCost);
+                }
+            })
+            .catch(error => {
+                showShippingLoading(false);
+                showShippingError('Erro de conexão ao calcular frete: ' + error.message);
+            });
+        }
+        
+        function showShippingResult(data) {
+            const resultDiv = document.getElementById('shippingResult');
+            const distanceDiv = document.getElementById('shippingDistance');
+            const timeDiv = document.getElementById('shippingTime');
+            
+            distanceDiv.textContent = data.distance + ' km';
+            timeDiv.textContent = data.estimatedDeliveryTime;
+            
+            resultDiv.style.display = 'block';
+        }
+        
+        function showShippingError(message) {
+            const errorDiv = document.getElementById('shippingError');
+            const messageSpan = document.getElementById('shippingErrorMessage');
+            
+            messageSpan.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function showShippingLoading(show) {
+            const loadingSpan = document.querySelector('.loading-shipping');
+            const normalSpan = document.querySelector('.normal-shipping');
+            const button = document.querySelector('.shipping-form .btn-primary');
+            
+            if (show) {
+                loadingSpan.style.display = 'inline';
+                normalSpan.style.display = 'none';
+                button.disabled = true;
+            } else {
+                loadingSpan.style.display = 'none';
+                normalSpan.style.display = 'inline';
+                button.disabled = false;
+            }
+        }
+        
+        function hideShippingResult() {
+            document.getElementById('shippingResult').style.display = 'none';
+        }
+        
+        function hideShippingError() {
+            document.getElementById('shippingError').style.display = 'none';
+        }
+        
+        function updateShippingCost(shippingCost) {
+            if (typeof shippingCost === 'undefined') {
+                console.error('updateShippingCost foi chamada com custo de frete indefinido.');
+                showShippingError('Ocorreu um erro interno ao atualizar o custo do frete.');
+                return;
+            }
+
+            const shippingCostDisplay = document.getElementById('shippingCostDisplay');
+            const cartTotalDisplay = document.getElementById('cartTotalDisplay');
+            const subtotalElement = document.querySelector('.summary-item span:first-child + strong');
+
+            if (!subtotalElement) {
+                console.error('Elemento de subtotal não encontrado.');
+                showShippingError('Ocorreu um erro interno ao ler o subtotal.');
+                return;
+            }
+
+            const subtotalText = subtotalElement.textContent;
+            const numberText = subtotalText.replace('R$ ', '').replace(/\./g, '').replace(',', '.');
+            const subtotal = parseFloat(numberText);
+
+            if (isNaN(subtotal)) {
+                console.error('Não foi possível parsear o subtotal:', subtotalText);
+                showShippingError('Ocorreu um erro interno ao processar o subtotal.');
+                return;
+            }
+            
+            if (shippingCost === 0) {
+                shippingCostDisplay.textContent = 'Grátis';
+                shippingCostDisplay.className = 'text-success';
+            } else {
+                shippingCostDisplay.textContent = 'R$ ' + shippingCost.toFixed(2).replace('.', ',');
+                shippingCostDisplay.className = '';
+            }
+            
+            const total = subtotal + shippingCost;
+            cartTotalDisplay.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+        }
     </script>
 
 </body>
