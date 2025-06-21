@@ -492,6 +492,57 @@
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
+
+        .summary-item.total {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .free-shipping-promo {
+            background-color: #e9f5ff;
+            color: #0056b3;
+            border: 1px solid #bde0fe;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .free-shipping-promo.success {
+            background-color: #e6ffed;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, var(--success), #218838);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow);
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            color: var(--white);
+        }
     </style>
 </head>
 <body>
@@ -581,36 +632,39 @@
                         <div class="cart-summary">
                             <h4 class="summary-title"><i class="fas fa-calculator me-2"></i>Resumo do Pedido</h4>
                             
-                            <div class="summary-row">
-                                <span class="summary-label">Subtotal:</span>
-                                <span class="summary-value" th:text="'R$' + ${#numbers.formatDecimal(cartTotal, 1, 2)}">R$0.00</span>
+                            <div class="summary-item">
+                                <span>Subtotal</span>
+                                <strong th:text="${'R$ ' + #numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
                             </div>
-                            
-                            <div class="summary-row">
-                                <span class="summary-label">Frete:</span>
-                                <span class="summary-value">R$50.00</span>
+                            <div class="summary-item">
+                                <span>Frete</span>
+                                <strong th:if="${isFreeShipping}" class="text-success">Grátis</strong>
+                                <strong th:unless="${isFreeShipping}" th:text="${'R$ ' + #numbers.formatDecimal(shippingCost, 1, 'POINT', 2, 'COMMA')}">R$ 15,00</strong>
                             </div>
-                            
-                            <div class="summary-row">
-                                <span class="summary-label">IVA (21%):</span>
-                                <span class="summary-value" th:text="'R$' + ${#numbers.formatDecimal(cartTotal * 0.21, 1, 2)}">R$0.00</span>
+                            <hr class="summary-divider">
+                            <div class="summary-item total">
+                                <span>Total</span>
+                                <strong th:text="${'R$ ' + #numbers.formatDecimal(cartTotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
                             </div>
-                            
-                            <div class="summary-row summary-total">
-                                <span class="summary-label">Total:</span>
-                                <span class="summary-value" th:text="'R$' + ${#numbers.formatDecimal(cartTotal + 50 + (cartTotal * 0.21), 1, 2)}">R$0.00</span>
-                            </div>
+                        </div>
 
-                            <div class="action-buttons">
-                                <a href="/checkout/cart" class="checkout-btn">
-                                    <i class="fas fa-credit-card me-2"></i>Finalizar Compra
+                        <!-- Mensagem sobre frete grátis -->
+                        <div th:unless="${isFreeShipping}" class="free-shipping-promo">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Faltam <strong th:text="${'R$ ' + #numbers.formatDecimal(freeShippingThreshold - subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong> para <strong>frete grátis!</strong></span>
+                        </div>
+                        <div th:if="${isFreeShipping}" class="free-shipping-promo success">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Você conseguiu <strong>frete grátis!</strong></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/checkout}" class="btn-checkout">Finalizar Compra</a>
+                            
+                            <div class="text-center">
+                                <a href="/" class="continue-shopping">
+                                    <i class="fas fa-arrow-left me-2"></i>Continuar Comprando
                                 </a>
-                                
-                                <div class="text-center">
-                                    <a href="/products" class="continue-shopping">
-                                        <i class="fas fa-arrow-left me-2"></i>Continuar Comprando
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>

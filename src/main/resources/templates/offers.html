@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ofertas e Promoções - Total Electro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .offers-banner {
+            background: linear-gradient(to right, #f36f21, #f8a02d), url('/images/banner-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin: 2rem auto;
+            max-width: 1400px;
+        }
+        .offers-banner h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+        .offers-banner p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+        .promotions-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .promo-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .promo-card .icon {
+            font-size: 3.5rem;
+            color: #f36f21;
+            margin-bottom: 1rem;
+        }
+        .promo-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 0.5rem 0;
+        }
+        .promo-card p {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <th:block th:insert="~{fragments/header :: header}"></th:block>
+
+    <!-- Conteúdo da página de Ofertas -->
+    <div class="offers-banner">
+        <h1>Nossas Ofertas Especiais</h1>
+        <p>Economize em suas compras com nossas promoções exclusivas. Válidas por tempo limitado!</p>
+    </div>
+
+    <div class="promotions-container">
+        <!-- Promoção Frete Grátis -->
+        <div class="promo-card">
+            <div class="icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <h3>Frete Grátis</h3>
+            <p>Receba seus produtos em casa sem custo de envio para compras acima de <strong>R$ 50,00</strong>. A promoção é aplicada automaticamente no seu carrinho!</p>
+        </div>
+
+        <!-- Promoção Desconto em Categoria -->
+        <div class="promo-card">
+            <div class="icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <h3>15% OFF em Iluminação</h3>
+            <p>Toda a nossa linha de Iluminação com <strong>15% de desconto</strong>. Use o cupom <span style="font-weight:bold; color:#d9534f;">LUZ15</span> no checkout para aproveitar.</p>
+        </div>
+
+        <!-- Promoção Leve 3 Pague 2 -->
+        <div class="promo-card">
+            <div class="icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3>Leve 3, Pague 2</h3>
+            <p>Na compra de 3 ou mais cabos e acessórios, o de menor valor sai de graça. Uma oferta imperdível para seus projetos!</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <th:block th:insert="~{fragments/footer :: footer}"></th:block>
+
+</body>
+</html> 

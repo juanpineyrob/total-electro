@@ -1,9 +1,9 @@
 -- Categories
-INSERT INTO categories(name) VALUES ('Iluminacion');
-INSERT INTO categories(name) VALUES ('Cables y Accesorios');
-INSERT INTO categories(name) VALUES ('Herramientas Electricas');
-INSERT INTO categories(name) VALUES ('Automatizacion y Domotica');
-INSERT INTO categories(name) VALUES ('Seguridad Electrica');
+INSERT INTO categories(name, slug) VALUES ('Iluminacion', 'iluminacion');
+INSERT INTO categories(name, slug) VALUES ('Cables y Accesorios', 'cables-accesorios');
+INSERT INTO categories(name, slug) VALUES ('Herramientas Electricas', 'herramientas-electricas');
+INSERT INTO categories(name, slug) VALUES ('Automatizacion y Domotica', 'automatizacion-domotica');
+INSERT INTO categories(name, slug) VALUES ('Seguridad Electrica', 'seguridad-electrica');
 
 -- Products
 INSERT INTO products (name, short_description, long_description, price, dimensions, category_id, views, image_url) VALUES ('Foco LED 10W', 'Iluminación LED eficiente', 'Foco LED de 10W ideal para interiores, luz blanca fría, durabilidad de 15,000 horas.', 50, '5x5x10 cm', 1, 0, '/images/products/foco-led-10w.jpg');

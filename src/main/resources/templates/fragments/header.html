@@ -2,6 +2,7 @@
 <html lang="pt" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
@@ -43,6 +44,28 @@
           text-align: center;
           display: inline-block;
         }
+        .offers-link-btn {
+            background: #f36f21;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .offers-link-btn:hover {
+            background: #e05a0c;
+            color: #fff;
+        }
+        .offers-link-btn .material-symbols-outlined {
+            font-size: 18px;
+        }
     </style>
 
     <!-- HEADER -->
@@ -57,12 +80,16 @@
             </form>
         </div>
         <div class="header-actions">
-            <button class="lang">🇧🇷 <span class="material-symbols-outlined">keyboard_arrow_down</span></button>
+            <button class="lang">🇧🇷 <span class="material-symbols-outlined"></span></button>
             <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn">Minha conta</a>
             <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn">Entrar</a>
             <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
                 <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
-                <span class="cart-count" id="cart-count">0</span>
+                <span th:if="${session.cartItemCount != null && session.cartItemCount > 0}"
+                      class="cart-count"
+                      id="cart-count"
+                      th:text="${session.cartItemCount}">
+                </span>
             </a>
         </div>
     </div>
@@ -72,7 +99,7 @@
         <div class="menu-items">
             <a th:href="@{/product/category/iluminacion}">
                 Iluminação
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                
                 <div class="submenu">
                     <a th:href="@{/product/subcategory/lampadas}">Lâmpadas</a>
                     <a th:href="@{/product/subcategory/lustres}">Lustres</a>
@@ -80,9 +107,9 @@
                     <a th:href="@{/product/subcategory/led}">LED</a>
                 </div>
             </a>
-            <a th:href="@{/product/category/cables-y-accessorios}">
+            <a th:href="@{/product/category/cables-accesorios}">
                 Cabos e acessórios
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                
                 <div class="submenu">
                     <a th:href="@{/product/subcategory/cables}">Cabos</a>
                     <a th:href="@{/product/subcategory/conectores}">Conectores</a>
@@ -91,16 +118,16 @@
             </a>
             <a th:href="@{/product/category/herramientas-electricas}">
                 Ferramentas elétricas
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+               
                 <div class="submenu">
                     <a th:href="@{/product/subcategory/furadeiras}">Furadeiras</a>
                     <a th:href="@{/product/subcategory/parafusadeiras}">Parafusadeiras</a>
                     <a th:href="@{/product/subcategory/multimetros}">Multímetros</a>
                 </div>
             </a>
-            <a th:href="@{/product/category/automatizacion-y-domoticas}">
+            <a th:href="@{/product/category/automatizacion-domotica}">
                 Automação e domótica
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+               
                 <div class="submenu">
                     <a th:href="@{/product/subcategory/sensores}">Sensores</a>
                     <a th:href="@{/product/subcategory/controladores}">Controladores</a>
@@ -109,7 +136,7 @@
             </a>
             <a th:href="@{/product/category/seguridad-electrica}">
                 Segurança elétrica
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                
                 <div class="submenu">
                     <a th:href="@{/product/subcategory/disjuntores}">Disjuntores</a>
                     <a th:href="@{/product/subcategory/dps}">DPS</a>
@@ -118,10 +145,10 @@
             </a>
         </div>
         <div class="menu-offers">
-            <button>
+            <a th:href="@{/offers}" class="offers-link-btn">
+                <span class="material-symbols-outlined"></span>
                 Ofertas e promoções
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
-            </button>
+            </a>
         </div>
     </nav>
 </div>

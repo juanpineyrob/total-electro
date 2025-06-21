@@ -346,84 +346,10 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- HEADER -->
-  <div class="top-header">
-    <div class="logo-header">
-      <a href="/"><img th:src="@{/images/logo.png}" alt="Total Electro"></a>
-    </div>
-    <div class="search-bar">
-      <form th:action="@{/product/search}" method="get">
-        <input type="text" name="name" placeholder="Pesquisar...">
-        <button type="submit">Buscar</button>
-      </form>
-    </div>
-    <div class="header-actions">
-      <button class="lang">🇧🇷<span class="material-symbols-outlined">keyboard_arrow_down</span></button>
-      <a th:href="${#authorization.expression('isAuthenticated()')} ? @{/profile} : @{/login}" class="account header-btn">Minha conta</a>
-      <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
-        <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
-        <span class="cart-count" id="cart-count">0</span>
-      </a>
-    </div>
-  </div>
-  <!-- MENU -->
-  <nav class="main-menu">
-    <div class="menu-items">
-      <a th:href="@{/product/category/iluminacion}">
-        Iluminação
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-        <div class="submenu">
-          <a th:href="@{/product/subcategory/lampadas}">Lâmpadas</a>
-          <a th:href="@{/product/subcategory/lustres}">Lustres</a>
-          <a th:href="@{/product/subcategory/plafones}">Plafones</a>
-          <a th:href="@{/product/subcategory/led}">LED</a>
-        </div>
-      </a>
-      <a th:href="@{/product/category/cables-y-accessorios}">
-        Cabos e acessórios
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-        <div class="submenu">
-          <a th:href="@{/product/subcategory/cables}">Cabos</a>
-          <a th:href="@{/product/subcategory/conectores}">Conectores</a>
-          <a th:href="@{/product/subcategory/canaletas}">Canaletas</a>
-        </div>
-      </a>
-      <a th:href="@{/product/category/herramientas-electricas}">
-        Ferramentas elétricas
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-        <div class="submenu">
-          <a th:href="@{/product/subcategory/furadeiras}">Furadeiras</a>
-          <a th:href="@{/product/subcategory/parafusadeiras}">Parafusadeiras</a>
-          <a th:href="@{/product/subcategory/multimetros}">Multímetros</a>
-        </div>
-      </a>
-      <a th:href="@{/product/category/automatizacion-y-domoticas}">
-        Automação e domótica
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-        <div class="submenu">
-          <a th:href="@{/product/subcategory/sensores}">Sensores</a>
-          <a th:href="@{/product/subcategory/controladores}">Controladores</a>
-          <a th:href="@{/product/subcategory/interfones}">Interfones</a>
-        </div>
-      </a>
-      <a th:href="@{/product/category/seguridad-electrica}">
-        Segurança elétrica
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-        <div class="submenu">
-          <a th:href="@{/product/subcategory/disjuntores}">Disjuntores</a>
-          <a th:href="@{/product/subcategory/dps}">DPS</a>
-          <a th:href="@{/product/subcategory/quadros}">Quadros</a>
-        </div>
-      </a>
-    </div>
-    <div class="menu-offers">
-      <button>
-        Ofertas e promoções
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-      </button>
-    </div>
-  </nav>
+  <th:block th:insert="~{fragments/header :: header}"></th:block>
+
   <!-- BANNER -->
-  <div class="banner">
+  <section class="banner">
     <div class="banner-img">
       <img th:src="@{/images/entregador.png}" alt="Banner">
     </div>
@@ -434,7 +360,8 @@
       </h1>
       <p>Tu pedido sera enviado en menos de 24 horas</p>
     </div>
-  </div>
+  </section>
+
   <!-- FEATURES -->
   <div class="features">
     <div class="feature-item">
@@ -459,6 +386,7 @@
       </div>
     </div>
   </div>
+
   <!-- CAROUSEL DE PRODUTOS -->
   <section class="products-section">
     <h2>Mais vendidos</h2>
@@ -468,7 +396,6 @@
         <div class="carousel-slide active" id="slide-0">
           <th:block th:each="product : ${popularProductsSlide1}">
             <div class="product">
-              <span class="fav">&#10084;</span>
               <img th:if="${product.imageUrl != null}" 
                    th:src="${product.imageUrl}" 
                    th:alt="${product.name}"
@@ -497,7 +424,6 @@
         <div class="carousel-slide" id="slide-1">
           <th:block th:each="product : ${popularProductsSlide2}">
             <div class="product">
-              <span class="fav">&#10084;</span>
               <img th:if="${product.imageUrl != null}" 
                    th:src="${product.imageUrl}" 
                    th:alt="${product.name}"
@@ -531,6 +457,11 @@
       <span id="dot-1" style="color:#eee;font-size:22px;cursor:pointer;" onclick="showSlide(1)">●</span>
     </div>
   </section>
+
+  <!-- FOOTER -->
+  <th:block th:insert="~{fragments/footer :: footer}"></th:block>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     function showSlide(n) {
       document.getElementById('slide-0').classList.remove('active');
@@ -664,67 +595,9 @@
         toast.remove();
       }, 300);
     }
-  </script>
-  <!-- MARCAS -->
-  <section class="brands-section">
-    <h2>MARCAS</h2>
-    <div class="brand-logos">
-      <img th:src="@{/images/brands/schneider.png}" alt="Schneider">
-      <img th:src="@{/images/brands/kalop.jpg}" alt="Kalop">
-      <img th:src="@{/images/brands/trefilcon.png}" alt="Trefilcon">
-      <img th:src="@{/images/brands/macroled.png}" alt="Macroled">
-      <img th:src="@{/images/brands/richi.avif}" alt="Richi">
-      <img th:src="@{/images/brands/roker.png}" alt="Roker">
-    </div>
-  </section>
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-col">
-        <strong>Informações de contato</strong><br>
-        Rivera<br>
-        Sarandí 821, 40000, Rivera, Uruguai<br>
-        Tel.: +598 4623 5798<br>
-        Email: total-electro@gmail.com
-      </div>
-      <div class="footer-col footer-logo-social">
-        <img th:src="@{/images/logo.png}" alt="Total Electro">
-        <div class="footer-socials">
-          <img th:src="@{/images/social/facebook.png}" alt="Facebook">
-          <img th:src="@{/images/social/instagram.png}" alt="Instagram">
-          <img th:src="@{/images/social/whatsapp.png}" alt="WhatsApp">
-        </div>
-      </div>
-      <div class="footer-col">
-        <strong>Perguntas frequentes</strong><br>
-        Formas de pagamento:<br>
-        <span class="footer-payments">
-          <img th:src="@{/images/payments/visa.png}" alt="Visa" class="visa-logo">
-          <img th:src="@{/images/payments/master.png}" alt="Mastercard" class="mastercard-logo">
-        </span>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>&copy; 2024 Total Electro</span>
-      <span>Todos os direitos reservados</span>
-    </div>
-  </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Verificar estado al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-      checkAuthStatus();
-      
-      // Carregar contador do carrinho
-      fetch('/cart/count')
-        .then(response => response.text())
-        .then(count => {
-          updateCartCount(count);
-        })
-        .catch(error => {
-          console.error('Erro ao carregar contador do carrinho:', error);
-        });
+    document.addEventListener("DOMContentLoaded", function() {
+      updateCartCount();
     });
   </script>
 </body>

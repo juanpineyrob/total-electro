@@ -25,7 +25,7 @@ public interface ProductService {
     void deleteProduct(Long id);
 
     // Métodos de búsqueda y filtrado
-    Page<Product> searchProducts(String name, Pageable pageable);
-    Page<Product> getProductsByCategory(String categorySlug, Pageable pageable);
+    Page<Product> searchProducts(String name, Double minPrice, Double maxPrice, List<String> categories, Pageable pageable);
+    Page<Product> getProductsByCategory(String categorySlug, Double minPrice, Double maxPrice, Pageable pageable);
     List<Product> getPopularProducts();
 }

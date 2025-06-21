@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 
@@ -28,10 +29,20 @@ public class CartController {
 
         String userEmail = auth.getName();
         List<CartItem> cartItems = cartService.getCartItems(userEmail);
-        Double total = cartService.getCartTotal(userEmail);
+        double subtotal = cartService.getCartTotal(userEmail);
+
+        final double SHIPPING_COST = 15.00;
+        final double FREE_SHIPPING_THRESHOLD = 50.00;
+
+        double shippingCost = (subtotal >= FREE_SHIPPING_THRESHOLD) ? 0.0 : SHIPPING_COST;
+        double total = subtotal + shippingCost;
 
         model.addAttribute("cartItems", cartItems);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("shippingCost", shippingCost);
         model.addAttribute("cartTotal", total);
+        model.addAttribute("freeShippingThreshold", FREE_SHIPPING_THRESHOLD);
+        model.addAttribute("isFreeShipping", subtotal >= FREE_SHIPPING_THRESHOLD);
         model.addAttribute("cartItemCount", cartItems.size());
 
         return "cart/view";
@@ -40,7 +51,8 @@ public class CartController {
     @PostMapping("/add")
     @ResponseBody
     public String addToCart(@RequestParam Long productId, 
-                           @RequestParam(defaultValue = "1") Integer quantity) {
+                           @RequestParam(defaultValue = "1") Integer quantity,
+                           HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
@@ -51,6 +63,7 @@ public class CartController {
             cartService.addToCart(userEmail, productId, quantity);
             
             int cartCount = cartService.getCartItemCount(userEmail);
+            session.setAttribute("cartItemCount", cartCount);
             return "success:" + cartCount;
         } catch (Exception e) {
             return "error:" + e.getMessage();
@@ -60,7 +73,8 @@ public class CartController {
     @PostMapping("/update")
     @ResponseBody
     public String updateCart(@RequestParam Long productId, 
-                            @RequestParam Integer quantity) {
+                            @RequestParam Integer quantity,
+                            HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
@@ -71,6 +85,7 @@ public class CartController {
             cartService.updateCartItem(userEmail, productId, quantity);
             
             Double total = cartService.getCartTotal(userEmail);
+            session.setAttribute("cartItemCount", cartService.getCartItemCount(userEmail));
             return "success:" + total;
         } catch (Exception e) {
             return "error:" + e.getMessage();
@@ -79,7 +94,7 @@ public class CartController {
 
     @PostMapping("/remove")
     @ResponseBody
-    public String removeFromCart(@RequestParam Long productId) {
+    public String removeFromCart(@RequestParam Long productId, HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
@@ -88,6 +103,7 @@ public class CartController {
 
             String userEmail = auth.getName();
             cartService.removeFromCart(userEmail, productId);
+            session.setAttribute("cartItemCount", cartService.getCartItemCount(userEmail));
             
             return "success:Item removido do carrinho";
         } catch (Exception e) {
@@ -96,7 +112,7 @@ public class CartController {
     }
 
     @PostMapping("/clear")
-    public String clearCart(RedirectAttributes redirectAttributes) {
+    public String clearCart(RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
@@ -106,6 +122,7 @@ public class CartController {
 
             String userEmail = auth.getName();
             cartService.clearCart(userEmail);
+            session.setAttribute("cartItemCount", 0);
             
             redirectAttributes.addFlashAttribute("success", "Carrinho limpo com sucesso");
         } catch (Exception e) {
