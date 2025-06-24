@@ -67,6 +67,50 @@
             color: #666;
             line-height: 1.5;
         }
+        .product-offer {
+            position: relative;
+            padding-top: 2.5rem;
+        }
+        .discount-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #d9534f;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 0.4em 1em;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .price-block {
+            margin: 1rem 0 0.5rem 0;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 1.1rem;
+            margin-right: 0.7rem;
+        }
+        .new-price {
+            color: #f36f21;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        .btn-offer {
+            display: inline-block;
+            margin-top: 1rem;
+            background: #f36f21;
+            color: #fff;
+            padding: 0.7em 1.5em;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-offer:hover {
+            background: #e05a0c;
+        }
     </style>
 </head>
 
@@ -80,7 +124,8 @@
         <p>Economize em suas compras com nossas promoções exclusivas. Válidas por tempo limitado!</p>
     </div>
 
-    <div class="promotions-container">
+    <!-- PROMOÇÕES FIXAS -->
+    <div class="promotions-container" style="margin-bottom: 2.5rem;">
         <!-- Promoção Frete Grátis -->
         <div class="promo-card">
             <div class="icon">
@@ -89,7 +134,6 @@
             <h3>Frete Grátis</h3>
             <p>Receba seus produtos em casa sem custo de envio para compras acima de <strong>R$ 50,00</strong>. A promoção é aplicada automaticamente no seu carrinho!</p>
         </div>
-
         <!-- Promoção Desconto em Categoria -->
         <div class="promo-card">
             <div class="icon">
@@ -98,7 +142,6 @@
             <h3>15% OFF em Iluminação</h3>
             <p>Toda a nossa linha de Iluminação com <strong>15% de desconto</strong>. Use o cupom <span style="font-weight:bold; color:#d9534f;">LUZ15</span> no checkout para aproveitar.</p>
         </div>
-
         <!-- Promoção Leve 3 Pague 2 -->
         <div class="promo-card">
             <div class="icon">
@@ -106,6 +149,23 @@
             </div>
             <h3>Leve 3, Pague 2</h3>
             <p>Na compra de 3 ou mais cabos e acessórios, o de menor valor sai de graça. Uma oferta imperdível para seus projetos!</p>
+        </div>
+    </div>
+
+    <!-- PRODUTOS EM OFERTA -->
+    <div class="promotions-container">
+        <div th:if="${#lists.isEmpty(offers)}" style="grid-column: 1/-1; text-align:center; color:#888;">
+            Nenhuma oferta disponível no momento.
+        </div>
+        <div th:each="product : ${offers}" class="promo-card product-offer">
+            <div class="discount-badge" th:text="${product.discountPercent} + '% OFF'"></div>
+            <img th:src="@{${product.imageUrl}}" alt="Imagem do produto" style="max-width:120px; max-height:120px; margin-bottom:1rem; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+            <h3 th:text="${product.name}"></h3>
+            <div class="price-block">
+                <span class="old-price" th:text="'R$ ' + ${#numbers.formatDecimal(product.price, 1, 'POINT', 2, 'COMMA')}"></span>
+                <span class="new-price" th:text="'R$ ' + ${#numbers.formatDecimal(product.price * (1 - product.discountPercent/100.0), 1, 'POINT', 2, 'COMMA')}"></span>
+            </div>
+            <a th:href="@{'/product/' + ${product.id}}" class="btn-offer">Ver Produto</a>
         </div>
     </div>
 

@@ -140,6 +140,21 @@
             color: #adb5bd;
         }
         
+        /* Estilos específicos para o campo de número do cartão */
+        .form-input[inputmode="numeric"] {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        
+        .form-input[inputmode="numeric"]:focus {
+            border-color: #f36f21;
+            box-shadow: 0 0 0 2px rgba(243, 111, 33, 0.1);
+        }
+        
+        .form-input[inputmode="numeric"]:invalid {
+            border-color: #d32f2f;
+        }
+        
         .order-summary {
             background: white;
             border-radius: 8px;
@@ -321,7 +336,7 @@
             <div class="checkout-grid">
                 <!-- Formulário de checkout -->
                 <div>
-                    <form th:action="@{/checkout/process}" method="post">
+                    <form id="checkout-form" th:action="@{/checkout/process}" method="post" th:if="${!isCartCheckout}">
                         <input type="hidden" name="productId" th:value="${product?.id}">
                         <input type="hidden" name="quantity" th:value="${quantity}">
                         
@@ -471,7 +486,11 @@
                                         class="form-input"
                                         placeholder="1234 5678 9012 3456"
                                         maxlength="19"
+                                        pattern="\d{4} \d{4} \d{4} \d{4}"
+                                        autocomplete="cc-number"
+                                        inputmode="numeric"
                                     />
+                                    <span id="cardNumberError" style="color:#d32f2f; font-size:13px; display:none;">Número de cartão inválido. Digite um cartão válido com 16 dígitos.</span>
                                 </div>
                                 <div class="form-group">
                                     <label for="expiryDate" class="form-label">Data de expiração</label>
@@ -500,6 +519,190 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- Formulário para checkout de carrinho -->
+                    <form id="checkout-form" th:action="@{/checkout/process-cart}" method="post" th:if="${isCartCheckout}">
+                        <!-- Dados Pessoais -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon">👤</div>
+                                <h2 class="section-title">Dados Pessoais</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="firstName" class="form-label">Nome</label>
+                                    <input
+                                        id="firstName"
+                                        name="firstName"
+                                        type="text"
+                                        th:value="${user?.firstName}"
+                                        required
+                                        class="form-input"
+                                        placeholder="Digite seu nome"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName" class="form-label">Sobrenome</label>
+                                    <input
+                                        id="lastName"
+                                        name="lastName"
+                                        type="text"
+                                        th:value="${user?.lastName}"
+                                        required
+                                        class="form-input"
+                                        placeholder="Digite seu sobrenome"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        th:value="${user?.email}"
+                                        required
+                                        class="form-input"
+                                        placeholder="seu@email.com"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">Telefone</label>
+                                    <input
+                                        id="phone"
+                                        name="phone"
+                                        type="tel"
+                                        th:value="${user?.phoneNumber}"
+                                        required
+                                        class="form-input"
+                                        placeholder="(00) 00000-0000"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Endereço de Entrega -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon">📍</div>
+                                <h2 class="section-title">Endereço de Entrega</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group form-grid-full">
+                                    <label for="address" class="form-label">Endereço completo</label>
+                                    <input
+                                        id="address"
+                                        name="address"
+                                        type="text"
+                                        th:value="${user?.address}"
+                                        required
+                                        class="form-input"
+                                        placeholder="Rua, número, complemento"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="city" class="form-label">Cidade</label>
+                                    <input
+                                        id="city"
+                                        name="city"
+                                        type="text"
+                                        th:value="${user?.city}"
+                                        required
+                                        class="form-input"
+                                        placeholder="Nome da cidade"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="state" class="form-label">Estado</label>
+                                    <input
+                                        id="state"
+                                        name="state"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="Estado/Província"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="zipCode" class="form-label">CEP</label>
+                                    <input
+                                        id="zipCode"
+                                        name="zipCode"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="00000-000"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dados de Pagamento -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon">💳</div>
+                                <h2 class="section-title">Dados de Pagamento</h2>
+                                <span class="badge">Seguro</span>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group form-grid-full">
+                                    <label for="cardName" class="form-label">Nome no cartão</label>
+                                    <input
+                                        id="cardName"
+                                        name="cardName"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="Nome como aparece no cartão"
+                                    />
+                                </div>
+                                <div class="form-group form-grid-full">
+                                    <label for="cardNumber" class="form-label">Número do cartão</label>
+                                    <input
+                                        id="cardNumber"
+                                        name="cardNumber"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="1234 5678 9012 3456"
+                                        maxlength="19"
+                                        pattern="\d{4} \d{4} \d{4} \d{4}"
+                                        autocomplete="cc-number"
+                                        inputmode="numeric"
+                                    />
+                                    <span id="cardNumberError" style="color:#d32f2f; font-size:13px; display:none;">Número de cartão inválido. Digite um cartão válido com 16 dígitos.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiryDate" class="form-label">Data de expiração</label>
+                                    <input
+                                        id="expiryDate"
+                                        name="expiryDate"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="MM/AA"
+                                        maxlength="5"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input
+                                        id="cvv"
+                                        name="cvv"
+                                        type="text"
+                                        required
+                                        class="form-input"
+                                        placeholder="123"
+                                        maxlength="4"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </form>
                 </div>
 
                 <!-- Resumo do Pedido -->
@@ -507,8 +710,26 @@
                     <div class="order-summary">
                         <h2 class="summary-title">Resumo do Pedido</h2>
                         
-                        <!-- Produto -->
-                        <div class="product-item" th:if="${product}">
+                        <!-- RESUMO TÉCNICO DO PEDIDO -->
+                        <div style="background:#f4f6fb; color:#222; padding:18px; margin-bottom:18px; border-radius:8px; font-size:15px; border:1px solid #e9ecef; box-shadow:0 1px 2px #0001; max-width:400px;">
+                            <b style="font-size:16px; color:#1a237e;">Resumo Técnico do Pedido</b>
+                            <ul style="list-style:none; padding:0; margin:12px 0 0 0;">
+                                <li><b>Itens no carrinho:</b> <span th:text="${#lists.size(cartItems)}">0</span></li>
+                                <li><b>Subtotal dos produtos:</b> R$ <span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></li>
+                                <li><b>Frete:</b> R$ <span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></li>
+                                <li><b>Imposto (IVA 21%):</b> R$ <span th:text="${#numbers.formatDecimal(tax, 0, 2)}">0,00</span></li>
+                                <li style="margin-top:8px;"><b style="color:#388e3c;">Total:</b> <b style="color:#388e3c;">R$ <span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></b></li>
+                            </ul>
+                        </div>
+                        <!-- Botão de finalizar compra -->
+                        <div style="text-align:right; margin-top:24px;">
+                            <button type="submit" form="checkout-form" class="checkout-button">
+                                🔒 Finalizar Compra
+                            </button>
+                        </div>
+
+                        <!-- Produto único -->
+                        <div class="product-item" th:if="${product && !isCartCheckout}">
                             <img
                                 th:src="${product.imageUrl ?: '/images/no-image.png'}"
                                 th:alt="${product.name}"
@@ -521,35 +742,25 @@
                             <span class="product-price">$<span th:text="${#numbers.formatDecimal(product.price, 0, 2)}">0,00</span></span>
                         </div>
 
-                        <!-- Cálculos -->
-                        <div class="summary-calculations">
-                            <div class="summary-row">
-                                <span>Subtotal</span>
-                                <span>$<span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Frete</span>
-                                <span>$<span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></span>
-                            </div>
-                            <div class="summary-row">
-                                <span>IVA (21%)</span>
-                                <span>$<span th:text="${#numbers.formatDecimal(tax, 0, 2)}">0,00</span></span>
-                            </div>
-                            <div class="summary-total">
-                                <span>Total</span>
-                                <span>$<span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></span>
+                        <!-- Itens do carrinho -->
+                        <div th:if="${isCartCheckout && cartItems != null && #lists.size(cartItems) > 0}">
+                            <div th:each="item : ${cartItems}" class="product-item">
+                                <img th:src="${item.product.imageUrl != null ? item.product.imageUrl : '/images/no-image.png'}"
+                                     th:alt="${item.product.name}"
+                                     class="product-image"/>
+                                <div class="product-info">
+                                    <h3 class="product-name" th:text="${item.product.name}">Nome do Produto</h3>
+                                    <p class="product-quantity">Quantidade: <span th:text="${item.quantity}">1</span></p>
+                                    <p class="product-unit-price">Preço unitário: $<span th:text="${#numbers.formatDecimal(item.product.price, 0, 2)}">0,00</span></p>
+                                </div>
+                                <span class="product-price">Total: $<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 2)}">0,00</span></span>
                             </div>
                         </div>
 
-                        <!-- Botão de finalizar -->
-                        <button 
-                            type="submit"
-                            form="checkout-form"
-                            class="checkout-button"
-                            onclick="document.querySelector('form').submit()"
-                        >
-                            🔒 Finalizar Compra
-                        </button>
+                        <!-- Mensagem se não houver produtos -->
+                        <div th:if="${!product && (!cartItems or #lists.isEmpty(cartItems))}">
+                            <p style="color: #888; text-align: center; margin: 32px 0;">Nenhum produto encontrado para o resumo do pedido.</p>
+                        </div>
 
                         <p class="security-text">
                             Seus dados estão protegidos com criptografia SSL
@@ -597,19 +808,83 @@
                 });
             }
 
-            // Máscara de cartão de crédito
+            // Bloquear letras e caracteres especiais no cartão (keydown)
+            if (cardNumberInput) {
+                // Previne entrada de caracteres não numéricos antes mesmo de serem digitados
+                cardNumberInput.addEventListener('beforeinput', function(e) {
+                    if (e.data && !/^\d*$/.test(e.data)) {
+                        e.preventDefault();
+                    }
+                });
+
+                cardNumberInput.addEventListener('keydown', function(e) {
+                    // Permite: backspace, tab, delete, setas, home, end, enter
+                    if ([8, 9, 46, 37, 38, 39, 40, 35, 36, 13].indexOf(e.keyCode) !== -1) return;
+                    // Permite números (0-9)
+                    if (e.key >= '0' && e.key <= '9') return;
+                    // Permite teclas de função
+                    if (e.keyCode >= 112 && e.keyCode <= 123) return;
+                    // Bloqueia tudo o resto
+                    e.preventDefault();
+                });
+
+                // Validação adicional no keypress
+                cardNumberInput.addEventListener('keypress', function(e) {
+                    // Permite apenas números (0-9)
+                    if (e.key < '0' || e.key > '9') {
+                        e.preventDefault();
+                    }
+                });
+
+                // Previne colagem de texto não numérico
+                cardNumberInput.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    const numericOnly = pastedText.replace(/\D/g, '');
+                    if (numericOnly.length > 0) {
+                        const currentValue = this.value.replace(/\D/g, '');
+                        const newValue = (currentValue + numericOnly).substr(0, 16);
+                        this.value = newValue.replace(/(.{4})/g, '$1 ').trim();
+                    }
+                });
+
+                // Previne arrastar e soltar texto não numérico
+                cardNumberInput.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                });
+            }
+
+            // Máscara de cartão de crédito e validação Luhn
             if (cardNumberInput) {
                 cardNumberInput.addEventListener('input', function(e) {
+                    // Remove todos os caracteres não numéricos
                     let value = e.target.value.replace(/\D/g, '');
-                    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
-                    e.target.value = value.substr(0, 19);
+                    // Limita a 16 dígitos
+                    value = value.substr(0, 16);
+                    // Adiciona espaço a cada 4 dígitos
+                    if (value.length > 0) {
+                        value = value.replace(/(.{4})/g, '$1 ').trim();
+                    }
+                    e.target.value = value;
+                    // Esconde mensagem de erro se o valor for válido
+                    const errorElement = document.getElementById('cardNumberError');
+                    if (errorElement) {
+                        errorElement.style.display = 'none';
+                    }
                 });
-                // Validación Luhn al salir del campo
+                
                 cardNumberInput.addEventListener('blur', function(e) {
                     const value = e.target.value.replace(/\s/g, '');
-                    if (value.length < 16 || !luhnCheck(value)) {
-                        alert('Número de cartão inválido.');
+                    const errorElement = document.getElementById('cardNumberError');
+                    if (value.length !== 16 || !luhnCheck(value)) {
+                        if (errorElement) {
+                            errorElement.style.display = 'block';
+                        }
                         e.target.focus();
+                    } else {
+                        if (errorElement) {
+                            errorElement.style.display = 'none';
+                        }
                     }
                 });
             }
@@ -622,12 +897,12 @@
                 });
             }
 
-            // Máscara de data de expiração y validación
+            // Máscara de data de expiração e validação
             if (expiryDateInput) {
                 expiryDateInput.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 3) {
-                        value = value.replace(/^(\d{2})(\d{0,2}).*/, '$1/$2');
+                    if (value.length > 2) {
+                        value = value.substr(0, 2) + '/' + value.substr(2, 2);
                     }
                     e.target.value = value.substr(0, 5);
                 });

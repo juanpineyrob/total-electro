@@ -210,8 +210,11 @@
 
                 <div class="product-price-area">
                     <div class="price-display">
+                        <span th:if="${product.discountPercent != null and product.discountPercent > 0}" class="discount-badge" style="background:#d9534f; color:#fff; font-weight:bold; border-radius:20px; padding:0.3em 1em; margin-right:0.7em;">-<span th:text="${product.discountPercent}"></span>%</span>
                         <span class="price-label">R$</span>
-                        <span class="price-value" th:text="${product.price}">1.000</span>
+                        <span th:if="${product.discountPercent != null and product.discountPercent > 0}" class="price-old" style="text-decoration:line-through; color:#888; margin-right:0.5em;" th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 2, 'COMMA')}"></span>
+                        <span class="price-value" th:if="${product.discountPercent != null and product.discountPercent > 0}" th:text="${#numbers.formatDecimal(product.price * (1 - product.discountPercent/100.0), 1, 'POINT', 2, 'COMMA')}"></span>
+                        <span class="price-value" th:unless="${product.discountPercent != null and product.discountPercent > 0}" th:text="${#numbers.formatDecimal(product.price, 1, 'POINT', 2, 'COMMA')}"></span>
                         <span class="price-tax">IVA Incluído</span>
                     </div>
                 </div>

@@ -66,3 +66,13 @@ INSERT INTO orders_products (order_id, product_id) VALUES (1, 6);
 INSERT INTO orders_products (order_id, product_id) VALUES (2, 2);
 INSERT INTO orders_products (order_id, product_id) VALUES (2, 5);
 INSERT INTO orders_products (order_id, product_id) VALUES (2, 7);
+
+-- Exemplo: Adicionar discount_percent em alguns produtos
+-- Após a criação dos produtos, atualizar alguns com desconto
+UPDATE products SET discount_percent = 10 WHERE id = 1;
+UPDATE products SET discount_percent = 7 WHERE id = 3;
+UPDATE products SET discount_percent = 12 WHERE id = 5;
+UPDATE products SET discount_percent = 14 WHERE id = 7;
+UPDATE products SET discount_percent = 9 WHERE id = 10;
+UPDATE products SET discount_percent = 13 WHERE id = 12;
+UPDATE products SET discount_percent = 8 WHERE id = 15;

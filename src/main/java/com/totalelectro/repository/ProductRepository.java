@@ -28,4 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> searchProducts(String name, Pageable pageable);
 
     Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.discountPercent IS NOT NULL AND p.discountPercent > 0")
+    List<Product> findDiscountedProducts();
 }

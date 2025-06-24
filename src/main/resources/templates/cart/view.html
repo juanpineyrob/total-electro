@@ -718,6 +718,18 @@
                             </div>
                         </div>
 
+                        <!-- Campo de cupom de desconto -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <form th:action="@{/cart/apply-coupon}" method="post" class="d-flex align-items-center gap-2">
+                                    <input type="text" name="coupon" class="form-control" placeholder="Cupom de desconto" th:value="${appliedCoupon}">
+                                    <button type="submit" class="btn btn-primary" style="background:#f36f21; border:none;">Aplicar</button>
+                                </form>
+                                <div th:if="${couponMessage}" th:text="${couponMessage}" class="mt-2 custom-alert" th:classappend="${couponSuccess} ? 'alert-success' : 'alert-danger'"></div>
+                            </div>
+                        </div>
+                        <!-- Fim campo cupom -->
+
                         <!-- Resumo do Carrinho -->
                         <div class="cart-summary">
                             <h4 class="summary-title"><i class="fas fa-calculator me-2"></i>Resumo do Pedido</h4>
@@ -776,6 +788,12 @@
                                 </div>
                             </div>
                             
+                            <div th:if="${discountTotal}">
+                                <div class="d-flex justify-content-between">
+                                    <span>Desconto aplicado:</span>
+                                    <span style="color:#28a745; font-weight:600;">- R$ <span th:text="${#numbers.formatDecimal(discountTotal, 1, 'POINT', 2, 'COMMA')}"></span></span>
+                                </div>
+                            </div>
                             
                             <hr class="summary-divider">
                             <div class="summary-item total">
@@ -795,7 +813,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <a th:href="@{/checkout}" class="btn-checkout">Finalizar Compra</a>
+                            <a th:href="@{/checkout/cart}" class="btn-checkout">Finalizar Compra</a>
                             
                             <div class="text-center">
                                 <a href="/" class="continue-shopping">

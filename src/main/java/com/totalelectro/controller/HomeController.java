@@ -2,6 +2,7 @@ package com.totalelectro.controller;
 
 import com.totalelectro.model.Product;
 import com.totalelectro.service.ProductService;
+import com.totalelectro.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,9 @@ public class HomeController {
     @Autowired
     private ProductService productService;
     
+    @Autowired
+    private ProductRepository productRepository;
+    
     @GetMapping("/")
     public String index(Model model) {
         var popularProducts = productService.getPopularProducts();
@@ -27,7 +31,9 @@ public class HomeController {
     }
 
     @GetMapping("/offers")
-    public String offers(Model model) {
+    public String showOffers(Model model) {
+        var offers = productRepository.findDiscountedProducts();
+        model.addAttribute("offers", offers);
         return "offers";
     }
 } 
