@@ -116,17 +116,24 @@
         }
         
         .info-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 2rem;
+            max-width: 500px;
         }
 
         .info-group dt {
             font-weight: 600;
             color: #333;
+            margin-top: 1rem;
         }
 
         .info-group dd {
             color: #555;
             margin-left: 0;
+            margin-bottom: 0.5rem;
         }
 
         .btn-edit-profile {
@@ -200,7 +207,124 @@
             font-weight: 600;
             background-color: #f8f9fa;
         }
-
+        .profile-edit-form {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 2rem;
+            max-width: 500px;
+        }
+        .order-history-wrapper {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .order-table.professional {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .order-table.professional th, .order-table.professional td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .order-table.professional th {
+            background: #f8f9fa;
+            font-weight: 700;
+            color: #333;
+        }
+        .order-table.professional tr:last-child td {
+            border-bottom: none;
+        }
+        .order-table.professional tbody tr:hover {
+            background: #f6f6f6;
+        }
+        .btn-details {
+            background: #f36f21;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-details:hover {
+            background: #e05a0c;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.4em 1em;
+            border-radius: 20px;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #fff;
+        }
+        .status-pendiente { background: #f36f21; }
+        .status-completada { background: #28a745; }
+        .status-cancelada { background: #dc3545; }
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 95%;
+            padding: 2.5rem 2rem 2rem 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            position: relative;
+            animation: modalIn 0.2s;
+        }
+        @keyframes modalIn {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            color: #f36f21;
+        }
+        .loading-modal {
+            text-align: center;
+            color: #888;
+            padding: 2rem 0;
+        }
+        .order-details-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .order-details-list li {
+            margin-bottom: 0.7rem;
+            font-size: 1.05em;
+        }
+        .order-details-list strong {
+            color: #f36f21;
+            min-width: 110px;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -237,36 +361,60 @@
             <div class="tab-content">
                 <!-- Informações Pessoais -->
                 <div id="info" class="tab-pane active">
-                    <h3>Editar Informações</h3>
-                     <form th:action="@{/profile/update}" th:object="${userProfileDTO}" method="post">
-                        <div class="form-group">
-                            <label for="firstName">Nome</label>
-                            <input type="text" id="firstName" class="form-control" th:field="*{firstName}">
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Sobrenome</label>
-                            <input type="text" id="lastName" class="form-control" th:field="*{lastName}">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" class="form-control" th:field="*{email}" readonly>
-                             <small class="form-text text-muted">O email não pode ser alterado.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="city">Cidade</label>
-                            <input type="text" id="city" class="form-control" th:field="*{city}">
-                        </div>
-                        <div class="form-group">
-                            <label for="address">Endereço</label>
-                            <input type="text" id="address" class="form-control" th:field="*{address}">
-                        </div>
-                        <div class="form-group">
-                            <label for="phoneNumber">Telefone</label>
-                            <input type="text" id="phoneNumber" class="form-control" th:field="*{phoneNumber}">
+                    <h3>Informações Pessoais</h3>
+                    <!-- VISUALIZAÇÃO -->
+                    <div id="profile-view">
+                        <dl class="info-group">
+                            <dt>Nome</dt>
+                            <dd th:text="${user.firstName}"></dd>
+                            <dt>Sobrenome</dt>
+                            <dd th:text="${user.lastName}"></dd>
+                            <dt>Email</dt>
+                            <dd th:text="${user.email}"></dd>
+                            <dt>Cidade</dt>
+                            <dd th:text="${user.city}"></dd>
+                            <dt>Endereço</dt>
+                            <dd th:text="${user.address}"></dd>
+                            <dt>Telefone</dt>
+                            <dd th:text="${user.phoneNumber}"></dd>
+                        </dl>
+                        <button type="button" class="btn-primary-custom" onclick="showEditProfile()">Editar</button>
                     </div>
-                        <button type="submit" class="btn-primary-custom">Salvar Alterações</button>
-                    </form>
-            </div>
+                    <!-- EDIÇÃO -->
+                    <div id="profile-edit" style="display:none;">
+                        <form th:action="@{/profile/update}" th:object="${userProfileDTO}" method="post" class="profile-edit-form">
+                            <div class="form-group">
+                                <label for="firstName">Nome</label>
+                                <input type="text" id="firstName" class="form-control" th:field="*{firstName}">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Sobrenome</label>
+                                <input type="text" id="lastName" class="form-control" th:field="*{lastName}">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" class="form-control" th:field="*{email}">
+                                <small class="form-text text-muted">O email deve ser único.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">Cidade</label>
+                                <input type="text" id="city" class="form-control" th:field="*{city}">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Endereço</label>
+                                <input type="text" id="address" class="form-control" th:field="*{address}">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Telefone</label>
+                                <input type="text" id="phoneNumber" class="form-control" th:field="*{phoneNumber}">
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <button type="submit" class="btn-primary-custom">Salvar Alterações</button>
+                                <button type="button" class="btn-secondary-custom" onclick="cancelEditProfile()">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             
                 <!-- Meus Pedidos -->
                 <div id="orders" class="tab-pane">
@@ -274,26 +422,42 @@
                     <div th:if="${#lists.isEmpty(orders)}">
                         <p>Você ainda não fez nenhum pedido.</p>
                     </div>
-                    <table class="order-table" th:if="${not #lists.isEmpty(orders)}">
-                        <thead>
-                            <tr>
-                                <th>Nº do Pedido</th>
-                                <th>Data</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="order : ${orders}">
-                                <td th:text="${order.id}"></td>
-                                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></td>
-                                <td th:text="'R$ ' + ${#numbers.formatDecimal(order.total, 1, 'POINT', 2, 'COMMA')}"></td>
-                                <td th:text="${order.status}"></td>
-                                <td><a th:href="@{'/order/' + ${order.id}}">Ver Detalhes</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="order-history-wrapper" th:if="${not #lists.isEmpty(orders)}">
+                        <table class="order-table professional">
+                            <thead>
+                                <tr>
+                                    <th>Nº do Pedido</th>
+                                    <th>Data</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td th:text="${order.id}"></td>
+                                    <td th:text="${#temporals.format(order.date, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="'R$ ' + ${#numbers.formatDecimal(order.totalPrice, 1, 'POINT', 2, 'COMMA')}"></td>
+                                    <td>
+                                        <span th:classappend="'status-badge status-' + ${order.status.name().toLowerCase()}" th:text="${order.status}"></span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn-details" th:attr="data-order-id=${order.id}" onclick="openOrderDetailsModal(this)">Ver Detalhes</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- MODAL DE DETALHES DO PEDIDO -->
+                    <div id="orderDetailsModal" class="modal-overlay" style="display:none;">
+                        <div class="modal-content">
+                            <button class="modal-close" onclick="closeOrderDetailsModal()">&times;</button>
+                            <div id="order-details-body">
+                                <!-- Conteúdo dinâmico via JS -->
+                                <div class="loading-modal">Carregando detalhes...</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mudar Senha -->
@@ -320,15 +484,75 @@
     </div>
 
     <script>
-        // Função simples para mostrar abas
         function showTab(tabName) {
             // Esconde todas as abas
             document.getElementById('info').style.display = 'none';
             document.getElementById('orders').style.display = 'none';
             document.getElementById('password').style.display = 'none';
-            
+
+            // Remove 'active' de todos os botões
+            document.querySelectorAll('.tab-nav-link').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+
             // Mostra a aba selecionada
             document.getElementById(tabName).style.display = 'block';
+
+            // Adiciona 'active' ao botão clicado
+            document.querySelector('.tab-nav-link[data-tab="' + tabName + '"]').classList.add('active');
+        }
+
+        // Exibe a aba correta ao recarregar a página com hash (ex: #password)
+        document.addEventListener('DOMContentLoaded', function() {
+            var hash = window.location.hash.replace('#', '');
+            if (hash && document.getElementById(hash)) {
+                showTab(hash);
+            } else {
+                showTab('info');
+            }
+        });
+
+        function showEditProfile() {
+            document.getElementById('profile-view').style.display = 'none';
+            document.getElementById('profile-edit').style.display = 'block';
+        }
+        function cancelEditProfile() {
+            document.getElementById('profile-edit').style.display = 'none';
+            document.getElementById('profile-view').style.display = 'block';
+        }
+
+        // MODAL DE DETALHES DO PEDIDO
+        function openOrderDetailsModal(btn) {
+            var orderId = btn.getAttribute('data-order-id');
+            var modal = document.getElementById('orderDetailsModal');
+            var body = document.getElementById('order-details-body');
+            modal.style.display = 'flex';
+            body.innerHTML = '<div class="loading-modal">Carregando detalhes...</div>';
+            fetch('/orders/' + orderId + '/json')
+                .then(resp => resp.json())
+                .then(order => {
+                    let html = `<ul class='order-details-list'>
+                        <li><strong>Nº do Pedido:</strong> ${order.id}</li>
+                        <li><strong>Data:</strong> ${new Date(order.date).toLocaleString('pt-BR')}</li>
+                        <li><strong>Status:</strong> <span class='status-badge status-${order.status.toLowerCase()}'>${order.status}</span></li>
+                        <li><strong>Total:</strong> R$ ${order.totalPrice.toFixed(2).replace('.', ',')}</li>
+                        <li><strong>Nome:</strong> ${order.firstName} ${order.lastName}</li>
+                        <li><strong>Email:</strong> ${order.email}</li>
+                        <li><strong>Endereço:</strong> ${order.address}, ${order.city}</li>
+                        <li><strong>Telefone:</strong> ${order.phoneNumber}</li>
+                        <li><strong>Produtos:</strong><ul>`;
+                    order.products.forEach(prod => {
+                        html += `<li>- ${prod.name}</li>`;
+                    });
+                    html += '</ul></li></ul>';
+                    body.innerHTML = html;
+                })
+                .catch(() => {
+                    body.innerHTML = '<div class="loading-modal">Erro ao carregar detalhes do pedido.</div>';
+                });
+        }
+        function closeOrderDetailsModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
         }
     </script>
     

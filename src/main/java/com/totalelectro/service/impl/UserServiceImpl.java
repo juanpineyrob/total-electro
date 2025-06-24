@@ -132,8 +132,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Order> getUserOrders(String email) {
         try {
-            return orderRepository.findAllByUserEmailOrderByDateDesc(email);
+            System.out.println("Buscando pedidos para o usuário: " + email);
+            List<Order> orders = orderRepository.findAllByUserEmailOrderByDateDesc(email);
+            System.out.println("Pedidos encontrados: " + orders.size());
+            return orders;
         } catch (Exception e) {
+            System.out.println("Erro ao buscar pedidos: " + e.getMessage());
+            e.printStackTrace();
             return new ArrayList<>();
         }
     }

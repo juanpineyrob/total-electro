@@ -50,14 +50,14 @@ INSERT INTO users (email, password, first_name, last_name, city, address, phone_
 INSERT INTO users (email, password, first_name, last_name, city, address, phone_number) VALUES ('admin@totalelectro.com', '$2a$10$CD0AKAgdinolsfw7mz1QBu4egK8Tcjm.N0eAPB1.VbHXjn2grs8mm', 'Admin', 'System', 'Ciudad', 'Dirección', '123456789');
 
 -- Asignación de roles
-INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'juan@ejemplo.com' AND r.name = 'ADMIN';
+INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'juan@ejemplo.com' AND r.name = 'USER';
 INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'ana@ejemplo.com' AND r.name = 'USER';
 INSERT INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.email = 'admin@totalelectro.com' AND r.name = 'ADMIN';
 
 -- Orders
 INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'PENDIENTE', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 1);
 INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (160.00, CURRENT_TIMESTAMP, 'COMPLETADA', 'Ana', 'García', 'Ciudad Corriente', 'Av. Voltaje 456', 'ana@ejemplo.com', '555-2222', 2);
-INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'PENDIENTE', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 2);
+INSERT INTO orders (total_price, date, status, first_name, last_name, city, address, email, phone_number, user_id) VALUES (230.00, CURRENT_TIMESTAMP, 'PENDIENTE', 'Juan', 'Pérez', 'Ciudad Luz', 'Calle Falsa 123', 'juan@ejemplo.com', '555-1111', 1);
 
 -- Order-Product Relationships
 INSERT INTO orders_products (order_id, product_id) VALUES (1, 1);

@@ -80,7 +80,7 @@
             </form>
         </div>
         <div class="header-actions">
-            <button class="lang">🇧🇷 <span class="material-symbols-outlined"></span></button>
+            
             <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn">Minha conta</a>
             <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn">Entrar</a>
             <a th:href="@{/cart}" class="cart header-btn" id="cart-link">

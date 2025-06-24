@@ -171,40 +171,11 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- HEADER -->
-    <div class="top-header">
-        <div class="logo-header">
-            <a href="/"><img th:src="@{/images/logo.png}" alt="Total Electro"></a>
-        </div>
-        <div class="search-bar">
-            <form th:action="@{/product/search}" method="get">
-                <input type="text" name="name" placeholder="Pesquisar...">
-                <button type="submit">Buscar</button>
-            </form>
-        </div>
-        <div class="header-actions">
-            <button class="lang">🇧🇷<span class="material-symbols-outlined">keyboard_arrow_down</span></button>
-            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn">Minha conta</a>
-            <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn">Minha conta</a>
-            <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
-                <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
-                <span class="cart-count" id="cartCount">0</span>
-            </a>
-        </div>
-    </div>
+    <th:block th:insert="~{fragments/header :: header}"></th:block>
 
-    <!-- MENU -->
-    <nav class="main-menu">
-        <div class="menu-items">
-            <a th:href="@{/product/category/iluminacion}">Iluminação</a>
-            <a th:href="@{/product/category/cables-y-accessorios}">Cabos e acessórios</a>
-            <a th:href="@{/product/category/herramientas-electricas}">Ferramentas elétricas</a>
-            <a th:href="@{/product/category/automatizacion-y-domoticas}">Automação e domótica</a>
-            <a th:href="@{/product/category/seguridad-electrica}">Segurança elétrica</a>
-        </div>
-        <div class="menu-offers">
-            <button>Ofertas e promoções</button>
-        </div>
-    </nav>
+    
+       
+ 
 
     <!-- PRODUTO -->
     <div class="product-container">
