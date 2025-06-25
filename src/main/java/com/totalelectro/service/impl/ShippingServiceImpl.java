@@ -101,7 +101,7 @@ public class ShippingServiceImpl implements ShippingService {
                 throw new RuntimeException("CEP de destino inválido para cálculo de distância.");
             }
 
-            return getDistanceFromCorreios(originCep, cleanDestinationCep);
+            return getDistanceFromCoordinates(originCep, cleanDestinationCep);
         } catch (Exception e) {
             logger.error("Não foi possível obter a distância para o CEP {}", destinationCep, e);
             throw new RuntimeException("Não foi possível obter a distância a partir do CEP informado.", e);
@@ -110,205 +110,141 @@ public class ShippingServiceImpl implements ShippingService {
     
     private double calculateShippingByCep(String originCep, String destinationCep) {
         try {
-            return getShippingFromCorreios(originCep, destinationCep);
+            // Primeiro, tentar calcular baseado em coordenadas reais
+            double distance = getDistanceFromCoordinates(originCep, destinationCep);
+            return calculateShippingByDistance(distance);
         } catch (Exception e) {
-            logger.error("Falha ao consultar a API dos Correios para cálculo de frete.", e);
-            throw new RuntimeException("Não foi possível calcular o frete. O serviço dos Correios pode estar indisponível. Tente novamente mais tarde.", e);
+            logger.warn("Falha ao calcular frete por coordenadas, usando cálculo regional: {}", e.getMessage());
+            // Fallback para cálculo regional
+            return calculateRegionalShipping(originCep, destinationCep);
         }
     }
     
-    private double getShippingFromCorreios(String originCep, String destinationCep) {
-        // API dos Correios - Calcular Preço e Prazo
-        String url = "http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx";
-        
-        // Parâmetros da API dos Correios
-        String params = String.format(
-            "?nCdEmpresa=&sDsSenha=&nCdServico=04510&sCepOrigem=%s&sCepDestino=%s&nVlPeso=%.2f&nCdFormato=1&nVlComprimento=%.1f&nVlAltura=%.1f&nVlLargura=%.1f&nVlDiametro=0&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&StrRetorno=xml",
-            originCep.replace("-", ""),
-            destinationCep.replace("-", ""),
-            packageWeight,
-            packageLength,
-            packageHeight,
-            packageWidth
-        );
-        
-        String fullUrl = url + params;
-        
-        try {
-            ResponseEntity<String> response = restTemplate.getForEntity(fullUrl, String.class);
-            
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return parseCorreiosResponse(response.getBody());
-            }
-        } catch (Exception e) {
-            logger.error("Erro na requisição para API dos Correios: {}", e.getMessage());
-        }
-        
-        throw new RuntimeException("Não foi possível calcular o frete pelos Correios");
-    }
-    
-    private double parseCorreiosResponse(String xmlResponse) {
-        try {
-            // Parse básico do XML dos Correios
-            if (xmlResponse.contains("<Erro>")) {
-                String error = extractXmlValue(xmlResponse, "MsgErro");
-                throw new RuntimeException("Erro dos Correios: " + error);
-            }
-            
-            String valor = extractXmlValue(xmlResponse, "Valor");
-            if (valor != null && !valor.isEmpty()) {
-                // Converter de "0,00" para 0.00
-                return Double.parseDouble(valor.replace(",", "."));
-            }
-            
-            throw new RuntimeException("Valor do frete não encontrado na resposta");
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao processar resposta dos Correios: " + e.getMessage());
-        }
-    }
-    
-    private String extractXmlValue(String xml, String tag) {
-        String startTag = "<" + tag + ">";
-        String endTag = "</" + tag + ">";
-        
-        int start = xml.indexOf(startTag);
-        if (start == -1) return null;
-        
-        start += startTag.length();
-        int end = xml.indexOf(endTag, start);
-        if (end == -1) return null;
-        
-        return xml.substring(start, end).trim();
-    }
-    
-    private double getDistanceFromCorreios(String originCep, String destinationCep) {
-        // Usar API de CEP para obter coordenadas e calcular distância
+    private double getDistanceFromCoordinates(String originCep, String destinationCep) {
         try {
             Map<String, Object> originData = getCepData(originCep);
             Map<String, Object> destinationData = getCepData(destinationCep);
             
             if (originData != null && destinationData != null) {
-                return calculateDistanceFromCoordinates(
-                    (Double) originData.get("latitude"),
-                    (Double) originData.get("longitude"),
-                    (Double) destinationData.get("latitude"),
-                    (Double) destinationData.get("longitude")
-                );
-            }
-        } catch (Exception e) {
-            logger.warn("Erro ao obter dados do CEP: {}", e.getMessage());
-        }
-        
-        return calculateSimulatedDistanceByCep(originCep, destinationCep);
-    }
-    
-    private Map<String, Object> getCepData(String cep) {
-        try {
-            String url = "https://viacep.com.br/ws/" + cep.replace("-", "") + "/json/";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                JsonNode data = objectMapper.readTree(response.getBody());
+                Double originLat = (Double) originData.get("latitude");
+                Double originLon = (Double) originData.get("longitude");
+                Double destLat = (Double) destinationData.get("latitude");
+                Double destLon = (Double) destinationData.get("longitude");
                 
-                if (!data.has("erro")) {
-                    Map<String, Object> result = new HashMap<>();
-                    result.put("cep", data.get("cep").asText());
-                    result.put("logradouro", data.get("logradouro").asText());
-                    result.put("bairro", data.get("bairro").asText());
-                    result.put("localidade", data.get("localidade").asText());
-                    result.put("uf", data.get("uf").asText());
-                    
-                    // Coordenadas aproximadas baseadas na cidade (simulado)
-                    result.put("latitude", getLatitudeByCity(data.get("localidade").asText()));
-                    result.put("longitude", getLongitudeByCity(data.get("localidade").asText()));
-                    
-                    return result;
+                if (originLat != null && originLon != null && destLat != null && destLon != null) {
+                    return calculateDistanceFromCoordinates(originLat, originLon, destLat, destLon);
                 }
             }
         } catch (Exception e) {
-            logger.warn("Erro ao buscar dados do CEP {}: {}", cep, e.getMessage());
+            logger.warn("Erro ao obter coordenadas para cálculo de distância: {}", e.getMessage());
         }
         
-        return null;
+        // Fallback para cálculo simulado baseado em região
+        return calculateSimulatedDistanceByCep(originCep, destinationCep);
     }
     
-    private double getLatitudeByCity(String city) {
-        // Coordenadas simuladas para algumas cidades principais
-        Map<String, Double> cityCoordinates = new HashMap<>();
-        cityCoordinates.put("São Paulo", -23.5505);
-        cityCoordinates.put("Rio de Janeiro", -22.9068);
-        cityCoordinates.put("Belo Horizonte", -19.9167);
-        cityCoordinates.put("Brasília", -15.7942);
-        cityCoordinates.put("Salvador", -12.9714);
-        cityCoordinates.put("Fortaleza", -3.7319);
-        cityCoordinates.put("Recife", -8.0476);
-        cityCoordinates.put("Porto Alegre", -30.0346);
-        cityCoordinates.put("Curitiba", -25.4289);
-        cityCoordinates.put("Goiânia", -16.6864);
-        cityCoordinates.put("Santa Maria", -29.6868);
-        cityCoordinates.put("Santana do Livramento", -30.8925);
+    private double calculateRegionalShipping(String originCep, String destinationCep) {
+        String originRegion = getRegionFromCep(originCep);
+        String destinationRegion = getRegionFromCep(destinationCep);
         
-        return cityCoordinates.getOrDefault(city, -30.8925); // Default para Santana do Livramento
-    }
-    
-    private double getLongitudeByCity(String city) {
-        // Coordenadas simuladas para algumas cidades principais
-        Map<String, Double> cityCoordinates = new HashMap<>();
-        cityCoordinates.put("São Paulo", -46.6333);
-        cityCoordinates.put("Rio de Janeiro", -43.1729);
-        cityCoordinates.put("Belo Horizonte", -43.9345);
-        cityCoordinates.put("Brasília", -47.8822);
-        cityCoordinates.put("Salvador", -38.5014);
-        cityCoordinates.put("Fortaleza", -38.5267);
-        cityCoordinates.put("Recife", -34.8770);
-        cityCoordinates.put("Porto Alegre", -51.2177);
-        cityCoordinates.put("Curitiba", -49.2671);
-        cityCoordinates.put("Goiânia", -49.2653);
-        cityCoordinates.put("Santa Maria", -53.8149);
-        cityCoordinates.put("Santana do Livramento", -55.5328);
+        // Tabela de preços por região (otimizada para RS)
+        Map<String, Double> regionalPrices = new HashMap<>();
         
-        return cityCoordinates.getOrDefault(city, -55.5328); // Default para Santana do Livramento
-    }
-    
-    private double calculateDistanceFromCoordinates(double lat1, double lon1, double lat2, double lon2) {
-        // Fórmula de Haversine para calcular distância entre coordenadas
-        final int R = 6371; // Raio da Terra em km
+        // Rio Grande do Sul - preços mais detalhados
+        regionalPrices.put("RS", 12.0); // Preço base para RS
         
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
+        // Outros estados
+        regionalPrices.put("SC", 22.0); // Santa Catarina
+        regionalPrices.put("PR", 28.0); // Paraná
+        regionalPrices.put("SP", 42.0); // São Paulo
+        regionalPrices.put("RJ", 48.0); // Rio de Janeiro
+        regionalPrices.put("MG", 38.0); // Minas Gerais
+        regionalPrices.put("ES", 42.0); // Espírito Santo
+        regionalPrices.put("BA", 52.0); // Bahia
+        regionalPrices.put("SE", 58.0); // Sergipe
+        regionalPrices.put("AL", 58.0); // Alagoas
+        regionalPrices.put("PE", 62.0); // Pernambuco
+        regionalPrices.put("PB", 62.0); // Paraíba
+        regionalPrices.put("RN", 68.0); // Rio Grande do Norte
+        regionalPrices.put("CE", 72.0); // Ceará
+        regionalPrices.put("PI", 68.0); // Piauí
+        regionalPrices.put("MA", 72.0); // Maranhão
+        regionalPrices.put("PA", 78.0); // Pará
+        regionalPrices.put("AP", 82.0); // Amapá
+        regionalPrices.put("AM", 88.0); // Amazonas
+        regionalPrices.put("RR", 92.0); // Roraima
+        regionalPrices.put("AC", 88.0); // Acre
+        regionalPrices.put("RO", 82.0); // Rondônia
+        regionalPrices.put("TO", 72.0); // Tocantins
+        regionalPrices.put("GO", 48.0); // Goiás
+        regionalPrices.put("MT", 68.0); // Mato Grosso
+        regionalPrices.put("MS", 52.0); // Mato Grosso do Sul
+        regionalPrices.put("DF", 48.0); // Distrito Federal
         
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        
-        return R * c;
-    }
-    
-    private double getDistanceFromCep(String originCep, String destinationCep) {
-        return getDistanceFromCorreios(originCep, destinationCep);
-    }
-    
-    private double calculateSimulatedDistanceByCep(String originCep, String destinationCep) {
-        // Cálculo simulado baseado em diferenças de CEP
-        String originUf = extractUfFromCep(originCep);
-        String destinationUf = extractUfFromCep(destinationCep);
-        
-        if (originUf.equals(destinationUf)) {
-            return Math.random() * 10 + 5; // 5-15 km no mesmo estado
-        } else {
-            return Math.random() * 100 + 50; // 50-150 km entre estados
+        // Se mesma região (RS), aplicar desconto baseado na proximidade
+        if (originRegion.equals(destinationRegion)) {
+            double basePrice = regionalPrices.getOrDefault(destinationRegion, 15.0);
+            
+            // Verificar se é uma cidade próxima a Santana do Livramento
+            if (isNearbyCity(destinationCep)) {
+                return basePrice * 0.6; // 40% de desconto para cidades próximas
+            } else {
+                return basePrice * 0.8; // 20% de desconto para outras cidades do RS
+            }
         }
+        
+        return regionalPrices.getOrDefault(destinationRegion, 25.0);
     }
     
-    private String extractUfFromCep(String cep) {
-        // Extrair UF baseado no CEP (implementação básica)
+    private boolean isNearbyCity(String destinationCep) {
+        // Cidades próximas a Santana do Livramento (RS)
+        String[] nearbyCeps = {
+            "97574", // Santana do Livramento
+            "97570", // Santana do Livramento
+            "97575", // Santana do Livramento
+            "97576", // Santana do Livramento
+            "97577", // Santana do Livramento
+            "97578", // Santana do Livramento
+            "97579", // Santana do Livramento
+            "97580", // Santana do Livramento
+            "97581", // Santana do Livramento
+            "97582", // Santana do Livramento
+            "97583", // Santana do Livramento
+            "97584", // Santana do Livramento
+            "97585", // Santana do Livramento
+            "97586", // Santana do Livramento
+            "97587", // Santana do Livramento
+            "97588", // Santana do Livramento
+            "97589", // Santana do Livramento
+            "97590", // Santana do Livramento
+            "97591", // Santana do Livramento
+            "97592", // Santana do Livramento
+            "97593", // Santana do Livramento
+            "97594", // Santana do Livramento
+            "97595", // Santana do Livramento
+            "97596", // Santana do Livramento
+            "97597", // Santana do Livramento
+            "97598", // Santana do Livramento
+            "97599"  // Santana do Livramento
+        };
+        
+        String cepPrefix = destinationCep.replace("-", "").substring(0, 5);
+        for (String nearbyCep : nearbyCeps) {
+            if (cepPrefix.equals(nearbyCep)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private String getRegionFromCep(String cep) {
         String cepClean = cep.replace("-", "");
         if (cepClean.length() >= 2) {
-            // Mapeamento básico de CEP para UF
             String prefix = cepClean.substring(0, 2);
             Map<String, String> cepToUf = new HashMap<>();
+            
+            // Mapeamento completo de CEP para UF
             cepToUf.put("01", "DF"); cepToUf.put("02", "DF"); cepToUf.put("03", "DF");
             cepToUf.put("04", "DF"); cepToUf.put("05", "DF"); cepToUf.put("06", "DF");
             cepToUf.put("07", "DF"); cepToUf.put("08", "DF"); cepToUf.put("09", "DF");
@@ -343,23 +279,215 @@ public class ShippingServiceImpl implements ShippingService {
             cepToUf.put("94", "RS"); cepToUf.put("95", "RS"); cepToUf.put("96", "RS");
             cepToUf.put("97", "RS"); cepToUf.put("98", "RS"); cepToUf.put("99", "RS");
             
-            // Mapeamento específico para Santa Maria, RS
-            if (cepClean.equals("97574230")) {
-                return "RS";
-            }
-            
             return cepToUf.getOrDefault(prefix, "RS");
         }
         return "RS";
     }
     
+    private Map<String, Object> getCepData(String cep) {
+        try {
+            // Mapeamento específico para o CEP da loja
+            if ("97574-230".equals(cep)) {
+                Map<String, Object> result = new HashMap<>();
+                result.put("cep", "97574-230");
+                result.put("logradouro", "Rua da Loja");
+                result.put("bairro", "Centro");
+                result.put("localidade", "Santana do Livramento");
+                result.put("uf", "RS");
+                result.put("latitude", -30.8925); // Coordenadas específicas de Santana do Livramento
+                result.put("longitude", -55.5328);
+                return result;
+            }
+            
+            String url = "https://viacep.com.br/ws/" + cep.replace("-", "") + "/json/";
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JsonNode data = objectMapper.readTree(response.getBody());
+                
+                if (!data.has("erro")) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("cep", data.get("cep").asText());
+                    result.put("logradouro", data.get("logradouro").asText());
+                    result.put("bairro", data.get("bairro").asText());
+                    result.put("localidade", data.get("localidade").asText());
+                    result.put("uf", data.get("uf").asText());
+                    
+                    // Coordenadas aproximadas baseadas na cidade
+                    result.put("latitude", getLatitudeByCity(data.get("localidade").asText()));
+                    result.put("longitude", getLongitudeByCity(data.get("localidade").asText()));
+                    
+                    return result;
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Erro ao buscar dados do CEP {}: {}", cep, e.getMessage());
+        }
+        
+        return null;
+    }
+    
+    private double getLatitudeByCity(String city) {
+        // Coordenadas simuladas para cidades principais
+        Map<String, Double> cityCoordinates = new HashMap<>();
+        cityCoordinates.put("São Paulo", -23.5505);
+        cityCoordinates.put("Rio de Janeiro", -22.9068);
+        cityCoordinates.put("Belo Horizonte", -19.9167);
+        cityCoordinates.put("Brasília", -15.7942);
+        cityCoordinates.put("Salvador", -12.9714);
+        cityCoordinates.put("Fortaleza", -3.7319);
+        cityCoordinates.put("Recife", -8.0476);
+        cityCoordinates.put("Porto Alegre", -30.0346);
+        cityCoordinates.put("Curitiba", -25.4289);
+        cityCoordinates.put("Goiânia", -16.6864);
+        cityCoordinates.put("Santa Maria", -29.6868);
+        cityCoordinates.put("Santana do Livramento", -30.8925);
+        cityCoordinates.put("Uruguaiana", -29.7614);
+        cityCoordinates.put("Pelotas", -31.7719);
+        cityCoordinates.put("Caxias do Sul", -29.1686);
+        cityCoordinates.put("Passo Fundo", -28.2619);
+        cityCoordinates.put("Santa Cruz do Sul", -29.7178);
+        cityCoordinates.put("Canoas", -29.9178);
+        cityCoordinates.put("Gravataí", -29.9428);
+        cityCoordinates.put("Viamão", -30.0819);
+        cityCoordinates.put("Novo Hamburgo", -29.6868);
+        cityCoordinates.put("São Leopoldo", -29.7604);
+        cityCoordinates.put("Alvorada", -29.9989);
+        cityCoordinates.put("Cachoeirinha", -29.9508);
+        cityCoordinates.put("Esteio", -29.8519);
+        cityCoordinates.put("Sapucaia do Sul", -29.8419);
+        cityCoordinates.put("Guaíba", -30.1139);
+        cityCoordinates.put("Bento Gonçalves", -29.1686);
+        cityCoordinates.put("Erechim", -27.6344);
+        cityCoordinates.put("Bagé", -31.3314);
+        cityCoordinates.put("Lajeado", -29.4669);
+        cityCoordinates.put("Ijuí", -28.3878);
+        cityCoordinates.put("Santiago", -29.1917);
+        cityCoordinates.put("Alegrete", -29.7831);
+        cityCoordinates.put("Santo Ângelo", -28.3008);
+        cityCoordinates.put("Vacaria", -28.5122);
+        cityCoordinates.put("Cruz Alta", -28.6442);
+        cityCoordinates.put("Carazinho", -28.2839);
+        cityCoordinates.put("Palmeira das Missões", -27.8994);
+        cityCoordinates.put("Frederico Westphalen", -27.3589);
+        cityCoordinates.put("São Borja", -28.6611);
+        cityCoordinates.put("Dom Pedrito", -30.9833);
+        cityCoordinates.put("Rosário do Sul", -30.2417);
+        cityCoordinates.put("São Gabriel", -30.3333);
+        cityCoordinates.put("Livramento", -30.8925);
+        
+        return cityCoordinates.getOrDefault(city, -29.6868); // Default para Santa Maria
+    }
+    
+    private double getLongitudeByCity(String city) {
+        // Coordenadas simuladas para cidades principais
+        Map<String, Double> cityCoordinates = new HashMap<>();
+        cityCoordinates.put("São Paulo", -46.6333);
+        cityCoordinates.put("Rio de Janeiro", -43.1729);
+        cityCoordinates.put("Belo Horizonte", -43.9345);
+        cityCoordinates.put("Brasília", -47.8822);
+        cityCoordinates.put("Salvador", -38.5014);
+        cityCoordinates.put("Fortaleza", -38.5267);
+        cityCoordinates.put("Recife", -34.8770);
+        cityCoordinates.put("Porto Alegre", -51.2177);
+        cityCoordinates.put("Curitiba", -49.2671);
+        cityCoordinates.put("Goiânia", -49.2653);
+        cityCoordinates.put("Santa Maria", -53.8149);
+        cityCoordinates.put("Santana do Livramento", -55.5328);
+        cityCoordinates.put("Uruguaiana", -57.0819);
+        cityCoordinates.put("Pelotas", -52.3428);
+        cityCoordinates.put("Caxias do Sul", -51.1794);
+        cityCoordinates.put("Passo Fundo", -52.4069);
+        cityCoordinates.put("Santa Cruz do Sul", -52.4258);
+        cityCoordinates.put("Canoas", -51.1839);
+        cityCoordinates.put("Gravataí", -50.9928);
+        cityCoordinates.put("Viamão", -51.0239);
+        cityCoordinates.put("Novo Hamburgo", -51.1289);
+        cityCoordinates.put("São Leopoldo", -51.1478);
+        cityCoordinates.put("Alvorada", -51.0308);
+        cityCoordinates.put("Cachoeirinha", -51.0939);
+        cityCoordinates.put("Esteio", -51.1508);
+        cityCoordinates.put("Sapucaia do Sul", -51.1469);
+        cityCoordinates.put("Guaíba", -51.3258);
+        cityCoordinates.put("Bento Gonçalves", -51.5189);
+        cityCoordinates.put("Erechim", -52.2756);
+        cityCoordinates.put("Bagé", -54.1069);
+        cityCoordinates.put("Lajeado", -51.9619);
+        cityCoordinates.put("Ijuí", -53.9147);
+        cityCoordinates.put("Santiago", -54.8672);
+        cityCoordinates.put("Alegrete", -55.7919);
+        cityCoordinates.put("Santo Ângelo", -54.2639);
+        cityCoordinates.put("Vacaria", -50.9339);
+        cityCoordinates.put("Cruz Alta", -53.6058);
+        cityCoordinates.put("Carazinho", -52.7869);
+        cityCoordinates.put("Palmeira das Missões", -53.3139);
+        cityCoordinates.put("Frederico Westphalen", -53.3947);
+        cityCoordinates.put("São Borja", -56.0044);
+        cityCoordinates.put("Dom Pedrito", -54.6733);
+        cityCoordinates.put("Rosário do Sul", -54.9133);
+        cityCoordinates.put("São Gabriel", -54.3200);
+        cityCoordinates.put("Livramento", -55.5328);
+        
+        return cityCoordinates.getOrDefault(city, -53.8149); // Default para Santa Maria
+    }
+    
+    private double calculateDistanceFromCoordinates(double lat1, double lon1, double lat2, double lon2) {
+        // Fórmula de Haversine para calcular distância entre coordenadas
+        final int R = 6371; // Raio da Terra em km
+        
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        
+        return R * c;
+    }
+    
+    private double calculateSimulatedDistanceByCep(String originCep, String destinationCep) {
+        // Cálculo simulado baseado em diferenças de CEP
+        String originUf = getRegionFromCep(originCep);
+        String destinationUf = getRegionFromCep(destinationCep);
+        
+        if (originUf.equals(destinationUf)) {
+            return Math.random() * 10 + 5; // 5-15 km no mesmo estado
+        } else {
+            return Math.random() * 100 + 50; // 50-150 km entre estados
+        }
+    }
+    
     private String extractCep(String address) {
+        if (address == null || address.trim().isEmpty()) {
+            return null;
+        }
+        
+        // Limpar a string de entrada
+        String cleanAddress = address.trim();
+        
+        // Se já é um CEP válido (formato 00000-000 ou 00000000)
+        if (cleanAddress.matches("\\d{5}-?\\d{3}")) {
+            // Formatar para o padrão 00000-000
+            String cepOnly = cleanAddress.replace("-", "");
+            return cepOnly.substring(0, 5) + "-" + cepOnly.substring(5);
+        }
+        
+        // Se é apenas números (8 dígitos)
+        if (cleanAddress.matches("\\d{8}")) {
+            return cleanAddress.substring(0, 5) + "-" + cleanAddress.substring(5);
+        }
+        
         // Extrair CEP do endereço usando regex
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\d{5}-?\\d{3}");
-        java.util.regex.Matcher matcher = pattern.matcher(address);
+        java.util.regex.Matcher matcher = pattern.matcher(cleanAddress);
         
         if (matcher.find()) {
-            return matcher.group();
+            String foundCep = matcher.group();
+            // Formatar para o padrão 00000-000
+            String cepOnly = foundCep.replace("-", "");
+            return cepOnly.substring(0, 5) + "-" + cepOnly.substring(5);
         }
         
         return null;

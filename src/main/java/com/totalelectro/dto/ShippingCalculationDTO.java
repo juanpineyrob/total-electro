@@ -8,7 +8,6 @@ import lombok.Setter;
 public class ShippingCalculationDTO {
     private String originAddress;
     private String destinationAddress;
-    private double distance;
     private double shippingCost;
     private String estimatedDeliveryTime;
     private boolean freeShipping;

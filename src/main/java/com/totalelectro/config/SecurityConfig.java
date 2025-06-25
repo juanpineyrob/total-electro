@@ -70,11 +70,21 @@ public class  SecurityConfig {
                         new AntPathRequestMatcher("/css/**"),
                         new AntPathRequestMatcher("/js/**"),
                         new AntPathRequestMatcher("/images/**"),
-                        new AntPathRequestMatcher("/favicon.ico")
+                        new AntPathRequestMatcher("/favicon.ico"),
+                        new AntPathRequestMatcher("/cart/calculate-shipping"), // Endpoint de cálculo de frete
+                        new AntPathRequestMatcher("/cart/save-shipping"), // Endpoint para salvar frete
+                        new AntPathRequestMatcher("/cart/clear-shipping"), // Endpoint para limpar frete
+                        new AntPathRequestMatcher("/cart/test-clear"), // Endpoint de teste
+                        new AntPathRequestMatcher("/cart/test-shipping/**") // Endpoint de teste de frete
                     ).permitAll()
                     // Rutas que requieren autenticación
                     .requestMatchers(
-                        new AntPathRequestMatcher("/cart/**"),
+                        new AntPathRequestMatcher("/cart/add"),
+                        new AntPathRequestMatcher("/cart/update"),
+                        new AntPathRequestMatcher("/cart/remove"),
+                        new AntPathRequestMatcher("/cart/clear"),
+                        new AntPathRequestMatcher("/cart/apply-coupon"),
+                        new AntPathRequestMatcher("/cart/checkout"),
                         new AntPathRequestMatcher("/profile/**"),
                         new AntPathRequestMatcher("/orders/**")
                     ).authenticated()
@@ -90,6 +100,13 @@ public class  SecurityConfig {
             })
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/admin/users/*/update") // Ignorar CSRF para endpoints AJAX específicos
+                .ignoringRequestMatchers("/cart/calculate-shipping") // Ignorar CSRF para cálculo de frete
+                .ignoringRequestMatchers("/cart/save-shipping") // Ignorar CSRF para salvar frete
+                .ignoringRequestMatchers("/cart/clear-shipping") // Ignorar CSRF para limpar frete
+                .ignoringRequestMatchers("/cart/add") // Ignorar CSRF para adicionar ao carrinho
+                .ignoringRequestMatchers("/cart/update") // Ignorar CSRF para atualizar carrinho
+                .ignoringRequestMatchers("/cart/remove") // Ignorar CSRF para remover do carrinho
+                .ignoringRequestMatchers("/cart/test-shipping/**") // Ignorar CSRF para teste de frete
             )
             .formLogin(form -> {
                 logger.info("Configurando login form");

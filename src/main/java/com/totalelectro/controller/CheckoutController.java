@@ -86,13 +86,22 @@ public class CheckoutController {
     }
 
     @GetMapping("/cart")
-    public String showCartCheckout(Model model, HttpSession session) {
-        // Verificar se o usuário está autenticado
+    public String showCartCheckout(Model model, HttpSession session, 
+                                  @RequestParam(required = false) String clearShipping) {
+        
+        // Se o parâmetro clearShipping estiver presente, limpar o frete da sessão
+        if ("true".equals(clearShipping)) {
+            session.removeAttribute("calculatedShippingCost");
+            session.removeAttribute("calculatedDeliveryTime");
+            session.removeAttribute("calculatedDestinationCep");
+            System.out.println("DEBUG - Frete limpo da sessão via parâmetro");
+        }
+        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser");
-        if (!isAuthenticated) {
+        if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
             return "redirect:/login";
         }
+        
         String userEmail = auth.getName();
         User user = userService.findByEmail(userEmail);
         List<CartItem> cartItems = cartService.getCartItems(userEmail);
@@ -133,18 +142,38 @@ public class CheckoutController {
         if (subtotalWithCoupon < 0) subtotalWithCoupon = 0;
         // Frete grátis se subtotal (com descontos) >= 50
         double shipping = subtotalWithCoupon >= 50.0 ? 0.0 : 50.0;
-        double tax = subtotalWithCoupon * 0.21; // 21% IVA
-        double total = subtotalWithCoupon + shipping + tax;
+        
+        // Verificar se há frete calculado na sessão
+        Double calculatedShipping = (Double) session.getAttribute("calculatedShippingCost");
+        String calculatedDeliveryTime = (String) session.getAttribute("calculatedDeliveryTime");
+        String calculatedDestinationCep = (String) session.getAttribute("calculatedDestinationCep");
+        
+        System.out.println("DEBUG - Subtotal com cupom: " + subtotalWithCoupon);
+        System.out.println("DEBUG - Frete padrão: " + shipping);
+        System.out.println("DEBUG - Frete calculado na sessão: " + calculatedShipping);
+        
+        if (calculatedShipping != null) {
+            shipping = calculatedShipping;
+            System.out.println("DEBUG - Usando frete calculado: " + shipping);
+        }
+        
+        double total = subtotalWithCoupon + shipping;
+        System.out.println("DEBUG - Total final: " + total);
         model.addAttribute("user", user);
-        model.addAttribute("isAuthenticated", isAuthenticated);
+        model.addAttribute("isAuthenticated", true);
         model.addAttribute("cartItems", cartItems);
-        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("subtotal", subtotalWithCoupon);
         model.addAttribute("discountTotal", discountTotal > 0 ? discountTotal : null);
         model.addAttribute("shipping", shipping);
-        model.addAttribute("tax", tax);
         model.addAttribute("total", total);
         model.addAttribute("isCartCheckout", true);
         model.addAttribute("appliedCoupon", appliedCoupon);
+        
+        // Adicionar informações do frete calculado
+        model.addAttribute("calculatedShipping", calculatedShipping);
+        model.addAttribute("calculatedDeliveryTime", calculatedDeliveryTime);
+        model.addAttribute("calculatedDestinationCep", calculatedDestinationCep);
+        
         return "checkout";
     }
     
@@ -182,8 +211,7 @@ public class CheckoutController {
             // Calcular valores
             double subtotal = product.getPrice().doubleValue() * quantity;
             double shipping = 50.0;
-            double tax = subtotal * 0.21; // 21% IVA
-            double total = subtotal + shipping + tax;
+            double total = subtotal + shipping;
             
             // Criar o pedido
             Order order = new Order();
@@ -304,8 +332,23 @@ public class CheckoutController {
             
             // Frete grátis se subtotal (com descontos) >= 50
             double shipping = subtotalWithCoupon >= 50.0 ? 0.0 : 50.0;
-            double tax = subtotalWithCoupon * 0.21; // 21% IVA
-            double total = subtotalWithCoupon + shipping + tax;
+            
+            // Verificar se há frete calculado na sessão
+            Double calculatedShipping = (Double) session.getAttribute("calculatedShippingCost");
+            String calculatedDeliveryTime = (String) session.getAttribute("calculatedDeliveryTime");
+            String calculatedDestinationCep = (String) session.getAttribute("calculatedDestinationCep");
+            
+            System.out.println("DEBUG - Subtotal com cupom: " + subtotalWithCoupon);
+            System.out.println("DEBUG - Frete padrão: " + shipping);
+            System.out.println("DEBUG - Frete calculado na sessão: " + calculatedShipping);
+            
+            if (calculatedShipping != null) {
+                shipping = calculatedShipping;
+                System.out.println("DEBUG - Usando frete calculado: " + shipping);
+            }
+            
+            double total = subtotalWithCoupon + shipping;
+            System.out.println("DEBUG - Total final: " + total);
             
             // Criar o pedido
             Order order = new Order();

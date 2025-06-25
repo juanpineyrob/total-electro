@@ -739,6 +739,12 @@
                                 <strong th:text="${'R$ ' + #numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</strong>
                             </div>
                             
+                            <!-- Custo do frete -->
+                            <div class="summary-item" id="shippingCostItem" style="display: none;">
+                                <span>Frete</span>
+                                <strong id="shippingCostDisplay">R$ 0,00</strong>
+                            </div>
+                            
                             <!-- Calculadora de Frete -->
                             <div class="shipping-calculator-section">
                                 <h5 class="shipping-title">
@@ -770,12 +776,12 @@
                                         <h6><i class="fas fa-info-circle me-2"></i>Resultado do Cálculo</h6>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <small class="text-muted">Distância:</small>
-                                                <div id="shippingDistance" class="fw-bold"></div>
-                                            </div>
-                                            <div class="col-md-6">
                                                 <small class="text-muted">Prazo de Entrega:</small>
                                                 <div id="shippingTime" class="fw-bold"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Valor do Frete:</small>
+                                                <div id="shippingValue" class="fw-bold"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -950,6 +956,15 @@
             
             if (!destinationCep) {
                 showShippingError('Por favor, informe o seu CEP.');
+                clearShippingCost();
+                return;
+            }
+            
+            // Validar formato do CEP
+            const cepRegex = /^\d{5}-?\d{3}$/;
+            if (!cepRegex.test(destinationCep.replace(/\D/g, ''))) {
+                showShippingError('CEP inválido. Use o formato 00000-000.');
+                clearShippingCost();
                 return;
             }
             
@@ -957,6 +972,7 @@
             showShippingLoading(true);
             hideShippingResult();
             hideShippingError();
+            clearShippingCost();
             
             fetch('/cart/calculate-shipping', {
                 method: 'POST',
@@ -967,31 +983,62 @@
                     destinationAddress: destinationCep
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('API Response:', data); // Log para depuração
                 showShippingLoading(false);
                 
                 if (data.errorMessage) {
                     showShippingError(data.errorMessage);
+                    clearShippingCost();
+                } else if (data.shippingCost === undefined || data.estimatedDeliveryTime === undefined) {
+                    showShippingError('Resposta inválida do servidor. Tente novamente.');
+                    clearShippingCost();
                 } else {
                     showShippingResult(data);
                     updateShippingCost(data.shippingCost);
+                    
+                    // Salvar o frete calculado na sessão
+                    saveShippingToSession(data.shippingCost, data.estimatedDeliveryTime, destinationCep);
                 }
             })
             .catch(error => {
+                console.error('Erro no cálculo de frete:', error);
                 showShippingLoading(false);
                 showShippingError('Erro de conexão ao calcular frete: ' + error.message);
+                clearShippingCost();
             });
         }
         
         function showShippingResult(data) {
             const resultDiv = document.getElementById('shippingResult');
-            const distanceDiv = document.getElementById('shippingDistance');
             const timeDiv = document.getElementById('shippingTime');
+            const valueDiv = document.getElementById('shippingValue');
             
-            distanceDiv.textContent = data.distance + ' km';
-            timeDiv.textContent = data.estimatedDeliveryTime;
+            // Validar se os dados estão presentes
+            if (data.estimatedDeliveryTime === undefined || data.shippingCost === undefined) {
+                showShippingError('Dados de frete incompletos. Tente novamente.');
+                return;
+            }
+            
+            timeDiv.textContent = data.estimatedDeliveryTime || 'Não informado';
+            
+            // Formatar o valor do frete
+            const shippingCost = typeof data.shippingCost === 'number' ? data.shippingCost : parseFloat(data.shippingCost);
+            if (isNaN(shippingCost)) {
+                valueDiv.textContent = 'Erro no valor';
+            } else if (shippingCost === 0) {
+                valueDiv.textContent = 'Grátis';
+                valueDiv.className = 'fw-bold text-success';
+            } else {
+                valueDiv.textContent = 'R$ ' + shippingCost.toFixed(2).replace('.', ',');
+                valueDiv.className = 'fw-bold';
+            }
             
             resultDiv.style.display = 'block';
         }
@@ -1036,12 +1083,19 @@
             }
 
             const shippingCostDisplay = document.getElementById('shippingCostDisplay');
+            const shippingCostItem = document.getElementById('shippingCostItem');
             const cartTotalDisplay = document.getElementById('cartTotalDisplay');
             const subtotalElement = document.querySelector('.summary-item span:first-child + strong');
 
             if (!subtotalElement) {
                 console.error('Elemento de subtotal não encontrado.');
                 showShippingError('Ocorreu um erro interno ao ler o subtotal.');
+                return;
+            }
+
+            if (!shippingCostDisplay || !shippingCostItem) {
+                console.error('Elementos de frete não encontrados.');
+                showShippingError('Ocorreu um erro interno ao atualizar o frete.');
                 return;
             }
 
@@ -1055,6 +1109,9 @@
                 return;
             }
             
+            // Mostrar o item de frete
+            shippingCostItem.style.display = 'flex';
+            
             if (shippingCost === 0) {
                 shippingCostDisplay.textContent = 'Grátis';
                 shippingCostDisplay.className = 'text-success';
@@ -1065,6 +1122,38 @@
             
             const total = subtotal + shippingCost;
             cartTotalDisplay.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+        }
+
+        function clearShippingCost() {
+            const shippingCostItem = document.getElementById('shippingCostItem');
+            if (shippingCostItem) {
+                shippingCostItem.style.display = 'none';
+            }
+        }
+        
+        function saveShippingToSession(shippingCost, deliveryTime, destinationCep) {
+            fetch('/cart/save-shipping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shippingCost: shippingCost,
+                    estimatedDeliveryTime: deliveryTime,
+                    destinationCep: destinationCep
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Frete salvo na sessão:', data.message);
+                } else {
+                    console.warn('Erro ao salvar frete na sessão:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao salvar frete na sessão:', error);
+            });
         }
     </script>
 

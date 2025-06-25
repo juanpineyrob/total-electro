@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/cart")
@@ -105,7 +106,6 @@ public class CartController {
 
             result.setOriginAddress("CEP: " + shippingService.getStoreCep());
             result.setDestinationAddress(destinationCep);
-            result.setDistance(Math.round(distance * 100.0) / 100.0);
             result.setShippingCost(Math.round(shippingCost * 100.0) / 100.0);
             result.setEstimatedDeliveryTime(estimatedDeliveryTime);
             result.setFreeShipping(shippingCost == 0);
@@ -119,6 +119,41 @@ public class CartController {
                 message = "Não foi possível calcular o frete. Verifique o CEP e tente novamente.";
             }
             result.setErrorMessage(message);
+            return ResponseEntity.badRequest().body(result);
+        }
+    }
+
+    @GetMapping("/test-shipping/{cep}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> testShipping(@PathVariable String cep) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            logger.info("Testando cálculo de frete para CEP: {}", cep);
+            
+            double distance = shippingService.getDistance(cep);
+            double shippingCost = shippingService.calculateShipping(cep);
+            String estimatedDeliveryTime = calculateEstimatedDeliveryTime(distance);
+            
+            result.put("success", true);
+            result.put("cep", cep);
+            result.put("shippingCost", Math.round(shippingCost * 100.0) / 100.0);
+            result.put("estimatedDeliveryTime", estimatedDeliveryTime);
+            result.put("storeCep", shippingService.getStoreCep());
+            result.put("baseRate", shippingService.getBaseRate());
+            result.put("ratePerKm", shippingService.getRatePerKm());
+            result.put("maxDistance", shippingService.getMaxDistance());
+            
+            logger.info("Cálculo de frete realizado com sucesso: custo=R${}", 
+                       result.get("shippingCost"));
+            
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            logger.error("Erro no teste de frete para CEP {}: {}", cep, e.getMessage(), e);
+            result.put("success", false);
+            result.put("error", e.getMessage());
+            result.put("cep", cep);
+            result.put("storeCep", shippingService.getStoreCep());
             return ResponseEntity.badRequest().body(result);
         }
     }
@@ -250,6 +285,75 @@ public class CartController {
             session.setAttribute("couponSuccess", false);
         }
         return "redirect:/cart";
+    }
+    
+    @PostMapping("/save-shipping")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveShipping(@RequestBody Map<String, Object> request, HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            Double shippingCost = (Double) request.get("shippingCost");
+            String estimatedDeliveryTime = (String) request.get("estimatedDeliveryTime");
+            String destinationCep = (String) request.get("destinationCep");
+            
+            if (shippingCost != null) {
+                session.setAttribute("calculatedShippingCost", shippingCost);
+                session.setAttribute("calculatedDeliveryTime", estimatedDeliveryTime);
+                session.setAttribute("calculatedDestinationCep", destinationCep);
+                
+                result.put("success", true);
+                result.put("message", "Frete salvo com sucesso");
+            } else {
+                result.put("success", false);
+                result.put("error", "Valor do frete não fornecido");
+            }
+            
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("error", "Erro ao salvar frete: " + e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
+    }
+    
+    @PostMapping("/test-clear")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> testClear() {
+        Map<String, Object> result = new HashMap<>();
+        
+        logger.info("Endpoint /test-clear chamado");
+        
+        result.put("success", true);
+        result.put("message", "Teste funcionando");
+        
+        return ResponseEntity.ok(result);
+    }
+    
+    @PostMapping("/clear-shipping")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> clearShipping(HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        
+        logger.info("Endpoint /clear-shipping chamado");
+        
+        try {
+            logger.info("Removendo atributos de frete da sessão");
+            session.removeAttribute("calculatedShippingCost");
+            session.removeAttribute("calculatedDeliveryTime");
+            session.removeAttribute("calculatedDestinationCep");
+            
+            result.put("success", true);
+            result.put("message", "Frete removido com sucesso");
+            
+            logger.info("Frete removido com sucesso da sessão");
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            logger.error("Erro ao remover frete da sessão", e);
+            result.put("success", false);
+            result.put("error", "Erro ao remover frete: " + e.getMessage());
+            return ResponseEntity.badRequest().body(result);
+        }
     }
     
     private String calculateEstimatedDeliveryTime(double distance) {

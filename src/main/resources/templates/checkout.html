@@ -717,10 +717,97 @@
                                 <li><b>Itens no carrinho:</b> <span th:text="${#lists.size(cartItems)}">0</span></li>
                                 <li><b>Subtotal dos produtos:</b> R$ <span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></li>
                                 <li><b>Frete:</b> R$ <span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></li>
-                                <li><b>Imposto (IVA 21%):</b> R$ <span th:text="${#numbers.formatDecimal(tax, 0, 2)}">0,00</span></li>
                                 <li style="margin-top:8px;"><b style="color:#388e3c;">Total:</b> <b style="color:#388e3c;">R$ <span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></b></li>
                             </ul>
                         </div>
+                        
+                        <!-- Calculadora de Frete -->
+                        <div style="background:#f8f9fa; padding:18px; margin-bottom:18px; border-radius:8px; border:1px solid #e9ecef;">
+                            <h6 style="margin-bottom:16px; color:#495057;">
+                                <i class="fas fa-shipping-fast me-2"></i>Calcular Frete
+                            </h6>
+                            
+                            <!-- Frete já calculado -->
+                            <div th:if="${calculatedShipping != null}" style="margin-bottom:16px;">
+                                <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:4px; padding:12px; color:#155724;">
+                                    <h6 style="margin-bottom:8px;">
+                                        <i class="fas fa-check-circle me-2"></i>Frete Calculado
+                                    </h6>
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                        <div>
+                                            <small style="color:#6c757d;">CEP:</small>
+                                            <div style="font-weight:bold;" th:text="${calculatedDestinationCep}">00000-000</div>
+                                        </div>
+                                        <div>
+                                            <small style="color:#6c757d;">Prazo:</small>
+                                            <div style="font-weight:bold;" th:text="${calculatedDeliveryTime}">Não informado</div>
+                                        </div>
+                                        <div>
+                                            <small style="color:#6c757d;">Valor:</small>
+                                            <div style="font-weight:bold; color:#28a745;" th:if="${calculatedShipping == 0}">Grátis</div>
+                                            <div style="font-weight:bold;" th:if="${calculatedShipping > 0}" th:text="'R$ ' + ${#numbers.formatDecimal(calculatedShipping, 0, 2)}">R$ 0,00</div>
+                                        </div>
+                                    </div>
+                                    <button type="button" 
+                                            id="recalculateShippingButton"
+                                            onclick="clearCalculatedShipping()" 
+                                            style="background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">
+                                        <i class="fas fa-times me-1"></i>Recalcular
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Calculadora de frete (mostrar apenas se não há frete calculado) -->
+                            <div th:if="${calculatedShipping == null}" style="margin-bottom:16px;">
+                                <label for="checkoutDestinationCep" style="font-size:14px; color:#495057; margin-bottom:8px; display:block;">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Informe seu CEP para calcular o frete
+                                </label>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="text" 
+                                           id="checkoutDestinationCep" 
+                                           placeholder="00000-000" 
+                                           style="flex:1; padding:8px 12px; border:1px solid #ced4da; border-radius:4px; font-size:14px;">
+                                    <button type="button" 
+                                            id="calculateShippingButton"
+                                            style="background:#f36f21; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:14px; cursor:pointer;">
+                                        <span class="loading-checkout-shipping" style="display: none;">
+                                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                                        </span>
+                                        <span class="normal-checkout-shipping">
+                                           <i class="fas fa-calculator me-1"></i> Calcular
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Resultado do cálculo de frete -->
+                            <div id="checkoutShippingResult" style="display: none;" class="mt-3">
+                                <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:4px; padding:12px;">
+                                    <h6 style="margin-bottom:12px; color:#0c5460;">
+                                        <i class="fas fa-info-circle me-2"></i>Resultado do Cálculo
+                                    </h6>
+                                    <div style="display:flex; justify-content:space-between;">
+                                        <div>
+                                            <small style="color:#6c757d;">Prazo de Entrega:</small>
+                                            <div id="checkoutShippingTime" style="font-weight:bold; color:#0c5460;"></div>
+                                        </div>
+                                        <div>
+                                            <small style="color:#6c757d;">Valor do Frete:</small>
+                                            <div id="checkoutShippingValue" style="font-weight:bold; color:#0c5460;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Erro do cálculo de frete -->
+                            <div id="checkoutShippingError" style="display: none;" class="mt-3">
+                                <div style="background:#f8d7da; border:1px solid #f5c6cb; border-radius:4px; padding:12px; color:#721c24;">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span id="checkoutShippingErrorMessage"></span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Botão de finalizar compra -->
                         <div style="text-align:right; margin-top:24px;">
                             <button type="submit" form="checkout-form" class="checkout-button">
@@ -772,7 +859,222 @@
     </div>
 
     <script>
+        // Funções globais para calculadora de frete do checkout
+        function calculateCheckoutShipping() {
+            console.log('Função calculateCheckoutShipping chamada');
+            const destinationCep = document.getElementById('checkoutDestinationCep').value;
+            console.log('CEP informado:', destinationCep);
+            
+            if (!destinationCep) {
+                showCheckoutShippingError('Por favor, informe o seu CEP.');
+                return;
+            }
+            
+            // Validar formato do CEP
+            const cepRegex = /^\d{5}-?\d{3}$/;
+            if (!cepRegex.test(destinationCep.replace(/\D/g, ''))) {
+                showCheckoutShippingError('CEP inválido. Use o formato 00000-000.');
+                return;
+            }
+            
+            console.log('CEP válido, fazendo requisição...');
+            
+            // Mostrar loading
+            showCheckoutShippingLoading(true);
+            hideCheckoutShippingResult();
+            hideCheckoutShippingError();
+            
+            // Teste simples primeiro
+            console.log('Fazendo requisição para /cart/calculate-shipping');
+            console.log('Dados enviados:', { destinationAddress: destinationCep });
+            
+            fetch('/cart/calculate-shipping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    destinationAddress: destinationCep
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Checkout API Response:', data);
+                showCheckoutShippingLoading(false);
+                
+                if (data.errorMessage) {
+                    showCheckoutShippingError(data.errorMessage);
+                } else if (data.shippingCost === undefined || data.estimatedDeliveryTime === undefined) {
+                    showCheckoutShippingError('Resposta inválida do servidor. Tente novamente.');
+                } else {
+                    showCheckoutShippingResult(data);
+                    updateCheckoutShippingCost(data.shippingCost);
+                    
+                    // Salvar o frete calculado na sessão
+                    saveCheckoutShippingToSession(data.shippingCost, data.estimatedDeliveryTime, destinationCep);
+                }
+            })
+            .catch(error => {
+                console.error('Erro no cálculo de frete do checkout:', error);
+                showCheckoutShippingLoading(false);
+                showCheckoutShippingError('Erro de conexão ao calcular frete: ' + error.message);
+            });
+        }
+        
+        function showCheckoutShippingResult(data) {
+            const resultDiv = document.getElementById('checkoutShippingResult');
+            const timeDiv = document.getElementById('checkoutShippingTime');
+            const valueDiv = document.getElementById('checkoutShippingValue');
+            
+            if (data.estimatedDeliveryTime === undefined || data.shippingCost === undefined) {
+                showCheckoutShippingError('Dados de frete incompletos. Tente novamente.');
+                return;
+            }
+            
+            timeDiv.textContent = data.estimatedDeliveryTime || 'Não informado';
+            
+            const shippingCost = typeof data.shippingCost === 'number' ? data.shippingCost : parseFloat(data.shippingCost);
+            if (isNaN(shippingCost)) {
+                valueDiv.textContent = 'Erro no valor';
+            } else if (shippingCost === 0) {
+                valueDiv.textContent = 'Grátis';
+                valueDiv.style.color = '#28a745';
+            } else {
+                valueDiv.textContent = 'R$ ' + shippingCost.toFixed(2).replace('.', ',');
+                valueDiv.style.color = '#0c5460';
+            }
+            
+            resultDiv.style.display = 'block';
+        }
+        
+        function showCheckoutShippingError(message) {
+            const errorDiv = document.getElementById('checkoutShippingError');
+            const messageSpan = document.getElementById('checkoutShippingErrorMessage');
+            
+            messageSpan.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function showCheckoutShippingLoading(show) {
+            const loadingSpan = document.querySelector('.loading-checkout-shipping');
+            const normalSpan = document.querySelector('.normal-checkout-shipping');
+            const button = document.querySelector('button[id="calculateShippingButton"]');
+            
+            if (show) {
+                loadingSpan.style.display = 'inline';
+                normalSpan.style.display = 'none';
+                button.disabled = true;
+            } else {
+                loadingSpan.style.display = 'none';
+                normalSpan.style.display = 'inline';
+                button.disabled = false;
+            }
+        }
+        
+        function hideCheckoutShippingResult() {
+            document.getElementById('checkoutShippingResult').style.display = 'none';
+        }
+        
+        function hideCheckoutShippingError() {
+            document.getElementById('checkoutShippingError').style.display = 'none';
+        }
+        
+        function updateCheckoutShippingCost(shippingCost) {
+            // Atualizar o valor do frete no resumo do pedido
+            const shippingElement = document.querySelector('.order-summary ul li:nth-child(3)');
+            if (shippingElement) {
+                if (shippingCost === 0) {
+                    shippingElement.innerHTML = '<b>Frete:</b> <span style="color:#28a745;">Grátis</span>';
+                } else {
+                    shippingElement.innerHTML = '<b>Frete:</b> R$ <span>' + shippingCost.toFixed(2).replace('.', ',') + '</span>';
+                }
+            }
+            
+            // Atualizar o total
+            const subtotalElement = document.querySelector('.order-summary ul li:nth-child(2)');
+            const totalElement = document.querySelector('.order-summary ul li:last-child');
+            
+            if (subtotalElement && totalElement) {
+                const subtotalText = subtotalElement.textContent;
+                const subtotalMatch = subtotalText.match(/R\$ ([\d,]+)/);
+                
+                if (subtotalMatch) {
+                    const subtotal = parseFloat(subtotalMatch[1].replace(',', '.'));
+                    const total = subtotal + shippingCost;
+                    totalElement.innerHTML = '<b style="color:#388e3c;">Total:</b> <b style="color:#388e3c;">R$ ' + total.toFixed(2).replace('.', ',') + '</b>';
+                }
+            }
+        }
+        
+        function saveCheckoutShippingToSession(shippingCost, deliveryTime, destinationCep) {
+            fetch('/cart/save-shipping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shippingCost: shippingCost,
+                    estimatedDeliveryTime: deliveryTime,
+                    destinationCep: destinationCep
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Frete do checkout salvo na sessão:', data.message);
+                } else {
+                    console.warn('Erro ao salvar frete do checkout na sessão:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao salvar frete do checkout na sessão:', error);
+            });
+        }
+        
+        // Função global para limpar frete calculado
+        function clearCalculatedShipping() {
+            console.log('Função clearCalculatedShipping chamada');
+            
+            // Mostrar loading no botão
+            const button = document.getElementById('recalculateShippingButton');
+            if (button) {
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Limpando...';
+                button.disabled = true;
+            }
+            
+            // Abordagem simples: recarregar a página com parâmetro para limpar frete
+            console.log('Recarregando página para limpar frete...');
+            setTimeout(() => {
+                window.location.href = window.location.pathname + '?clearShipping=true';
+            }, 500);
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar event listener para o botão de calcular frete
+            const calculateButton = document.querySelector('button[id="calculateShippingButton"]');
+            if (calculateButton) {
+                calculateButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Botão de calcular frete clicado via event listener');
+                    calculateCheckoutShipping();
+                });
+            }
+            
+            // Adicionar event listener para o botão de recalcular frete
+            const recalculateButton = document.querySelector('button[id="recalculateShippingButton"]');
+            if (recalculateButton) {
+                recalculateButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Botão de recalcular frete clicado via event listener');
+                    clearCalculatedShipping();
+                });
+            }
+            
             // Mascarar campos
             const phoneInput = document.getElementById('phone');
             const zipCodeInput = document.getElementById('zipCode');
