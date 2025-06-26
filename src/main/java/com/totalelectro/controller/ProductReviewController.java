@@ -37,9 +37,19 @@ public class ProductReviewController {
             @RequestParam(required = false) List<MultipartFile> photos
     ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+            return ResponseEntity.status(403).body("Usuário não autenticado");
+        }
+        
         String userEmail = auth.getName();
-        ProductReviewDTO dto = reviewService.createReview(productId, userEmail, rating, comment, photos);
-        return ResponseEntity.ok(dto);
+        
+        try {
+            ProductReviewDTO dto = reviewService.createReview(productId, userEmail, rating, comment, photos);
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        }
     }
 
     @GetMapping("/can-review/product/{productId}/order/{orderId}")
@@ -58,5 +68,10 @@ public class ProductReviewController {
         }
         reviewService.deleteReviewById(reviewId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("API Reviews funcionando!");
     }
 } 
