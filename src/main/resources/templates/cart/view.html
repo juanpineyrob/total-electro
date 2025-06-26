@@ -693,7 +693,12 @@
                                 <div class="col-lg-4 col-md-4 mb-3 mb-md-0">
                                     <h5 class="product-name" th:text="${item.product.name}">Nome do Produto</h5>
                                     <p class="product-description" th:text="${item.product.short_description}">Descrição</p>
-                                    <p class="product-price" th:text="'R$' + ${#numbers.formatDecimal(item.product.price, 1, 2)}">R$0.00</p>
+                                    <span th:if="${item.product.discountPercent != null and item.product.discountPercent > 0}">
+                                        <span style="text-decoration:line-through;color:#999;" th:text="${'R$ ' + #numbers.formatDecimal(item.product.price, 1, 'POINT', 2, 'COMMA')}"></span>
+                                        <span th:text="${'R$ ' + #numbers.formatDecimal(item.product.price * (1 - item.product.discountPercent / 100.0), 1, 'POINT', 2, 'COMMA')}"></span>
+                                    </span>
+                                    <span th:unless="${item.product.discountPercent != null and item.product.discountPercent > 0}"
+                                          th:text="${'R$ ' + #numbers.formatDecimal(item.product.price, 1, 'POINT', 2, 'COMMA')}"></span>
                                 </div>
                                 <div class="col-lg-3 col-md-2 text-center mb-3 mb-md-0">
                                     <div class="quantity-controls">
@@ -708,7 +713,10 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 text-center mb-3 mb-md-0">
-                                    <p class="item-subtotal" th:text="'R$' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">R$0.00</p>
+                                    <p class="item-subtotal" th:if="${item.product.discountPercent != null and item.product.discountPercent > 0}"
+                                        th:text="'R$' + ${#numbers.formatDecimal(item.product.price * (1 - item.product.discountPercent / 100.0) * item.quantity, 1, 'POINT', 2, 'COMMA')}">R$0.00</p>
+                                    <p class="item-subtotal" th:unless="${item.product.discountPercent != null and item.product.discountPercent > 0}"
+                                        th:text="'R$' + ${#numbers.formatDecimal(item.product.price * item.quantity, 1, 'POINT', 2, 'COMMA')}">R$0.00</p>
                                 </div>
                                 <div class="col-lg-1 col-md-1 text-center">
                                     <button class="remove-btn" th:onclick="'removeFromCart(' + ${item.product.id} + ')'">
@@ -717,18 +725,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Campo de cupom de desconto -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <form th:action="@{/cart/apply-coupon}" method="post" class="d-flex align-items-center gap-2">
-                                    <input type="text" name="coupon" class="form-control" placeholder="Cupom de desconto" th:value="${appliedCoupon}">
-                                    <button type="submit" class="btn btn-primary" style="background:#f36f21; border:none;">Aplicar</button>
-                                </form>
-                                <div th:if="${couponMessage}" th:text="${couponMessage}" class="mt-2 custom-alert" th:classappend="${couponSuccess} ? 'alert-success' : 'alert-danger'"></div>
-                            </div>
-                        </div>
-                        <!-- Fim campo cupom -->
 
                         <!-- Resumo do Carrinho -->
                         <div class="cart-summary">
@@ -819,7 +815,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <a th:href="@{/checkout/cart}" class="btn-checkout">Finalizar Compra</a>
+                            <a th:href="@{/checkout/cart}" class="btn-checkout">Pagamento e Envio</a>
                             
                             <div class="text-center">
                                 <a href="/" class="continue-shopping">

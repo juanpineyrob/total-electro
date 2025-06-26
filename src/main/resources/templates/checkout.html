@@ -6,96 +6,97 @@
     <title>Finalizar Compra - Total Electro</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
         }
         
         .checkout-container {
-            min-height: 100vh;
-            background: #f8f9fa;
-            font-family: 'Roboto', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
         
         .checkout-header {
             background: white;
-            border-bottom: 1px solid #e9ecef;
-            padding: 16px 0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .back-button {
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #f36f21;
+        }
+
+        .back-link {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: none;
-            border: none;
+            color: #f36f21;
+            text-decoration: none;
+            font-weight: 500;
             padding: 8px 16px;
-            color: #6c757d;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(243, 111, 33, 0.1);
+            color: #f36f21;
             text-decoration: none;
-            border-radius: 4px;
-            transition: color 0.2s ease;
-            font-size: 14px;
-        }
-        
-        .back-button:hover {
-            color: #495057;
-            text-decoration: none;
-        }
-        
-        .checkout-main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 20px;
-        }
-        
-        .checkout-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #212529;
-            margin-bottom: 32px;
         }
         
         .checkout-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 32px;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
         }
         
         .form-section {
             background: white;
             border-radius: 8px;
-            border: 1px solid #e9ecef;
             padding: 24px;
-            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
         
-        .section-header {
+        .section-title {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e9ecef;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
         .section-icon {
-            background: #f8f9fa;
-            color: #f36f21;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
+            background: #f36f21;
+            color: white;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #212529;
-            margin: 0;
+            font-size: 16px;
         }
         
         .form-grid {
@@ -104,30 +105,28 @@
             gap: 16px;
         }
         
-        .form-grid-full {
-            grid-column: span 2;
-        }
-        
         .form-group {
             display: flex;
             flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
         }
         
         .form-label {
             font-weight: 500;
             margin-bottom: 6px;
-            color: #495057;
+            color: #555;
             font-size: 14px;
         }
         
         .form-input {
-            padding: 12px 16px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 14px;
-            transition: border-color 0.2s ease;
-            background: white;
-            color: #495057;
+            transition: border-color 0.3s ease;
         }
         
         .form-input:focus {
@@ -137,60 +136,42 @@
         }
         
         .form-input::placeholder {
-            color: #adb5bd;
-        }
-        
-        /* Estilos específicos para o campo de número do cartão */
-        .form-input[inputmode="numeric"] {
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
-        
-        .form-input[inputmode="numeric"]:focus {
-            border-color: #f36f21;
-            box-shadow: 0 0 0 2px rgba(243, 111, 33, 0.1);
-        }
-        
-        .form-input[inputmode="numeric"]:invalid {
-            border-color: #d32f2f;
+            color: #999;
         }
         
         .order-summary {
             background: white;
             border-radius: 8px;
-            border: 1px solid #e9ecef;
             padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             position: sticky;
-            top: 32px;
+            top: 20px;
             height: fit-content;
         }
         
         .summary-title {
             font-size: 18px;
             font-weight: 600;
-            color: #212529;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e9ecef;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
         .product-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #e9ecef;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .product-image {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-            background: #f8f9fa;
-            border-radius: 4px;
-            border: 1px solid #e9ecef;
-            padding: 8px;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #f0f0f0;
         }
         
         .product-info {
@@ -198,91 +179,224 @@
         }
         
         .product-name {
-            font-weight: 500;
+            font-weight: 600;
+            color: #333;
             margin-bottom: 4px;
-            color: #212529;
             font-size: 14px;
         }
         
-        .product-quantity {
-            color: #6c757d;
+        .product-details {
             font-size: 12px;
+            color: #666;
         }
         
         .product-price {
             font-weight: 600;
-            color: #212529;
-            font-size: 16px;
+            color: #f36f21;
+            font-size: 14px;
         }
         
-        .summary-calculations {
-            margin-bottom: 24px;
+        .summary-breakdown {
+            margin: 20px 0;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
         }
         
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
+            align-items: center;
+            padding: 6px 0;
             font-size: 14px;
-            color: #495057;
         }
         
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 600;
+        .summary-row.total {
             font-size: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #e9ecef;
-            margin-top: 16px;
-            color: #212529;
+            font-weight: 700;
+            color: #f36f21;
+            border-top: 1px solid #e1e5e9;
+            margin-top: 8px;
+            padding-top: 12px;
+        }
+
+        .shipping-calculator {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .shipping-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .shipping-form {
+            margin-bottom: 12px;
+        }
+
+        .shipping-form .form-label {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .shipping-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
         }
         
-        .checkout-button {
-            width: 100%;
-            background: #28a745;
+        .shipping-input:focus {
+            outline: none;
+            border-color: #f36f21;
+        }
+
+        .calculate-btn {
+            background: #f36f21;
             color: white;
             border: none;
-            padding: 16px 24px;
-            border-radius: 4px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        
+        .calculate-btn:hover {
+            background: #e05a0c;
+            transform: translateY(-1px);
+        }
+        
+        .calculate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .shipping-result {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .shipping-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            color: #721c24;
+            display: none;
+        }
+
+        .shipping-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .shipping-info div {
+            text-align: center;
+        }
+        
+        .shipping-info small {
+            color: #666;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .shipping-info strong {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .checkout-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .checkout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+            
+        .security-badge {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-        
-        .checkout-button:hover {
-            background: #218838;
-        }
-        
-        .checkout-button:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-        
-        .security-text {
+            margin-top: 12px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
             font-size: 12px;
-            color: #6c757d;
-            text-align: center;
-            margin-top: 16px;
+            color: #666;
+            }
+            
+        .loading-spinner {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
         
-        .badge {
-            background: #f36f21;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .recalculate-btn {
+            background: #dc3545;
             color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: 12px;
-            font-weight: 500;
-            margin-left: auto;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            }
+            
+        .recalculate-btn:hover {
+            background: #c82333;
         }
-        
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+
+        @media (max-width: 768px) {
             .checkout-grid {
                 grid-template-columns: 1fr;
             }
@@ -291,603 +405,219 @@
                 grid-template-columns: 1fr;
             }
             
-            .order-summary {
-                position: static;
-                margin-top: 24px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .checkout-main {
-                padding: 24px 16px;
-            }
-            
-            .checkout-title {
-                font-size: 24px;
-            }
-            
-            .form-section, .order-summary {
-                padding: 20px;
-            }
-            
-            .section-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 16px;
+            .form-group.full-width {
+                grid-column: span 1;
             }
         }
     </style>
 </head>
 <body>
+   
+
     <div class="checkout-container">
-        <!-- Header simplificado -->
-        <header class="checkout-header">
-            <div class="container mx-auto px-4 py-4">
-                <a href="/" class="back-button">
-                    <span>←</span>
-                    <span>Voltar à loja</span>
+        <!-- Header -->
+        <div class="checkout-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-bolt"></i>
+                    Total Electro
+                </div>
+                <a href="/cart" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar ao Carrinho
                 </a>
             </div>
-        </header>
-
-        <main class="checkout-main">
-            <h1 class="checkout-title">Finalizar Compra</h1>
+        </div>
             
             <div class="checkout-grid">
-                <!-- Formulário de checkout -->
-                <div>
-                    <form id="checkout-form" th:action="@{/checkout/process}" method="post" th:if="${!isCartCheckout}">
-                        <input type="hidden" name="productId" th:value="${product?.id}">
-                        <input type="hidden" name="quantity" th:value="${quantity}">
-                        
+            <!-- Formulário de Checkout -->
+            <div class="checkout-form">
+                <form id="checkout-form" th:action="@{/checkout/process}" method="post">
                         <!-- Dados Pessoais -->
                         <div class="form-section">
-                            <div class="section-header">
-                                <div class="section-icon">👤</div>
-                                <h2 class="section-title">Dados Pessoais</h2>
+                        <h2 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-user"></i>
                             </div>
-                            
+                            Dados Pessoais
+                        </h2>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="firstName" class="form-label">Nome</label>
-                                    <input
-                                        id="firstName"
-                                        name="firstName"
-                                        type="text"
-                                        th:value="${user?.firstName}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Digite seu nome"
-                                    />
+                                <label class="form-label">Nome</label>
+                                <input type="text" name="firstName" class="form-input" required th:value="${user?.firstName}" placeholder="Digite seu nome">
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastName" class="form-label">Sobrenome</label>
-                                    <input
-                                        id="lastName"
-                                        name="lastName"
-                                        type="text"
-                                        th:value="${user?.lastName}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Digite seu sobrenome"
-                                    />
+                                <label class="form-label">Sobrenome</label>
+                                <input type="text" name="lastName" class="form-input" required th:value="${user?.lastName}" placeholder="Digite seu sobrenome">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email" class="form-label">E-mail</label>
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        th:value="${user?.email}"
-                                        required
-                                        class="form-input"
-                                        placeholder="seu@email.com"
-                                    />
+                                <label class="form-label">E-mail</label>
+                                <input type="email" name="email" class="form-input" required th:value="${user?.email}" placeholder="seu@email.com">
                                 </div>
                                 <div class="form-group">
-                                    <label for="phone" class="form-label">Telefone</label>
-                                    <input
-                                        id="phone"
-                                        name="phone"
-                                        type="tel"
-                                        th:value="${user?.phoneNumber}"
-                                        required
-                                        class="form-input"
-                                        placeholder="(00) 00000-0000"
-                                    />
+                                <label class="form-label">Telefone</label>
+                                <input type="tel" name="phone" id="phone" class="form-input" required th:value="${user?.phoneNumber}" placeholder="(11) 99999-9999">
                                 </div>
                             </div>
                         </div>
-
                         <!-- Endereço de Entrega -->
                         <div class="form-section">
-                            <div class="section-header">
-                                <div class="section-icon">📍</div>
-                                <h2 class="section-title">Endereço de Entrega</h2>
+                        <h2 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-map-marker-alt"></i>
                             </div>
-                            
+                            Endereço de Entrega
+                        </h2>
                             <div class="form-grid">
-                                <div class="form-group form-grid-full">
-                                    <label for="address" class="form-label">Endereço completo</label>
-                                    <input
-                                        id="address"
-                                        name="address"
-                                        type="text"
-                                        th:value="${user?.address}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Rua, número, complemento"
-                                    />
+                                <div class="form-group">
+                                <label class="form-label">CEP</label>
+                                <input type="text" name="zipCode" id="zipCode" class="form-input" required placeholder="00000-000">
                                 </div>
                                 <div class="form-group">
-                                    <label for="city" class="form-label">Cidade</label>
-                                    <input
-                                        id="city"
-                                        name="city"
-                                        type="text"
-                                        th:value="${user?.city}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Nome da cidade"
-                                    />
+                                <label class="form-label">Estado</label>
+                                <input type="text" name="state" class="form-input" required placeholder="SP">
                                 </div>
                                 <div class="form-group">
-                                    <label for="state" class="form-label">Estado</label>
-                                    <input
-                                        id="state"
-                                        name="state"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="Estado/Província"
-                                    />
+                                <label class="form-label">Cidade</label>
+                                <input type="text" name="city" class="form-input" required th:value="${user?.city}" placeholder="São Paulo">
                                 </div>
                                 <div class="form-group">
-                                    <label for="zipCode" class="form-label">CEP</label>
-                                    <input
-                                        id="zipCode"
-                                        name="zipCode"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="00000-000"
-                                    />
+                                <label class="form-label">Bairro</label>
+                                <input type="text" name="neighborhood" class="form-input" required placeholder="Centro">
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Dados de Pagamento -->
+                                <div class="form-group">
+                                <label class="form-label">Endereço</label>
+                                <input type="text" name="address" class="form-input" required th:value="${user?.address}" placeholder="Rua das Flores, 123">
+                                </div>
+                                <div class="form-group">
+                                <label class="form-label">Complemento</label>
+                                <input type="text" name="complement" class="form-input" placeholder="Apto 101">
+                                </div>
+                                </div>
+                                </div>
+                    <!-- Pagamento -->
                         <div class="form-section">
-                            <div class="section-header">
-                                <div class="section-icon">💳</div>
-                                <h2 class="section-title">Dados de Pagamento</h2>
-                                <span class="badge">Seguro</span>
+                        <h2 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-credit-card"></i>
                             </div>
-                            
+                            Informações de Pagamento
+                        </h2>
                             <div class="form-grid">
-                                <div class="form-group form-grid-full">
-                                    <label for="cardName" class="form-label">Nome no cartão</label>
-                                    <input
-                                        id="cardName"
-                                        name="cardName"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="Nome como aparece no cartão"
-                                    />
-                                </div>
-                                <div class="form-group form-grid-full">
-                                    <label for="cardNumber" class="form-label">Número do cartão</label>
-                                    <input
-                                        id="cardNumber"
-                                        name="cardNumber"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="1234 5678 9012 3456"
-                                        maxlength="19"
-                                        pattern="\d{4} \d{4} \d{4} \d{4}"
-                                        autocomplete="cc-number"
-                                        inputmode="numeric"
-                                    />
-                                    <span id="cardNumberError" style="color:#d32f2f; font-size:13px; display:none;">Número de cartão inválido. Digite um cartão válido com 16 dígitos.</span>
+                            <div class="form-group full-width">
+                                <label class="form-label">Número do Cartão</label>
+                                <input type="text" name="cardNumber" id="cardNumber" class="form-input" required placeholder="0000 0000 0000 0000" maxlength="19">
                                 </div>
                                 <div class="form-group">
-                                    <label for="expiryDate" class="form-label">Data de expiração</label>
-                                    <input
-                                        id="expiryDate"
-                                        name="expiryDate"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="MM/AA"
-                                        maxlength="5"
-                                    />
+                                <label class="form-label">Nome no Cartão</label>
+                                <input type="text" name="cardName" class="form-input" required placeholder="NOME COMO ESTÁ NO CARTÃO">
                                 </div>
                                 <div class="form-group">
-                                    <label for="cvv" class="form-label">CVV</label>
-                                    <input
-                                        id="cvv"
-                                        name="cvv"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="123"
-                                        maxlength="4"
-                                    />
+                                <label class="form-label">Data de Validade</label>
+                                <input type="text" name="expiryDate" id="expiryDate" class="form-input" required placeholder="MM/AA" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                <label class="form-label">CVV</label>
+                                <input type="text" name="cvv" id="cvv" class="form-input" required placeholder="123" maxlength="4">
                                 </div>
                             </div>
                         </div>
-                    </form>
-
-                    <!-- Formulário para checkout de carrinho -->
-                    <form id="checkout-form" th:action="@{/checkout/process-cart}" method="post" th:if="${isCartCheckout}">
-                        <!-- Dados Pessoais -->
-                        <div class="form-section">
-                            <div class="section-header">
-                                <div class="section-icon">👤</div>
-                                <h2 class="section-title">Dados Pessoais</h2>
+                </form>
                             </div>
-                            
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="firstName" class="form-label">Nome</label>
-                                    <input
-                                        id="firstName"
-                                        name="firstName"
-                                        type="text"
-                                        th:value="${user?.firstName}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Digite seu nome"
-                                    />
+            <!-- Resumo do Pedido -->
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-body">
+                    <h5 class="card-title" style="font-weight: bold;">
+                        <i class="fas fa-shopping-cart me-2" style="color: #f36f21;"></i>Resumo do Pedido
+                    </h5>
+                    
+                    <!-- Campo de cupom de desconto -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <form id="couponForm" class="d-flex align-items-center gap-2">
+                                <input type="text" name="coupon" id="couponInput" class="form-control" placeholder="Cupom de desconto" th:value="${appliedCoupon}">
+                                <button type="submit" class="btn btn-primary" style="background:#f36f21; border:none;">Aplicar</button>
+                            </form>
+                            <div id="couponMessage" class="mt-2 custom-alert"></div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="lastName" class="form-label">Sobrenome</label>
-                                    <input
-                                        id="lastName"
-                                        name="lastName"
-                                        type="text"
-                                        th:value="${user?.lastName}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Digite seu sobrenome"
-                                    />
                                 </div>
-                                <div class="form-group">
-                                    <label for="email" class="form-label">E-mail</label>
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        th:value="${user?.email}"
-                                        required
-                                        class="form-input"
-                                        placeholder="seu@email.com"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone" class="form-label">Telefone</label>
-                                    <input
-                                        id="phone"
-                                        name="phone"
-                                        type="tel"
-                                        th:value="${user?.phoneNumber}"
-                                        required
-                                        class="form-input"
-                                        placeholder="(00) 00000-0000"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Endereço de Entrega -->
-                        <div class="form-section">
-                            <div class="section-header">
-                                <div class="section-icon">📍</div>
-                                <h2 class="section-title">Endereço de Entrega</h2>
-                            </div>
-                            
-                            <div class="form-grid">
-                                <div class="form-group form-grid-full">
-                                    <label for="address" class="form-label">Endereço completo</label>
-                                    <input
-                                        id="address"
-                                        name="address"
-                                        type="text"
-                                        th:value="${user?.address}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Rua, número, complemento"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label for="city" class="form-label">Cidade</label>
-                                    <input
-                                        id="city"
-                                        name="city"
-                                        type="text"
-                                        th:value="${user?.city}"
-                                        required
-                                        class="form-input"
-                                        placeholder="Nome da cidade"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label for="state" class="form-label">Estado</label>
-                                    <input
-                                        id="state"
-                                        name="state"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="Estado/Província"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label for="zipCode" class="form-label">CEP</label>
-                                    <input
-                                        id="zipCode"
-                                        name="zipCode"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="00000-000"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dados de Pagamento -->
-                        <div class="form-section">
-                            <div class="section-header">
-                                <div class="section-icon">💳</div>
-                                <h2 class="section-title">Dados de Pagamento</h2>
-                                <span class="badge">Seguro</span>
-                            </div>
-                            
-                            <div class="form-grid">
-                                <div class="form-group form-grid-full">
-                                    <label for="cardName" class="form-label">Nome no cartão</label>
-                                    <input
-                                        id="cardName"
-                                        name="cardName"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="Nome como aparece no cartão"
-                                    />
-                                </div>
-                                <div class="form-group form-grid-full">
-                                    <label for="cardNumber" class="form-label">Número do cartão</label>
-                                    <input
-                                        id="cardNumber"
-                                        name="cardNumber"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="1234 5678 9012 3456"
-                                        maxlength="19"
-                                        pattern="\d{4} \d{4} \d{4} \d{4}"
-                                        autocomplete="cc-number"
-                                        inputmode="numeric"
-                                    />
-                                    <span id="cardNumberError" style="color:#d32f2f; font-size:13px; display:none;">Número de cartão inválido. Digite um cartão válido com 16 dígitos.</span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="expiryDate" class="form-label">Data de expiração</label>
-                                    <input
-                                        id="expiryDate"
-                                        name="expiryDate"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="MM/AA"
-                                        maxlength="5"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label for="cvv" class="form-label">CVV</label>
-                                    <input
-                                        id="cvv"
-                                        name="cvv"
-                                        type="text"
-                                        required
-                                        class="form-input"
-                                        placeholder="123"
-                                        maxlength="4"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        
-                    </form>
+                    <!-- Fim campo cupom -->
+                    
+                    <!-- Lista de produtos do carrinho (debug: SEM th:if) -->
+                    <div id="cartItemsContainer">
+                        <em>Carregando produtos do carrinho...</em>
                 </div>
 
-                <!-- Resumo do Pedido -->
-                <div>
-                    <div class="order-summary">
-                        <h2 class="summary-title">Resumo do Pedido</h2>
+                    <hr>
                         
-                        <!-- RESUMO TÉCNICO DO PEDIDO -->
-                        <div style="background:#f4f6fb; color:#222; padding:18px; margin-bottom:18px; border-radius:8px; font-size:15px; border:1px solid #e9ecef; box-shadow:0 1px 2px #0001; max-width:400px;">
-                            <b style="font-size:16px; color:#1a237e;">Resumo Técnico do Pedido</b>
-                            <ul style="list-style:none; padding:0; margin:12px 0 0 0;">
-                                <li><b>Itens no carrinho:</b> <span th:text="${#lists.size(cartItems)}">0</span></li>
-                                <li><b>Subtotal dos produtos:</b> R$ <span th:text="${#numbers.formatDecimal(subtotal, 0, 2)}">0,00</span></li>
-                                <li><b>Frete:</b> R$ <span th:text="${#numbers.formatDecimal(shipping, 0, 2)}">0,00</span></li>
-                                <li style="margin-top:8px;"><b style="color:#388e3c;">Total:</b> <b style="color:#388e3c;">R$ <span th:text="${#numbers.formatDecimal(total, 0, 2)}">0,00</span></b></li>
-                            </ul>
-                        </div>
-                        
-                        <!-- Calculadora de Frete -->
-                        <div style="background:#f8f9fa; padding:18px; margin-bottom:18px; border-radius:8px; border:1px solid #e9ecef;">
-                            <h6 style="margin-bottom:16px; color:#495057;">
-                                <i class="fas fa-shipping-fast me-2"></i>Calcular Frete
-                            </h6>
-                            
-                            <!-- Frete já calculado -->
-                            <div th:if="${calculatedShipping != null}" style="margin-bottom:16px;">
-                                <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:4px; padding:12px; color:#155724;">
-                                    <h6 style="margin-bottom:8px;">
-                                        <i class="fas fa-check-circle me-2"></i>Frete Calculado
-                                    </h6>
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                                        <div>
-                                            <small style="color:#6c757d;">CEP:</small>
-                                            <div style="font-weight:bold;" th:text="${calculatedDestinationCep}">00000-000</div>
-                                        </div>
-                                        <div>
-                                            <small style="color:#6c757d;">Prazo:</small>
-                                            <div style="font-weight:bold;" th:text="${calculatedDeliveryTime}">Não informado</div>
-                                        </div>
-                                        <div>
-                                            <small style="color:#6c757d;">Valor:</small>
-                                            <div style="font-weight:bold; color:#28a745;" th:if="${calculatedShipping == 0}">Grátis</div>
-                                            <div style="font-weight:bold;" th:if="${calculatedShipping > 0}" th:text="'R$ ' + ${#numbers.formatDecimal(calculatedShipping, 0, 2)}">R$ 0,00</div>
-                                        </div>
-                                    </div>
-                                    <button type="button" 
-                                            id="recalculateShippingButton"
-                                            onclick="clearCalculatedShipping()" 
-                                            style="background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">
-                                        <i class="fas fa-times me-1"></i>Recalcular
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Calculadora de frete (mostrar apenas se não há frete calculado) -->
-                            <div th:if="${calculatedShipping == null}" style="margin-bottom:16px;">
-                                <label for="checkoutDestinationCep" style="font-size:14px; color:#495057; margin-bottom:8px; display:block;">
-                                    <i class="fas fa-map-marker-alt me-2"></i>Informe seu CEP para calcular o frete
-                                </label>
-                                <div style="display:flex; gap:8px;">
-                                    <input type="text" 
-                                           id="checkoutDestinationCep" 
-                                           placeholder="00000-000" 
-                                           style="flex:1; padding:8px 12px; border:1px solid #ced4da; border-radius:4px; font-size:14px;">
-                                    <button type="button" 
-                                            id="calculateShippingButton"
-                                            style="background:#f36f21; color:white; border:none; padding:8px 16px; border-radius:4px; font-size:14px; cursor:pointer;">
-                                        <span class="loading-checkout-shipping" style="display: none;">
-                                            <span class="spinner-border spinner-border-sm" role="status"></span>
-                                        </span>
-                                        <span class="normal-checkout-shipping">
-                                           <i class="fas fa-calculator me-1"></i> Calcular
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Resultado do cálculo de frete -->
-                            <div id="checkoutShippingResult" style="display: none;" class="mt-3">
-                                <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:4px; padding:12px;">
-                                    <h6 style="margin-bottom:12px; color:#0c5460;">
-                                        <i class="fas fa-info-circle me-2"></i>Resultado do Cálculo
-                                    </h6>
-                                    <div style="display:flex; justify-content:space-between;">
-                                        <div>
-                                            <small style="color:#6c757d;">Prazo de Entrega:</small>
-                                            <div id="checkoutShippingTime" style="font-weight:bold; color:#0c5460;"></div>
-                                        </div>
-                                        <div>
-                                            <small style="color:#6c757d;">Valor do Frete:</small>
-                                            <div id="checkoutShippingValue" style="font-weight:bold; color:#0c5460;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Erro do cálculo de frete -->
-                            <div id="checkoutShippingError" style="display: none;" class="mt-3">
-                                <div style="background:#f8d7da; border:1px solid #f5c6cb; border-radius:4px; padding:12px; color:#721c24;">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    <span id="checkoutShippingErrorMessage"></span>
-                                </div>
-                            </div>
+                    <!-- Desconto do cupom -->
+                    <div th:if="${discountTotal != null and discountTotal > 0}" class="d-flex justify-content-between">
+                        <span>Desconto (LUZ15):</span>
+                        <span style="font-weight:600;color:#28a745;" th:text="${'-R$ ' + #numbers.formatDecimal(discountTotal, 1, 'POINT', 2, 'COMMA')}">-R$ 0,00</span>
                         </div>
 
-                        <!-- Botão de finalizar compra -->
-                        <div style="text-align:right; margin-top:24px;">
-                            <button type="submit" form="checkout-form" class="checkout-button">
-                                🔒 Finalizar Compra
+                    <div class="d-flex justify-content-between">
+                        <span>Subtotal:</span>
+                        <span id="checkoutSubtotal" style="font-weight:600;" th:text="${'R$ ' + #numbers.formatDecimal(subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                            </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span>Frete:</span>
+                        <span id="checkoutShippingValue" style="font-weight:600;" th:text="${'R$ ' + #numbers.formatDecimal(shipping, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                        </div>
+                    <div class="d-flex justify-content-between mt-2" style="font-size: 1.1em;">
+                        <span style="font-weight:600;">Total:</span>
+                        <span id="checkoutTotal" style="font-weight:700;color:#28a745;" th:text="${'R$ ' + #numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+                                </div>
+                    <hr>
+                    <!-- Calculadora de Frete -->
+                    <div>
+                        <label for="destinationCep" class="form-label" style="font-weight:500;">
+                            <i class="fas fa-map-marker-alt me-1"></i> Calcule o frete
+                        </label>
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" id="destinationCep" placeholder="00000-000">
+                            <button class="btn btn-primary" type="button" id="calculateBtn" onclick="calculateShipping()">
+                                <span class="spinner-border spinner-border-sm d-none" id="loadingSpinner"></span>
+                                <span id="calculateText"><i class="fas fa-calculator me-1"></i>Calcular</span>
                             </button>
-                        </div>
-
-                        <!-- Produto único -->
-                        <div class="product-item" th:if="${product && !isCartCheckout}">
-                            <img
-                                th:src="${product.imageUrl ?: '/images/no-image.png'}"
-                                th:alt="${product.name}"
-                                class="product-image"
-                            />
-                            <div class="product-info">
-                                <h3 class="product-name" th:text="${product.name}">Nome do Produto</h3>
-                                <p class="product-quantity">Quantidade: <span th:text="${quantity}">1</span></p>
                             </div>
-                            <span class="product-price">$<span th:text="${#numbers.formatDecimal(product.price, 0, 2)}">0,00</span></span>
+                        <div id="shippingResult" class="alert alert-info py-2 px-3 d-none" style="font-size:14px;">
+                            <div><strong>Prazo de entrega:</strong> <span id="shippingTime"></span></div>
+                            <div><strong>Valor do frete:</strong> <span id="shippingValue"></span></div>
                         </div>
-
-                        <!-- Itens do carrinho -->
-                        <div th:if="${isCartCheckout && cartItems != null && #lists.size(cartItems) > 0}">
-                            <div th:each="item : ${cartItems}" class="product-item">
-                                <img th:src="${item.product.imageUrl != null ? item.product.imageUrl : '/images/no-image.png'}"
-                                     th:alt="${item.product.name}"
-                                     class="product-image"/>
-                                <div class="product-info">
-                                    <h3 class="product-name" th:text="${item.product.name}">Nome do Produto</h3>
-                                    <p class="product-quantity">Quantidade: <span th:text="${item.quantity}">1</span></p>
-                                    <p class="product-unit-price">Preço unitário: $<span th:text="${#numbers.formatDecimal(item.product.price, 0, 2)}">0,00</span></p>
-                                </div>
-                                <span class="product-price">Total: $<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 2)}">0,00</span></span>
-                            </div>
+                        <div id="shippingError" class="alert alert-danger py-2 px-3 d-none" style="font-size:14px;">
+                            <span id="shippingErrorMessage"></span>
                         </div>
-
-                        <!-- Mensagem se não houver produtos -->
-                        <div th:if="${!product && (!cartItems or #lists.isEmpty(cartItems))}">
-                            <p style="color: #888; text-align: center; margin: 32px 0;">Nenhum produto encontrado para o resumo do pedido.</p>
-                        </div>
-
-                        <p class="security-text">
-                            Seus dados estão protegidos com criptografia SSL
-                        </p>
                     </div>
+                    <button class="btn btn-success w-100 mt-3" id="btnFinalizarCompra" type="submit" form="checkout-form">
+                        <i class="fas fa-lock me-1"></i> Finalizar Compra
+                    </button>
                 </div>
             </div>
-        </main>
+                </div>
     </div>
 
     <script>
-        // Funções globais para calculadora de frete do checkout
-        function calculateCheckoutShipping() {
-            console.log('Função calculateCheckoutShipping chamada');
-            const destinationCep = document.getElementById('checkoutDestinationCep').value;
-            console.log('CEP informado:', destinationCep);
-            
+        // Função para calcular frete (igual ao carrinho)
+        function calculateShipping() {
+            const destinationCep = document.getElementById('destinationCep').value;
             if (!destinationCep) {
-                showCheckoutShippingError('Por favor, informe o seu CEP.');
+                showShippingError('Por favor, informe o seu CEP.');
+                clearShippingCost();
                 return;
             }
-            
             // Validar formato do CEP
             const cepRegex = /^\d{5}-?\d{3}$/;
             if (!cepRegex.test(destinationCep.replace(/\D/g, ''))) {
-                showCheckoutShippingError('CEP inválido. Use o formato 00000-000.');
+                showShippingError('CEP inválido. Use o formato 00000-000.');
+                clearShippingCost();
                 return;
             }
-            
-            console.log('CEP válido, fazendo requisição...');
-            
             // Mostrar loading
-            showCheckoutShippingLoading(true);
-            hideCheckoutShippingResult();
-            hideCheckoutShippingError();
-            
-            // Teste simples primeiro
-            console.log('Fazendo requisição para /cart/calculate-shipping');
-            console.log('Dados enviados:', { destinationAddress: destinationCep });
-            
+            showShippingLoading(true);
+            hideShippingResult();
+            hideShippingError();
+            clearShippingCost();
             fetch('/cart/calculate-shipping', {
                 method: 'POST',
                 headers: {
@@ -904,114 +634,106 @@
                 return response.json();
             })
             .then(data => {
-                console.log('Checkout API Response:', data);
-                showCheckoutShippingLoading(false);
-                
+                showShippingLoading(false);
                 if (data.errorMessage) {
-                    showCheckoutShippingError(data.errorMessage);
+                    showShippingError(data.errorMessage);
+                    clearShippingCost();
                 } else if (data.shippingCost === undefined || data.estimatedDeliveryTime === undefined) {
-                    showCheckoutShippingError('Resposta inválida do servidor. Tente novamente.');
+                    showShippingError('Resposta inválida do servidor. Tente novamente.');
+                    clearShippingCost();
                 } else {
-                    showCheckoutShippingResult(data);
-                    updateCheckoutShippingCost(data.shippingCost);
-                    
-                    // Salvar o frete calculado na sessão
-                    saveCheckoutShippingToSession(data.shippingCost, data.estimatedDeliveryTime, destinationCep);
+                    showShippingResult(data);
+                    updateShippingCost(data.shippingCost);
+                    saveShippingToSession(data.shippingCost, data.estimatedDeliveryTime, destinationCep);
                 }
             })
             .catch(error => {
-                console.error('Erro no cálculo de frete do checkout:', error);
-                showCheckoutShippingLoading(false);
-                showCheckoutShippingError('Erro de conexão ao calcular frete: ' + error.message);
-            });
-        }
-        
-        function showCheckoutShippingResult(data) {
-            const resultDiv = document.getElementById('checkoutShippingResult');
-            const timeDiv = document.getElementById('checkoutShippingTime');
-            const valueDiv = document.getElementById('checkoutShippingValue');
-            
+                showShippingLoading(false);
+                showShippingError('Erro de conexão ao calcular frete: ' + error.message);
+                clearShippingCost();
+                });
+            }
+        function showShippingResult(data) {
+            const resultDiv = document.getElementById('shippingResult');
+            const timeDiv = document.getElementById('shippingTime');
+            const valueDiv = document.getElementById('shippingValue');
             if (data.estimatedDeliveryTime === undefined || data.shippingCost === undefined) {
-                showCheckoutShippingError('Dados de frete incompletos. Tente novamente.');
+                showShippingError('Dados de frete incompletos. Tente novamente.');
                 return;
             }
-            
             timeDiv.textContent = data.estimatedDeliveryTime || 'Não informado';
-            
             const shippingCost = typeof data.shippingCost === 'number' ? data.shippingCost : parseFloat(data.shippingCost);
             if (isNaN(shippingCost)) {
                 valueDiv.textContent = 'Erro no valor';
             } else if (shippingCost === 0) {
                 valueDiv.textContent = 'Grátis';
-                valueDiv.style.color = '#28a745';
-            } else {
+                valueDiv.className = 'fw-bold text-success';
+                    } else {
                 valueDiv.textContent = 'R$ ' + shippingCost.toFixed(2).replace('.', ',');
-                valueDiv.style.color = '#0c5460';
+                valueDiv.className = 'fw-bold';
             }
-            
             resultDiv.style.display = 'block';
         }
-        
-        function showCheckoutShippingError(message) {
-            const errorDiv = document.getElementById('checkoutShippingError');
-            const messageSpan = document.getElementById('checkoutShippingErrorMessage');
-            
+        function showShippingError(message) {
+            const errorDiv = document.getElementById('shippingError');
+            const messageSpan = document.getElementById('shippingErrorMessage');
             messageSpan.textContent = message;
             errorDiv.style.display = 'block';
-        }
-        
-        function showCheckoutShippingLoading(show) {
-            const loadingSpan = document.querySelector('.loading-checkout-shipping');
-            const normalSpan = document.querySelector('.normal-checkout-shipping');
-            const button = document.querySelector('button[id="calculateShippingButton"]');
-            
+                    }
+        function showShippingLoading(show) {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const calculateText = document.getElementById('calculateText');
+            const calculateBtn = document.getElementById('calculateBtn');
             if (show) {
-                loadingSpan.style.display = 'inline';
-                normalSpan.style.display = 'none';
-                button.disabled = true;
+                loadingSpinner.style.display = 'inline-block';
+                calculateText.style.display = 'none';
+                calculateBtn.disabled = true;
             } else {
-                loadingSpan.style.display = 'none';
-                normalSpan.style.display = 'inline';
-                button.disabled = false;
+                loadingSpinner.style.display = 'none';
+                calculateText.style.display = 'inline';
+                calculateBtn.disabled = false;
             }
         }
-        
-        function hideCheckoutShippingResult() {
-            document.getElementById('checkoutShippingResult').style.display = 'none';
+        function hideShippingResult() {
+            document.getElementById('shippingResult').style.display = 'none';
         }
-        
-        function hideCheckoutShippingError() {
-            document.getElementById('checkoutShippingError').style.display = 'none';
+        function hideShippingError() {
+            document.getElementById('shippingError').style.display = 'none';
         }
-        
-        function updateCheckoutShippingCost(shippingCost) {
-            // Atualizar o valor do frete no resumo do pedido
-            const shippingElement = document.querySelector('.order-summary ul li:nth-child(3)');
-            if (shippingElement) {
-                if (shippingCost === 0) {
-                    shippingElement.innerHTML = '<b>Frete:</b> <span style="color:#28a745;">Grátis</span>';
-                } else {
-                    shippingElement.innerHTML = '<b>Frete:</b> R$ <span>' + shippingCost.toFixed(2).replace('.', ',') + '</span>';
-                }
+        function updateShippingCost(shippingCost) {
+            if (typeof shippingCost === 'undefined') {
+                showShippingError('Ocorreu um erro interno ao atualizar o custo do frete.');
+                return;
             }
+            const shippingValue = document.getElementById('checkoutShippingValue');
+            const totalValue = document.getElementById('checkoutTotal');
             
-            // Atualizar o total
-            const subtotalElement = document.querySelector('.order-summary ul li:nth-child(2)');
-            const totalElement = document.querySelector('.order-summary ul li:last-child');
-            
-            if (subtotalElement && totalElement) {
-                const subtotalText = subtotalElement.textContent;
-                const subtotalMatch = subtotalText.match(/R\$ ([\d,]+)/);
-                
-                if (subtotalMatch) {
-                    const subtotal = parseFloat(subtotalMatch[1].replace(',', '.'));
-                    const total = subtotal + shippingCost;
-                    totalElement.innerHTML = '<b style="color:#388e3c;">Total:</b> <b style="color:#388e3c;">R$ ' + total.toFixed(2).replace('.', ',') + '</b>';
-                }
+            // Atualizar valor do frete
+            if (shippingCost === 0) {
+                shippingValue.innerHTML = '<strong style="color: #28a745;">Grátis</strong>';
+                                } else {
+                shippingValue.innerHTML = '<strong>R$ ' + shippingCost.toFixed(2).replace('.', ',') + '</strong>';
             }
+
+            // Calcular e atualizar total
+            const subtotalText = document.getElementById('checkoutSubtotal').textContent;
+            const subtotal = parseFloat(subtotalText.replace('R$ ', '').replace(/\./g, '').replace(',', '.'));
+            const total = subtotal + shippingCost;
+            
+            totalValue.innerHTML = '<strong>R$ ' + total.toFixed(2).replace('.', ',') + '</strong>';
         }
-        
-        function saveCheckoutShippingToSession(shippingCost, deliveryTime, destinationCep) {
+        function clearShippingCost() {
+            const shippingValue = document.getElementById('checkoutShippingValue');
+            const totalValue = document.getElementById('checkoutTotal');
+            
+            shippingValue.innerHTML = '<strong>R$ 0,00</strong>';
+            
+            const subtotalText = document.getElementById('checkoutSubtotal').textContent;
+            const subtotal = parseFloat(subtotalText.replace('R$ ', '').replace(/\./g, '').replace(',', '.'));
+            
+            totalValue.innerHTML = '<strong>R$ ' + subtotal.toFixed(2).replace('.', ',') + '</strong>';
+        }
+        function saveShippingToSession(shippingCost, deliveryTime, destinationCep) {
             fetch('/cart/save-shipping', {
                 method: 'POST',
                 headers: {
@@ -1024,274 +746,101 @@
                 })
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Frete do checkout salvo na sessão:', data.message);
-                } else {
-                    console.warn('Erro ao salvar frete do checkout na sessão:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao salvar frete do checkout na sessão:', error);
-            });
-        }
-        
-        // Função global para limpar frete calculado
-        function clearCalculatedShipping() {
-            console.log('Função clearCalculatedShipping chamada');
-            
-            // Mostrar loading no botão
-            const button = document.getElementById('recalculateShippingButton');
-            if (button) {
-                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Limpando...';
-                button.disabled = true;
-            }
-            
-            // Abordagem simples: recarregar a página com parâmetro para limpar frete
-            console.log('Recarregando página para limpar frete...');
-            setTimeout(() => {
-                window.location.href = window.location.pathname + '?clearShipping=true';
-            }, 500);
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // Adicionar event listener para o botão de calcular frete
-            const calculateButton = document.querySelector('button[id="calculateShippingButton"]');
-            if (calculateButton) {
-                calculateButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Botão de calcular frete clicado via event listener');
-                    calculateCheckoutShipping();
-                });
-            }
-            
-            // Adicionar event listener para o botão de recalcular frete
-            const recalculateButton = document.querySelector('button[id="recalculateShippingButton"]');
-            if (recalculateButton) {
-                recalculateButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Botão de recalcular frete clicado via event listener');
-                    clearCalculatedShipping();
-                });
-            }
-            
-            // Mascarar campos
-            const phoneInput = document.getElementById('phone');
-            const zipCodeInput = document.getElementById('zipCode');
-            const cardNumberInput = document.getElementById('cardNumber');
-            const expiryDateInput = document.getElementById('expiryDate');
-            const cvvInput = document.getElementById('cvv');
-
-            // Máscara de telefone
-            if (phoneInput) {
-                phoneInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 11) {
-                        value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
-                    } else if (value.length >= 7) {
-                        value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
-                    } else if (value.length >= 3) {
-                        value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-                    } else if (value.length >= 1) {
-                        value = value.replace(/^(\d{0,2})/, '($1');
-                    }
-                    e.target.value = value;
-                });
-            }
-
-            // Máscara de CEP
-            if (zipCodeInput) {
-                zipCodeInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 6) {
-                        value = value.replace(/^(\d{5})(\d{0,3}).*/, '$1-$2');
-                    }
-                    e.target.value = value;
-                });
-            }
-
-            // Bloquear letras e caracteres especiais no cartão (keydown)
-            if (cardNumberInput) {
-                // Previne entrada de caracteres não numéricos antes mesmo de serem digitados
-                cardNumberInput.addEventListener('beforeinput', function(e) {
-                    if (e.data && !/^\d*$/.test(e.data)) {
-                        e.preventDefault();
-                    }
-                });
-
-                cardNumberInput.addEventListener('keydown', function(e) {
-                    // Permite: backspace, tab, delete, setas, home, end, enter
-                    if ([8, 9, 46, 37, 38, 39, 40, 35, 36, 13].indexOf(e.keyCode) !== -1) return;
-                    // Permite números (0-9)
-                    if (e.key >= '0' && e.key <= '9') return;
-                    // Permite teclas de função
-                    if (e.keyCode >= 112 && e.keyCode <= 123) return;
-                    // Bloqueia tudo o resto
-                    e.preventDefault();
-                });
-
-                // Validação adicional no keypress
-                cardNumberInput.addEventListener('keypress', function(e) {
-                    // Permite apenas números (0-9)
-                    if (e.key < '0' || e.key > '9') {
-                        e.preventDefault();
-                    }
-                });
-
-                // Previne colagem de texto não numérico
-                cardNumberInput.addEventListener('paste', function(e) {
-                    e.preventDefault();
-                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                    const numericOnly = pastedText.replace(/\D/g, '');
-                    if (numericOnly.length > 0) {
-                        const currentValue = this.value.replace(/\D/g, '');
-                        const newValue = (currentValue + numericOnly).substr(0, 16);
-                        this.value = newValue.replace(/(.{4})/g, '$1 ').trim();
-                    }
-                });
-
-                // Previne arrastar e soltar texto não numérico
-                cardNumberInput.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                });
-            }
-
-            // Máscara de cartão de crédito e validação Luhn
-            if (cardNumberInput) {
-                cardNumberInput.addEventListener('input', function(e) {
-                    // Remove todos os caracteres não numéricos
-                    let value = e.target.value.replace(/\D/g, '');
-                    // Limita a 16 dígitos
-                    value = value.substr(0, 16);
-                    // Adiciona espaço a cada 4 dígitos
-                    if (value.length > 0) {
-                        value = value.replace(/(.{4})/g, '$1 ').trim();
-                    }
-                    e.target.value = value;
-                    // Esconde mensagem de erro se o valor for válido
-                    const errorElement = document.getElementById('cardNumberError');
-                    if (errorElement) {
-                        errorElement.style.display = 'none';
-                    }
-                });
-                
-                cardNumberInput.addEventListener('blur', function(e) {
-                    const value = e.target.value.replace(/\s/g, '');
-                    const errorElement = document.getElementById('cardNumberError');
-                    if (value.length !== 16 || !luhnCheck(value)) {
-                        if (errorElement) {
-                            errorElement.style.display = 'block';
-                        }
-                        e.target.focus();
-                    } else {
-                        if (errorElement) {
-                            errorElement.style.display = 'none';
-                        }
-                    }
-                });
-            }
-
-            // Validar solo letras y espacios en nombre del titular
-            const cardNameInput = document.getElementById('cardName');
-            if (cardNameInput) {
-                cardNameInput.addEventListener('input', function(e) {
-                    e.target.value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
-                });
-            }
-
-            // Máscara de data de expiração e validação
-            if (expiryDateInput) {
-                expiryDateInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length > 2) {
-                        value = value.substr(0, 2) + '/' + value.substr(2, 2);
-                    }
-                    e.target.value = value.substr(0, 5);
-                });
-                expiryDateInput.addEventListener('blur', function(e) {
-                    if (!validateExpiryDate(e.target.value)) {
-                        alert('Data de expiração inválida. Use MM/AA e não pode ser passada.');
-                        e.target.focus();
-                    }
-                });
-            }
-
-            // Apenas números no CVV
-            if (cvvInput) {
-                cvvInput.addEventListener('input', function(e) {
-                    e.target.value = e.target.value.replace(/\D/g, '').substr(0, 4);
-                });
-            }
-
-            // Autocompletar cidade e estado pelo CEP (ViaCEP)
-            if (zipCodeInput) {
-                zipCodeInput.addEventListener('blur', function(e) {
-                    const cep = e.target.value.replace(/\D/g, '');
-                    if (cep.length === 8) {
-                        fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                            .then(res => res.json())
                             .then(data => {
-                                if (!data.erro) {
-                                    document.getElementById('city').value = data.localidade;
-                                    document.getElementById('state').value = data.uf;
-                                    document.getElementById('city').readOnly = true;
-                                    document.getElementById('state').readOnly = true;
+                if (data.success) {
+                    console.log('Frete salvo na sessão:', data.message);
                                 } else {
-                                    alert('CEP não encontrado!');
-                                    document.getElementById('city').value = '';
-                                    document.getElementById('state').value = '';
-                                    document.getElementById('city').readOnly = false;
-                                    document.getElementById('state').readOnly = false;
+                    console.warn('Erro ao salvar frete na sessão:', data.error);
                                 }
                             })
-                            .catch(() => {
-                                alert('Erro ao consultar o CEP.');
-                                document.getElementById('city').value = '';
-                                document.getElementById('state').value = '';
-                                document.getElementById('city').readOnly = false;
-                                document.getElementById('state').readOnly = false;
-                            });
-                    } else {
-                        document.getElementById('city').readOnly = false;
-                        document.getElementById('state').readOnly = false;
+            .catch(error => {
+                console.error('Erro ao salvar frete na sessão:', error);
+            });
+        }
+        // Event listeners para Enter no campo CEP
+        const destinationCepInput = document.getElementById('destinationCep');
+        if (destinationCepInput) {
+            destinationCepInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    calculateShipping();
                     }
                 });
             }
 
-            // Função de validação Luhn
-            function luhnCheck(num) {
-                let arr = (num + '').split('').reverse().map(x => parseInt(x));
-                let sum = arr.reduce((acc, val, idx) => {
-                    if (idx % 2) {
-                        val *= 2;
-                        if (val > 9) val -= 9;
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/cart/api/items')
+                .then(response => response.json())
+                .then(items => {
+                    const container = document.getElementById('cartItemsContainer');
+                    if (!items || items.length === 0) {
+                        container.innerHTML = '<span style="color:#b94a48;">Carrinho vazio! Adicione produtos antes de finalizar a compra.</span>';
+                        return;
                     }
-                    return acc + val;
-                }, 0);
-                return sum % 10 === 0;
-            }
-
-            // Validação de data de expiração MM/AA
-            function validateExpiryDate(value) {
-                if (!/^(0[1-9]|1[0-2])\/(\d{2})$/.test(value)) return false;
-                const [mes, ano] = value.split('/').map(Number);
-                const agora = new Date();
-                const anoAtual = agora.getFullYear() % 100;
-                const mesAtual = agora.getMonth() + 1;
-                return (ano > anoAtual) || (ano === anoAtual && mes >= mesAtual);
-            }
-
-            // Loading no botão de submit
-            const form = document.querySelector('form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const submitBtn = document.querySelector('.checkout-button');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '⏳ Processando...';
-                        submitBtn.disabled = true;
-                    }
+                    let subtotal = 0;
+                    let html = '';
+                    items.forEach(item => {
+                        subtotal += item.productPrice * item.quantity;
+                        html += `
+                            <div style="display:flex;align-items:center;margin-bottom:12px;">
+                                <img src="/images/products/${item.productImage}" alt="${item.productName}" style="width:48px;height:48px;border-radius:8px;margin-right:12px;object-fit:cover;">
+                                <div>
+                                    <div style="font-weight:600;">${item.productName}</div>
+                                    <div style="font-size:13px;color:#888;">
+                                        Qtd: ${item.quantity} | R$ ${item.productPrice.toFixed(2).replace('.', ',')} cada
+                                    </div>
+                                </div>
+                                <div style="margin-left:auto;font-weight:600;color:#f36f21;">
+                                    R$ ${(item.productPrice * item.quantity).toFixed(2).replace('.', ',')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                    document.getElementById('checkoutSubtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
+                    // O total e desconto serão atualizados pelo cupom/frete
+                })
+                .catch(() => {
+                    document.getElementById('cartItemsContainer').innerHTML = '<span style="color:#b94a48;">Erro ao carregar o carrinho.</span>';
                 });
-            }
+        });
+
+        document.getElementById('couponForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const coupon = document.getElementById('couponInput').value;
+            fetch('/cart/api/apply-coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coupon })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const msgDiv = document.getElementById('couponMessage');
+                if (data.success) {
+                    msgDiv.textContent = data.message;
+                    msgDiv.className = 'mt-2 custom-alert alert-success';
+                    // Atualiza desconto, subtotal e total
+                    document.getElementById('checkoutSubtotal').textContent = 'R$ ' + data.subtotal.toFixed(2).replace('.', ',');
+                    let desconto = document.getElementById('checkoutDiscount');
+                    if (!desconto) {
+                        desconto = document.createElement('div');
+                        desconto.className = 'd-flex justify-content-between';
+                        desconto.innerHTML = '<span>Desconto:</span><span id="checkoutDiscountValue" style="color:#28a745;font-weight:600;"></span>';
+                        document.getElementById('checkoutSubtotal').parentNode.insertAdjacentElement('afterend', desconto);
+                    }
+                    document.getElementById('checkoutDiscountValue').textContent = '-R$ ' + data.discountTotal.toFixed(2).replace('.', ',');
+                    document.getElementById('checkoutShippingValue').textContent = 'R$ ' + data.shipping.toFixed(2).replace('.', ',');
+                    document.getElementById('checkoutTotal').textContent = 'R$ ' + data.total.toFixed(2).replace('.', ',');
+                } else {
+                    msgDiv.textContent = data.message;
+                    msgDiv.className = 'mt-2 custom-alert alert-danger';
+                }
+            })
+            .catch(() => {
+                const msgDiv = document.getElementById('couponMessage');
+                msgDiv.textContent = 'Erro ao aplicar cupom.';
+                msgDiv.className = 'mt-2 custom-alert alert-danger';
+            });
         });
     </script>
 </body>

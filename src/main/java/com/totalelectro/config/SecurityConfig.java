@@ -84,6 +84,7 @@ public class  SecurityConfig {
                         new AntPathRequestMatcher("/cart/remove"),
                         new AntPathRequestMatcher("/cart/clear"),
                         new AntPathRequestMatcher("/cart/apply-coupon"),
+                        new AntPathRequestMatcher("/cart/api/apply-coupon"),
                         new AntPathRequestMatcher("/cart/checkout"),
                         new AntPathRequestMatcher("/profile/**"),
                         new AntPathRequestMatcher("/orders/**")
@@ -107,6 +108,7 @@ public class  SecurityConfig {
                 .ignoringRequestMatchers("/cart/update") // Ignorar CSRF para atualizar carrinho
                 .ignoringRequestMatchers("/cart/remove") // Ignorar CSRF para remover do carrinho
                 .ignoringRequestMatchers("/cart/test-shipping/**") // Ignorar CSRF para teste de frete
+                .ignoringRequestMatchers("/cart/api/apply-coupon")
             )
             .formLogin(form -> {
                 logger.info("Configurando login form");

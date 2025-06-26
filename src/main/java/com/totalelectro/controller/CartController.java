@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import com.totalelectro.repository.CategoryRepository;
 import com.totalelectro.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.totalelectro.dto.CartItemDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -269,11 +270,11 @@ public class CartController {
     }
 
     @PostMapping("/apply-coupon")
-    public String applyCoupon(@RequestParam String coupon, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String applyCoupon(@RequestParam String coupon, @RequestParam(required = false) String redirectTo, HttpSession session, RedirectAttributes redirectAttributes) {
         if (coupon == null || coupon.isBlank()) {
             session.setAttribute("couponMessage", "Digite um cupom válido.");
             session.setAttribute("couponSuccess", false);
-            return "redirect:/cart";
+            return (redirectTo != null && !redirectTo.isBlank()) ? "redirect:" + redirectTo : "redirect:/cart";
         }
         if (coupon.equalsIgnoreCase("LUZ15")) {
             session.setAttribute("appliedCoupon", coupon.toUpperCase());
@@ -284,7 +285,7 @@ public class CartController {
             session.setAttribute("couponMessage", "Cupom inválido ou não suportado.");
             session.setAttribute("couponSuccess", false);
         }
-        return "redirect:/cart";
+        return (redirectTo != null && !redirectTo.isBlank()) ? "redirect:" + redirectTo : "redirect:/cart";
     }
     
     @PostMapping("/save-shipping")
@@ -368,5 +369,95 @@ public class CartController {
         } else {
             return "7-10 dias úteis";
         }
+    }
+
+    @GetMapping("/api/items")
+    @ResponseBody
+    public List<CartItemDTO> getCartItemsApi() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+            return List.of();
+        }
+        String userEmail = auth.getName();
+        return cartService.getCartItems(userEmail).stream()
+            .map(CartItemDTO::new)
+            .toList();
+    }
+
+    @PostMapping("/api/apply-coupon")
+    @ResponseBody
+    public Map<String, Object> applyCouponApi(@RequestBody Map<String, String> req, HttpSession session) {
+        String coupon = req.get("coupon");
+        if ("LUZ15".equalsIgnoreCase((String) session.getAttribute("appliedCoupon"))) {
+            Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", false);
+            resp.put("message", "O cupom LUZ15 já foi aplicado nesta compra.");
+            return resp;
+        }
+        Map<String, Object> resp = new java.util.HashMap<>();
+        if (coupon == null || coupon.isBlank()) {
+            resp.put("success", false);
+            resp.put("message", "Digite um cupom válido.");
+            return resp;
+        }
+        if (coupon.equalsIgnoreCase("LUZ15")) {
+            session.setAttribute("appliedCoupon", coupon.toUpperCase());
+            session.setAttribute("couponMessage", "Cupom aplicado: 15% OFF em Iluminação!");
+            session.setAttribute("couponSuccess", true);
+        } else {
+            session.removeAttribute("appliedCoupon");
+            session.setAttribute("couponMessage", "Cupom inválido ou não suportado.");
+            session.setAttribute("couponSuccess", false);
+            resp.put("success", false);
+            resp.put("message", "Cupom inválido ou não suportado.");
+            return resp;
+        }
+        // Calcular desconto e totais
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+            resp.put("success", false);
+            resp.put("message", "Usuário não autenticado");
+            return resp;
+        }
+        String userEmail = auth.getName();
+        var cartItems = cartService.getCartItems(userEmail);
+        double subtotal = 0.0;
+        double discountTotal = 0.0;
+        for (var item : cartItems) {
+            double price = item.getProduct().getPrice().doubleValue();
+            Double discount = item.getProduct().getDiscountPercent();
+            if (discount != null && discount > 0) {
+                price = price * (1 - discount / 100.0);
+            }
+            subtotal += price * item.getQuantity();
+        }
+        var catOpt = categoryRepository.findBySlug("iluminacion");
+        if (catOpt.isPresent()) {
+            Long iluminacionId = catOpt.get().getId();
+            for (var item : cartItems) {
+                var p = item.getProduct();
+                if (p.getCategory().getId().equals(iluminacionId)) {
+                    double basePrice = p.getPrice().doubleValue();
+                    Double prodDiscount = p.getDiscountPercent();
+                    if (prodDiscount != null && prodDiscount > 0) {
+                        basePrice = basePrice * (1 - prodDiscount / 100.0);
+                    }
+                    discountTotal += (basePrice * 0.15) * item.getQuantity();
+                }
+            }
+        }
+        double subtotalWithCoupon = subtotal - discountTotal;
+        if (subtotalWithCoupon < 0) subtotalWithCoupon = 0;
+        double shipping = subtotalWithCoupon >= 50.0 ? 0.0 : 50.0;
+        Double calculatedShipping = (Double) session.getAttribute("calculatedShippingCost");
+        if (calculatedShipping != null) shipping = calculatedShipping;
+        double total = subtotalWithCoupon + shipping;
+        resp.put("success", true);
+        resp.put("discountTotal", discountTotal);
+        resp.put("subtotal", subtotalWithCoupon);
+        resp.put("shipping", shipping);
+        resp.put("total", total);
+        resp.put("message", "Cupom aplicado: 15% OFF em Iluminação!");
+        return resp;
     }
 } 
