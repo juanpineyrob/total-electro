@@ -164,6 +164,478 @@
         .btn-buy-now:hover {
             background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
         }
+
+        /* Estilos para perguntas */
+        .question-form-section {
+            background: #f8f9fa;
+            padding: 2rem 2rem 1.5rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 2.5rem;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .question-form-section h4 {
+            margin-bottom: 1rem;
+            color: #222;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .question-form-section h4 i {
+            color: #f36f21;
+        }
+        .question-form {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        .question-form textarea {
+            border: 1.5px solid #ced4da;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            min-height: 48px;
+            transition: border-color 0.2s;
+        }
+        .question-form textarea:focus {
+            border-color: #f36f21;
+            box-shadow: 0 0 0 0.1rem rgba(243, 111, 33, 0.10);
+        }
+        .question-form .btn-send-question {
+            background: linear-gradient(135deg, #f36f21 0%, #e05a0c 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(243, 111, 33, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .question-form .btn-send-question:hover {
+            background: linear-gradient(135deg, #e05a0c 0%, #d1520a 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .question-form-section small {
+            color: #888;
+            margin-top: 0.5rem;
+            display: block;
+        }
+        .questions-list {
+            margin-top: 2rem;
+        }
+        .question-item {
+            background: #fff;
+            border: 1.5px solid #e9ecef;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            position: relative;
+        }
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .question-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #f36f21;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(243, 111, 33, 0.10);
+        }
+        .question-info {
+            flex: 1;
+        }
+        .question-info strong {
+            color: #222;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .question-info small {
+            color: #888;
+            margin-left: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .question-status .badge {
+            font-size: 0.8rem;
+            border-radius: 6px;
+            padding: 0.3em 0.8em;
+            font-weight: 600;
+        }
+        .question-status .badge.bg-success {
+            background: #28a745;
+            color: #fff;
+        }
+        .question-status .badge.bg-warning {
+            background: #ffc107;
+            color: #222;
+        }
+        .question-content {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            color: #333;
+        }
+        .answer-content {
+            background: #f8f9fa;
+            border-left: 5px solid #28a745;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1.2rem;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.04);
+            position: relative;
+        }
+        .answer-header {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-bottom: 0.5rem;
+        }
+        .answer-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #28a745;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .answer-header strong {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .answer-header small {
+            color: #888;
+            margin-left: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .answer-content p {
+            margin: 0.2rem 0 0 0;
+            color: #333;
+            font-size: 1.02rem;
+        }
+        .admin-actions {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .admin-actions .btn {
+            font-size: 0.95rem;
+            border-radius: 6px;
+            padding: 0.4rem 1.1rem;
+        }
+        .answer-form {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .answer-form textarea {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            resize: vertical;
+            font-size: 1rem;
+        }
+        .answer-form textarea:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.1rem rgba(40, 167, 69, 0.10);
+        }
+        .no-questions {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+        @media (max-width: 700px) {
+            .question-form-section, .question-item {
+                padding: 1rem;
+            }
+            .answer-content {
+                padding: 1rem;
+            }
+        }
+        .btn-review-product {
+            background: linear-gradient(90deg, #f36f21 0%, #e05a0c 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 2.2rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(243, 111, 33, 0.10);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            margin: 0 auto;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+        .btn-review-product:hover {
+            background: linear-gradient(90deg, #e05a0c 0%, #d1520a 100%);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 24px rgba(243, 111, 33, 0.18);
+        }
+        .modal-content {
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            border: none;
+            padding: 0.5rem 0 0 0;
+        }
+        .modal-header {
+            border-bottom: 1px solid #f3f3f3;
+            background: #f8f9fa;
+            border-radius: 18px 18px 0 0;
+            padding: 1.2rem 2rem 1rem 2rem;
+        }
+        .modal-title {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: #f36f21;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.7rem;
+            color: #888;
+            margin-left: auto;
+            transition: color 0.2s;
+        }
+        .btn-close:hover {
+            color: #f36f21;
+        }
+        .modal-body {
+            padding: 2rem 2rem 1.5rem 2rem;
+        }
+        .star-rating {
+            display: flex;
+            gap: 0.4rem;
+            font-size: 2.3rem;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+        }
+        .star-rating .star {
+            color: #ffc107;
+            transition: transform 0.15s, color 0.15s;
+            filter: drop-shadow(0 2px 4px rgba(243,111,33,0.08));
+        }
+        .star-rating .star.inactive {
+            color: #e4e5e9;
+        }
+        .star-rating .star:hover, .star-rating .star:focus {
+            transform: scale(1.18) rotate(-8deg);
+            color: #f36f21;
+        }
+        #reviewForm .form-label {
+            font-weight: 600;
+            color: #444;
+        }
+        #reviewForm textarea {
+            border-radius: 8px;
+            font-size: 1.05rem;
+            padding: 0.7rem 1rem;
+            min-height: 70px;
+        }
+        #reviewForm input[type="file"] {
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+        #photoPreview {
+            margin-top: 0.7rem;
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+        #photoPreview img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #f36f21;
+            box-shadow: 0 2px 8px rgba(243,111,33,0.08);
+        }
+        .modal-footer {
+            border-top: 1px solid #f3f3f3;
+            background: #f8f9fa;
+            border-radius: 0 0 18px 18px;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .modal-footer .btn-success {
+            background: linear-gradient(90deg, #28a745 0%, #218838 100%);
+            border: none;
+            font-weight: 700;
+            font-size: 1.08rem;
+            border-radius: 8px;
+            padding: 0.7rem 1.7rem;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.10);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .modal-footer .btn-success:hover {
+            background: linear-gradient(90deg, #218838 0%, #1e7e34 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .modal-footer .btn-secondary {
+            border-radius: 8px;
+            padding: 0.7rem 1.7rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            border: none;
+            background: #e9ecef;
+            color: #444;
+            transition: background 0.2s, color 0.2s;
+        }
+        .modal-footer .btn-secondary:hover {
+            background: #f36f21;
+            color: #fff;
+        }
+        @media (max-width: 700px) {
+            .modal-body, .modal-header, .modal-footer {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .btn-review-product {
+                width: 100%;
+                font-size: 1rem;
+                padding: 1rem 0.5rem;
+            }
+        }
+        .reviews-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 2.2rem;
+            margin-top: 1.5rem;
+        }
+        .review-post {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            border: 1.5px solid #e9ecef;
+            padding: 2rem 2.2rem 1.5rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+        .review-post:hover {
+            box-shadow: 0 8px 32px rgba(243,111,33,0.13);
+        }
+        .review-post-header {
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+        }
+        .review-post-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #f36f21;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(243,111,33,0.10);
+        }
+        .review-post-userinfo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .review-post-user {
+            font-weight: 700;
+            color: #222;
+            font-size: 1.13rem;
+        }
+        .review-post-date {
+            color: #888;
+            font-size: 0.98rem;
+        }
+        .review-post-stars {
+            display: flex;
+            gap: 0.12rem;
+            font-size: 1.45rem;
+            margin-top: 0.2rem;
+        }
+        .review-post-stars .star { color: #ffc107; }
+        .review-post-comment {
+            font-size: 1.15rem;
+            color: #333;
+            font-weight: 500;
+            margin: 0.2rem 0 0.5rem 0;
+            word-break: break-word;
+        }
+        .review-post-photos {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+        }
+        .review-post-photos img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #f36f21;
+            box-shadow: 0 2px 8px rgba(243,111,33,0.08);
+            transition: transform 0.15s;
+            cursor: pointer;
+        }
+        .review-post-photos img:hover {
+            transform: scale(1.08);
+            z-index: 2;
+        }
+        @media (max-width: 700px) {
+            .review-post {
+                padding: 1.1rem 0.7rem 1rem 0.7rem;
+            }
+            .review-post-avatar {
+                width: 40px; height: 40px; font-size: 1.1rem;
+            }
+            .review-post-user {
+                font-size: 1rem;
+            }
+            .review-post-stars {
+                font-size: 1.1rem;
+            }
+            .review-post-photos img {
+                width: 60px; height: 60px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -251,8 +723,6 @@
                             <i class="fas fa-bolt"></i>
                             Comprar Agora
                         </button>
-                        
-                        <button class="btn-freight">Calcular frete</button>
                     </div>
                 </div>
             </div>
@@ -262,7 +732,7 @@
         <div class="product-tabs-section">
             <div class="tab-headers">
                 <button class="tab-header active" data-tab="description">Descripción</button>
-                <button class="tab-header" data-tab="comments">Comentarios</button>
+                <button class="tab-header" data-tab="questions">Perguntas <span th:if="${unansweredCount > 0}" class="badge bg-warning" th:text="${unansweredCount}"></span></button>
                 <button class="tab-header" data-tab="opinions">Opiniones</button>
             </div>
             
@@ -287,14 +757,251 @@
                     </div>
                 </div>
                 
-                <div class="tab-panel" id="comments">
-                    <h3>Comentarios</h3>
-                    <p>Aquí aparecerán los comentarios de los usuarios sobre este producto.</p>
+                <div class="tab-panel" id="questions">
+                    <h3 style="font-weight:700;font-size:1.3rem;margin-bottom:1.2rem;">Perguntas sobre este produto</h3>
+                    <div class="question-form-section">
+                        <h4><i class="fas fa-pen-nib"></i> Faça sua pergunta</h4>
+                        <div class="question-form">
+                            <textarea id="questionText" placeholder="Digite sua dúvida sobre este produto..." rows="2" class="form-control"></textarea>
+                            <button onclick="submitQuestion()" class="btn-send-question">
+                                <i class="fas fa-paper-plane"></i> Enviar Pergunta
+                            </button>
+                        </div>
+                        <small>Sua pergunta será respondida por nossa equipe ou outros clientes.</small>
+                    </div>
+                    <div class="questions-list">
+                        <div th:if="${questions.isEmpty()}" class="no-questions">
+                            Nenhuma pergunta ainda. Seja o primeiro a perguntar!
+                        </div>
+                        <div th:each="question : ${questions}" class="question-item" th:data-question-id="${question.id}">
+                            <div class="question-header">
+                                <div class="question-avatar">
+                                    <span th:text="${#strings.substring(question.userName,0,1)}">U</span>
+                                </div>
+                                <div class="question-info">
+                                    <strong th:text="${question.userName}">Usuário</strong>
+                                    <small th:text="${#temporals.format(question.createdAt, 'dd/MM/yyyy HH:mm')}">Data</small>
+                                </div>
+                                <div class="question-status">
+                                    <span th:if="${question.isAnswered}" class="badge bg-success">Respondida</span>
+                                    <span th:unless="${question.isAnswered}" class="badge bg-warning">Aguardando resposta</span>
+                                </div>
+                            </div>
+                            <div class="question-content">
+                                <p th:text="${question.question}">Pergunta</p>
+                            </div>
+                            <!-- Resposta (se existir) -->
+                            <div th:if="${question.isAnswered}" class="answer-content">
+                                <div class="answer-header">
+                                    <div class="answer-avatar"><i class="fas fa-users"></i></div>
+                                    <strong th:text="${question.answeredBy != null ? question.answeredBy : 'Equipe Total Electro'}">Equipe</strong>
+                                    <small th:text="${#temporals.format(question.answeredAt, 'dd/MM/yyyy HH:mm')}">Data</small>
+                                </div>
+                                <p th:text="${question.answer}">Resposta</p>
+                            </div>
+                            <!-- Botões de admin (se logado como admin) -->
+                            <div class="admin-actions" sec:authorize="hasRole('ADMIN')">
+                                <button th:unless="${question.isAnswered}" onclick="showAnswerForm(this)" class="btn btn-sm btn-success">
+                                    <i class="fas fa-reply"></i> Responder
+                                </button>
+                                <button onclick="deleteQuestion(this)" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </button>
+                            </div>
+                            <!-- Formulário de resposta (admin) -->
+                            <div class="answer-form" style="display: none;">
+                                <textarea class="form-control" rows="2" placeholder="Digite sua resposta..."></textarea>
+                                <div class="mt-2">
+                                    <button onclick="submitAnswer(this)" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Enviar Resposta
+                                    </button>
+                                    <button onclick="cancelAnswer(this)" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="tab-panel" id="opinions">
-                    <h3>Opiniones</h3>
-                    <p>Aquí aparecerán las opiniones y reseñas de los usuarios.</p>
+                    <h3 style="font-weight:700;font-size:1.3rem;margin-bottom:1.2rem;">Opiniões de clientes</h3>
+                    <div id="opinions-section">
+                        <!-- Botão para avaliar (aparece só se permitido) -->
+                        <div id="review-action" style="margin-bottom:2rem;display:none;">
+                            <button class="btn-review-product" id="openReviewModal">
+                                <i class="fas fa-star"></i> Avaliar este produto
+                            </button>
+                        </div>
+                        <!-- Lista de avaliações -->
+                        <div id="reviews-list" class="reviews-feed"></div>
+                        <div id="no-reviews" class="no-questions" style="display:none;">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</div>
+                    </div>
+                    <!-- Modal de avaliação -->
+                    <div id="reviewModal" class="modal" tabindex="-1" style="display:none;">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="fas fa-star"></i> Avaliar Produto</h5>
+                                    <button type="button" class="btn-close" onclick="closeReviewModal()"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="reviewForm" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nota:</label>
+                                            <div id="star-rating" class="star-rating"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Comentário:</label>
+                                            <textarea class="form-control" name="comment" id="reviewComment" rows="3" maxlength="2000" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Fotos (opcional, até 5):</label>
+                                            <input type="file" name="photos" id="reviewPhotos" class="form-control" accept="image/*" multiple max="5">
+                                            <div id="photoPreview" style="margin-top:0.5rem;display:flex;gap:0.5rem;"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Cancelar</button>
+                                            <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Enviar Avaliação</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        // Carregar avaliações ao abrir aba
+                        document.addEventListener('DOMContentLoaded', function() {
+                            if (document.getElementById('opinions-section')) loadReviews();
+                        });
+                        function loadReviews() {
+                            const productId = document.querySelector('.btn-add-to-cart').dataset.productId;
+                            fetch(`/api/reviews/product/${productId}`)
+                                .then(r => r.json())
+                                .then(reviews => {
+                                    const list = document.getElementById('reviews-list');
+                                    const empty = document.getElementById('no-reviews');
+                                    list.innerHTML = '';
+                                    if (!reviews || reviews.length === 0) {
+                                        empty.style.display = 'block';
+                                        return;
+                                    }
+                                    empty.style.display = 'none';
+                                    reviews.forEach(r => list.appendChild(renderReviewPost(r)));
+                                });
+                            // Verifica se pode avaliar (mock: sempre mostra botão, ajuste depois)
+                            checkCanReview(productId);
+                        }
+                        function renderReviewPost(r) {
+                            const card = document.createElement('div');
+                            card.className = 'review-post';
+                            card.innerHTML = `
+                                <div class="review-post-header">
+                                    <div class="review-post-avatar">${r.userName ? r.userName[0] : 'U'}</div>
+                                    <div class="review-post-userinfo">
+                                        <span class="review-post-user">${r.userName || 'Usuário'}</span>
+                                        <span class="review-post-date">${r.createdAt ? new Date(r.createdAt).toLocaleString('pt-BR') : ''}</span>
+                                        <div class="review-post-stars">${renderStars(r.rating)}</div>
+                                    </div>
+                                </div>
+                                <div class="review-post-comment">${r.comment ? r.comment.replace(/</g,'&lt;') : ''}</div>
+                                <div class="review-post-photos">${(r.photoUrls||[]).map(url => `<img src="${url}" alt="foto">`).join('')}</div>
+                            `;
+                            return card;
+                        }
+                        function renderStars(rating) {
+                            let html = '';
+                            for (let i = 1; i <= 5; i++) {
+                                html += `<span class="star${i > rating ? ' inactive' : ''}"><i class="fas fa-star"></i></span>`;
+                            }
+                            return html;
+                        }
+                        // Modal de avaliação
+                        document.addEventListener('click', function(e) {
+                            if (e.target && e.target.id === 'openReviewModal') openReviewModal();
+                        });
+                        function openReviewModal() {
+                            document.getElementById('reviewModal').style.display = 'block';
+                            renderStarInput();
+                        }
+                        function closeReviewModal() {
+                            document.getElementById('reviewModal').style.display = 'none';
+                            document.getElementById('reviewForm').reset();
+                            document.getElementById('photoPreview').innerHTML = '';
+                        }
+                        // Estrelas input
+                        function renderStarInput() {
+                            const starDiv = document.getElementById('star-rating');
+                            starDiv.innerHTML = '';
+                            let rating = 0;
+                            for (let i = 1; i <= 5; i++) {
+                                const star = document.createElement('span');
+                                star.className = 'star inactive';
+                                star.innerHTML = '<i class="fas fa-star"></i>';
+                                star.onclick = () => {
+                                    rating = i;
+                                    Array.from(starDiv.children).forEach((s, idx) => {
+                                        s.className = 'star' + (idx < i ? '' : ' inactive');
+                                    });
+                                    starDiv.dataset.rating = i;
+                                };
+                                starDiv.appendChild(star);
+                            }
+                        }
+                        // Preview de fotos
+                        document.getElementById('reviewPhotos').addEventListener('change', function(e) {
+                            const files = Array.from(e.target.files).slice(0,5);
+                            const preview = document.getElementById('photoPreview');
+                            preview.innerHTML = '';
+                            files.forEach(f => {
+                                const img = document.createElement('img');
+                                img.src = URL.createObjectURL(f);
+                                img.style.width = '60px';
+                                img.style.height = '60px';
+                                img.style.objectFit = 'cover';
+                                img.style.borderRadius = '6px';
+                                preview.appendChild(img);
+                            });
+                        });
+                        // Envio do formulário
+                        document.getElementById('reviewForm').onsubmit = function(e) {
+                            e.preventDefault();
+                            const productId = document.querySelector('.btn-add-to-cart').dataset.productId;
+                            const rating = document.getElementById('star-rating').dataset.rating || 0;
+                            const comment = document.getElementById('reviewComment').value;
+                            const photos = document.getElementById('reviewPhotos').files;
+                            if (rating < 1) { showToast('error', 'Erro', 'Selecione uma nota!'); return; }
+                            const formData = new FormData();
+                            formData.append('rating', rating);
+                            formData.append('comment', comment);
+                            for (let i = 0; i < photos.length && i < 5; i++) {
+                                formData.append('photos', photos[i]);
+                            }
+                            fetch(`/api/reviews/product/${productId}`, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(async r => {
+                                if (!r.ok) {
+                                    const err = await r.text();
+                                    throw new Error(err);
+                                }
+                                return r.json();
+                            })
+                            .then(data => {
+                                closeReviewModal();
+                                showToast('success', 'Avaliação enviada!', 'Sua avaliação foi registrada com sucesso.');
+                                setTimeout(() => loadReviews(), 500);
+                            })
+                            .catch(err => {
+                                showToast('error', 'Erro', 'Erro ao enviar avaliação: ' + err.message);
+                            });
+                        };
+                        // Mock: sempre mostra botão de avaliar
+                        function checkCanReview(productId) {
+                            document.getElementById('review-action').style.display = 'block';
+                        }
+                    </script>
                 </div>
             </div>
         </div>
@@ -356,7 +1063,7 @@
             const quantity = document.getElementById('quantityInput').value;
             const button = document.querySelector('.btn-add-to-cart');
             
-            console.log('Tentando adicionar produto ao carrinho:', { productId, productName, quantity });
+            console.log('Tentando adicionar ao carrinho:', { productId, productName, quantity });
             
             // Adicionar estado de loading
             button.classList.add('loading');
@@ -373,12 +1080,7 @@
             // Adicionar CSRF token se disponível
             if (csrfToken && csrfHeader) {
                 headers[csrfHeader.content] = csrfToken.content;
-                console.log('CSRF token adicionado:', csrfHeader.content, csrfToken.content);
-            } else {
-                console.warn('CSRF tokens não encontrados');
             }
-            
-            console.log('Fazendo requisição para /cart/add com headers:', headers);
             
             fetch('/cart/add', {
                 method: 'POST',
@@ -387,12 +1089,28 @@
             })
             .then(response => {
                 console.log('Resposta recebida:', response.status, response.statusText);
+                
+                // Se o status for 401 (Unauthorized), redirecionar para login
+                if (response.status === 401) {
+                    showToast('error', 'Login necessário', 'Você precisa estar logado para adicionar produtos ao carrinho.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return null;
+                }
+                
                 return response.text();
             })
             .then(data => {
-                console.log('Dados da resposta:', data);
                 button.classList.remove('loading');
                 button.disabled = false;
+                
+                if (data === null) {
+                    // Já foi tratado o redirecionamento
+                    return;
+                }
+                
+                console.log('Dados da resposta:', data);
                 
                 if (data.startsWith('success')) {
                     const cartCount = data.split(':')[1];
@@ -401,14 +1119,7 @@
                 } else if (data.startsWith('error')) {
                     const errorMessage = data.split(':')[1];
                     console.error('Erro do servidor:', errorMessage);
-                    if (errorMessage.includes('logado')) {
-                        showToast('error', 'Login necessário', 'Você precisa estar logado para adicionar produtos ao carrinho.');
-                        setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 2000);
-                    } else {
-                        showToast('error', 'Erro', errorMessage);
-                    }
+                    showToast('error', 'Erro', errorMessage);
                 } else {
                     console.error('Resposta inesperada:', data);
                     showToast('error', 'Erro', 'Resposta inesperada do servidor');
@@ -453,12 +1164,28 @@
             })
             .then(response => {
                 console.log('Resposta buy now recebida:', response.status, response.statusText);
+                
+                // Se o status for 401 (Unauthorized), redirecionar para login
+                if (response.status === 401) {
+                    showToast('error', 'Login necessário', 'Você precisa estar logado para comprar produtos.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return null;
+                }
+                
                 return response.text();
             })
             .then(data => {
-                console.log('Dados da resposta buy now:', data);
                 button.classList.remove('loading');
                 button.disabled = false;
+                
+                if (data === null) {
+                    // Já foi tratado o redirecionamento
+                    return;
+                }
+                
+                console.log('Dados da resposta buy now:', data);
                 
                 if (data.startsWith('success')) {
                     // Redirecionar para checkout
@@ -466,14 +1193,7 @@
                 } else if (data.startsWith('error')) {
                     const errorMessage = data.split(':')[1];
                     console.error('Erro do servidor buy now:', errorMessage);
-                    if (errorMessage.includes('logado')) {
-                        showToast('error', 'Login necessário', 'Você precisa estar logado para comprar produtos.');
-                        setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 2000);
-                    } else {
-                        showToast('error', 'Erro', errorMessage);
-                    }
+                    showToast('error', 'Erro', errorMessage);
                 } else {
                     console.error('Resposta inesperada buy now:', data);
                     showToast('error', 'Erro', 'Resposta inesperada do servidor');
@@ -591,6 +1311,184 @@
                     console.error('Erro ao carregar contador do carrinho:', error);
                 });
         });
+
+        // Funções para perguntas
+        function submitQuestion() {
+            const questionText = document.getElementById('questionText').value.trim();
+            
+            if (!questionText) {
+                showToast('error', 'Erro', 'Por favor, digite sua pergunta.');
+                return;
+            }
+            
+            console.log('Enviando pergunta:', questionText, 'para produto:', productId);
+            
+            // Obter o token CSRF
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+            
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.content] = csrfToken.content;
+                console.log('CSRF token encontrado');
+            } else {
+                console.log('CSRF token não encontrado');
+            }
+            
+            fetch(`/product/${productId}/question`, {
+                method: 'POST',
+                headers: headers,
+                body: `question=${encodeURIComponent(questionText)}`
+            })
+            .then(response => {
+                console.log('Resposta do servidor:', response.status, response.statusText);
+                
+                // Se o status for 401 (Unauthorized), redirecionar para login
+                if (response.status === 401) {
+                    showToast('error', 'Login necessário', 'Você precisa estar logado para fazer perguntas.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return null;
+                }
+                return response.text();
+            })
+            .then(data => {
+                if (data === null) {
+                    // Já foi tratado o redirecionamento
+                    return;
+                }
+                
+                console.log('Dados da resposta:', data);
+                
+                if (data.startsWith('success')) {
+                    showToast('success', 'Pergunta enviada!', 'Sua pergunta foi enviada com sucesso.');
+                    document.getElementById('questionText').value = '';
+                    // Recarregar a página para mostrar a nova pergunta
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else if (data.startsWith('error')) {
+                    const errorMessage = data.split(':')[1];
+                    showToast('error', 'Erro', errorMessage);
+                } else {
+                    console.error('Resposta inesperada:', data);
+                    showToast('error', 'Erro', 'Resposta inesperada do servidor');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar pergunta:', error);
+                showToast('error', 'Erro', 'Erro ao enviar pergunta: ' + error.message);
+            });
+        }
+
+        function showAnswerForm(button) {
+            const questionItem = button.closest('.question-item');
+            const answerForm = questionItem.querySelector('.answer-form');
+            const adminActions = questionItem.querySelector('.admin-actions');
+            
+            answerForm.style.display = 'block';
+            adminActions.style.display = 'none';
+        }
+
+        function cancelAnswer(button) {
+            const questionItem = button.closest('.question-item');
+            const answerForm = questionItem.querySelector('.answer-form');
+            const adminActions = questionItem.querySelector('.admin-actions');
+            const textarea = answerForm.querySelector('textarea');
+            
+            answerForm.style.display = 'none';
+            adminActions.style.display = 'block';
+            textarea.value = '';
+        }
+
+        function submitAnswer(button) {
+            const questionItem = button.closest('.question-item');
+            const questionId = questionItem.dataset.questionId;
+            const textarea = questionItem.querySelector('.answer-form textarea');
+            const answer = textarea.value.trim();
+            
+            if (!answer) {
+                showToast('error', 'Erro', 'Por favor, digite sua resposta.');
+                return;
+            }
+            
+            // Obter o token CSRF
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+            
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.content] = csrfToken.content;
+            }
+            
+            fetch(`/product/question/${questionId}/answer`, {
+                method: 'POST',
+                headers: headers,
+                body: `answer=${encodeURIComponent(answer)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.startsWith('success')) {
+                    showToast('success', 'Resposta enviada!', 'Sua resposta foi enviada com sucesso.');
+                    // Recarregar a página para mostrar a resposta
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else if (data.startsWith('error')) {
+                    const errorMessage = data.split(':')[1];
+                    showToast('error', 'Erro', errorMessage);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar resposta:', error);
+                showToast('error', 'Erro', 'Erro ao enviar resposta: ' + error.message);
+            });
+        }
+
+        function deleteQuestion(button) {
+            if (!confirm('Tem certeza que deseja excluir esta pergunta?')) {
+                return;
+            }
+            
+            const questionItem = button.closest('.question-item');
+            const questionId = questionItem.dataset.questionId;
+            
+            // Obter o token CSRF
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            
+            const headers = {};
+            
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.content] = csrfToken.content;
+            }
+            
+            fetch(`/product/question/${questionId}`, {
+                method: 'DELETE',
+                headers: headers
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.startsWith('success')) {
+                    showToast('success', 'Pergunta excluída!', 'A pergunta foi excluída com sucesso.');
+                    questionItem.remove();
+                } else if (data.startsWith('error')) {
+                    const errorMessage = data.split(':')[1];
+                    showToast('error', 'Erro', errorMessage);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao excluir pergunta:', error);
+                showToast('error', 'Erro', 'Erro ao excluir pergunta: ' + error.message);
+            });
+        }
     </script>
 
 </body>

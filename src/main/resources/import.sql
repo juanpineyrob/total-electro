@@ -76,3 +76,96 @@ UPDATE products SET discount_percent = 14 WHERE id = 7;
 UPDATE products SET discount_percent = 9 WHERE id = 10;
 UPDATE products SET discount_percent = 13 WHERE id = 12;
 UPDATE products SET discount_percent = 8 WHERE id = 15;
+
+-- Criação da tabela de perguntas dos produtos
+CREATE TABLE IF NOT EXISTS product_questions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    question VARCHAR(1000) NOT NULL,
+    answer VARCHAR(1000),
+    answered_by BIGINT,
+    answered_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_answered BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (answered_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- Inserir algumas perguntas de exemplo
+INSERT INTO product_questions (product_id, user_id, question, created_at, is_answered) VALUES
+(1, 1, 'Este produto tem garantia?', CURRENT_TIMESTAMP, false),
+(1, 2, 'Qual é o prazo de entrega?', CURRENT_TIMESTAMP, false),
+(2, 1, 'Este produto é compatível com 220V?', CURRENT_TIMESTAMP, false),
+(3, 2, 'Qual a potência deste produto?', CURRENT_TIMESTAMP, false),
+(4, 1, 'Este produto vem com manual de instruções?', CURRENT_TIMESTAMP, false),
+(5, 2, 'Qual a durabilidade estimada?', CURRENT_TIMESTAMP, false),
+(6, 1, 'Este produto é à prova d''água?', CURRENT_TIMESTAMP, false),
+(7, 2, 'Qual a temperatura máxima que suporta?', CURRENT_TIMESTAMP, false),
+(8, 1, 'Este produto tem certificação de segurança?', CURRENT_TIMESTAMP, false),
+(9, 2, 'Qual o consumo de energia?', CURRENT_TIMESTAMP, false),
+(10, 1, 'Este produto é compatível com WiFi?', CURRENT_TIMESTAMP, false),
+(11, 2, 'Qual a distância máxima de alcance?', CURRENT_TIMESTAMP, false),
+(12, 1, 'Este produto tem sensor de movimento?', CURRENT_TIMESTAMP, false),
+(13, 2, 'Qual a vida útil da bateria?', CURRENT_TIMESTAMP, false),
+(14, 1, 'Este produto é resistente a impactos?', CURRENT_TIMESTAMP, false),
+(15, 2, 'Qual a garantia do fabricante?', CURRENT_TIMESTAMP, false);
+
+-- Inserir algumas respostas de exemplo
+UPDATE product_questions SET 
+    answer = 'Sim, este produto possui garantia de 1 ano contra defeitos de fabricação.',
+    answered_by = 3,
+    answered_at = CURRENT_TIMESTAMP,
+    is_answered = true
+WHERE id = 1;
+
+UPDATE product_questions SET 
+    answer = 'O prazo de entrega é de 3-5 dias úteis para a região de Rivera.',
+    answered_by = 3,
+    answered_at = CURRENT_TIMESTAMP,
+    is_answered = true
+WHERE id = 2;
+
+UPDATE product_questions SET 
+    answer = 'Sim, este produto é compatível com tensão de 220V. É importante verificar se sua instalação elétrica suporta esta tensão.',
+    answered_by = 3,
+    answered_at = CURRENT_TIMESTAMP,
+    is_answered = true
+WHERE id = 3;
+
+UPDATE product_questions SET 
+    answer = 'Este produto tem potência de 500W, ideal para uso doméstico e pequenos projetos.',
+    answered_by = 3,
+    answered_at = CURRENT_TIMESTAMP,
+    is_answered = true
+WHERE id = 4;
+
+UPDATE product_questions SET 
+    answer = 'Sim, o produto vem com manual de instruções completo em português e espanhol.',
+    answered_by = 3,
+    answered_at = CURRENT_TIMESTAMP,
+    is_answered = true
+WHERE id = 5;
+
+-- Tabela de avaliações de produtos
+CREATE TABLE IF NOT EXISTS product_reviews (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    rating INT NOT NULL,
+    comment VARCHAR(2000),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+-- Tabela de fotos das avaliações
+CREATE TABLE IF NOT EXISTS product_review_photos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    review_id BIGINT NOT NULL,
+    url VARCHAR(500) NOT NULL,
+    FOREIGN KEY (review_id) REFERENCES product_reviews(id) ON DELETE CASCADE
+);

@@ -348,6 +348,19 @@
   <!-- HEADER -->
   <th:block th:insert="~{fragments/header :: header}"></th:block>
 
+  <!-- MENSAGENS FLASH -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 20px auto; max-width: 1200px;">
+    <i class="fas fa-check-circle me-2"></i>
+    <span th:text="${success}">Mensagem de sucesso</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 20px auto; max-width: 1200px;">
+    <i class="fas fa-exclamation-circle me-2"></i>
+    <span th:text="${error}">Mensagem de erro</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
   <!-- BANNER -->
   <section class="banner">
     <div class="banner-img">
@@ -500,12 +513,7 @@
       // Adicionar CSRF token se disponível
       if (csrfToken && csrfHeader) {
         headers[csrfHeader.content] = csrfToken.content;
-        console.log('CSRF token adicionado (index):', csrfHeader.content, csrfToken.content);
-      } else {
-        console.warn('CSRF tokens não encontrados (index)');
       }
-      
-      console.log('Fazendo requisição para /cart/add com headers (index):', headers);
       
       fetch('/cart/add', {
         method: 'POST',
@@ -514,12 +522,28 @@
       })
       .then(response => {
         console.log('Resposta recebida (index):', response.status, response.statusText);
+        
+        // Se o status for 401 (Unauthorized), redirecionar para login
+        if (response.status === 401) {
+          showToast('error', 'Login necessário', 'Você precisa estar logado para adicionar produtos ao carrinho.');
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+          return null;
+        }
+        
         return response.text();
       })
       .then(data => {
-        console.log('Dados da resposta (index):', data);
         button.classList.remove('loading');
         button.disabled = false;
+        
+        if (data === null) {
+          // Já foi tratado o redirecionamento
+          return;
+        }
+        
+        console.log('Dados da resposta (index):', data);
         
         if (data.startsWith('success')) {
           const cartCount = data.split(':')[1];
@@ -528,14 +552,7 @@
         } else if (data.startsWith('error')) {
           const errorMessage = data.split(':')[1];
           console.error('Erro do servidor (index):', errorMessage);
-          if (errorMessage.includes('logado')) {
-            showToast('error', 'Login necessário', 'Você precisa estar logado para adicionar produtos ao carrinho.');
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 2000);
-          } else {
-            showToast('error', 'Erro', errorMessage);
-          }
+          showToast('error', 'Erro', errorMessage);
         } else {
           console.error('Resposta inesperada (index):', data);
           showToast('error', 'Erro', 'Resposta inesperada do servidor');

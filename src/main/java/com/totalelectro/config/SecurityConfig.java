@@ -87,7 +87,8 @@ public class  SecurityConfig {
                         new AntPathRequestMatcher("/cart/api/apply-coupon"),
                         new AntPathRequestMatcher("/cart/checkout"),
                         new AntPathRequestMatcher("/profile/**"),
-                        new AntPathRequestMatcher("/orders/**")
+                        new AntPathRequestMatcher("/orders/**"),
+                        new AntPathRequestMatcher("/api/reviews/**")
                     ).authenticated()
                     // Rutas de administración
                     .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
@@ -109,6 +110,7 @@ public class  SecurityConfig {
                 .ignoringRequestMatchers("/cart/remove") // Ignorar CSRF para remover do carrinho
                 .ignoringRequestMatchers("/cart/test-shipping/**") // Ignorar CSRF para teste de frete
                 .ignoringRequestMatchers("/cart/api/apply-coupon")
+                .ignoringRequestMatchers("/api/reviews/**") // Ignorar CSRF para avaliações
             )
             .formLogin(form -> {
                 logger.info("Configurando login form");

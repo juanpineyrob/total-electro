@@ -432,7 +432,7 @@
             <div class="checkout-grid">
             <!-- Formulário de Checkout -->
             <div class="checkout-form">
-                <form id="checkout-form" th:action="@{/checkout/process}" method="post">
+                <form id="checkout-form" th:action="${isCartCheckout ? '/checkout/process-cart' : '/checkout/process'}" method="post">
                         <!-- Dados Pessoais -->
                         <div class="form-section">
                         <h2 class="section-title">
@@ -482,16 +482,8 @@
                                 <input type="text" name="city" class="form-input" required th:value="${user?.city}" placeholder="São Paulo">
                                 </div>
                                 <div class="form-group">
-                                <label class="form-label">Bairro</label>
-                                <input type="text" name="neighborhood" class="form-input" required placeholder="Centro">
-                                </div>
-                                <div class="form-group">
                                 <label class="form-label">Endereço</label>
                                 <input type="text" name="address" class="form-input" required th:value="${user?.address}" placeholder="Rua das Flores, 123">
-                                </div>
-                                <div class="form-group">
-                                <label class="form-label">Complemento</label>
-                                <input type="text" name="complement" class="form-input" placeholder="Apto 101">
                                 </div>
                                 </div>
                                 </div>
@@ -506,19 +498,19 @@
                             <div class="form-grid">
                             <div class="form-group full-width">
                                 <label class="form-label">Número do Cartão</label>
-                                <input type="text" name="cardNumber" id="cardNumber" class="form-input" required placeholder="0000 0000 0000 0000" maxlength="19">
+                                <input type="text" name="cardNumber" id="cardNumber" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19">
                                 </div>
                                 <div class="form-group">
                                 <label class="form-label">Nome no Cartão</label>
-                                <input type="text" name="cardName" class="form-input" required placeholder="NOME COMO ESTÁ NO CARTÃO">
+                                <input type="text" name="cardName" class="form-input" placeholder="NOME COMO ESTÁ NO CARTÃO">
                                 </div>
                                 <div class="form-group">
                                 <label class="form-label">Data de Validade</label>
-                                <input type="text" name="expiryDate" id="expiryDate" class="form-input" required placeholder="MM/AA" maxlength="5">
+                                <input type="text" name="expiryDate" id="expiryDate" class="form-input" placeholder="MM/AA" maxlength="5">
                                 </div>
                                 <div class="form-group">
                                 <label class="form-label">CVV</label>
-                                <input type="text" name="cvv" id="cvv" class="form-input" required placeholder="123" maxlength="4">
+                                <input type="text" name="cvv" id="cvv" class="form-input" placeholder="123" maxlength="4">
                                 </div>
                             </div>
                         </div>
@@ -813,8 +805,23 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ coupon })
             })
-            .then(res => res.json())
+            .then(response => {
+                // Se o status for 401 (Unauthorized), redirecionar para login
+                if (response.status === 401) {
+                    alert('Você precisa estar logado para aplicar cupons.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return null;
+                }
+                return response.json();
+            })
             .then(data => {
+                if (data === null) {
+                    // Já foi tratado o redirecionamento
+                    return;
+                }
+                
                 const msgDiv = document.getElementById('couponMessage');
                 if (data.success) {
                     msgDiv.textContent = data.message;

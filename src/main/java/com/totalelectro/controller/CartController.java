@@ -161,13 +161,13 @@ public class CartController {
 
     @PostMapping("/add")
     @ResponseBody
-    public String addToCart(@RequestParam Long productId, 
+    public ResponseEntity<String> addToCart(@RequestParam Long productId, 
                            @RequestParam(defaultValue = "1") Integer quantity,
                            HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
-                return "error:Você precisa estar logado para adicionar produtos ao carrinho";
+                return ResponseEntity.status(401).body("Você precisa estar logado para adicionar produtos ao carrinho");
             }
 
             String userEmail = auth.getName();
@@ -175,21 +175,21 @@ public class CartController {
             
             int cartCount = cartService.getCartItemCount(userEmail);
             session.setAttribute("cartItemCount", cartCount);
-            return "success:" + cartCount;
+            return ResponseEntity.ok("success:" + cartCount);
         } catch (Exception e) {
-            return "error:" + e.getMessage();
+            return ResponseEntity.badRequest().body("error:" + e.getMessage());
         }
     }
 
     @PostMapping("/update")
     @ResponseBody
-    public String updateCart(@RequestParam Long productId, 
+    public ResponseEntity<String> updateCart(@RequestParam Long productId, 
                             @RequestParam Integer quantity,
                             HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
-                return "error:Usuário não autenticado";
+                return ResponseEntity.status(401).body("Usuário não autenticado");
             }
 
             String userEmail = auth.getName();
@@ -197,28 +197,28 @@ public class CartController {
             
             Double total = cartService.getCartTotal(userEmail);
             session.setAttribute("cartItemCount", cartService.getCartItemCount(userEmail));
-            return "success:" + total;
+            return ResponseEntity.ok("success:" + total);
         } catch (Exception e) {
-            return "error:" + e.getMessage();
+            return ResponseEntity.badRequest().body("error:" + e.getMessage());
         }
     }
 
     @PostMapping("/remove")
     @ResponseBody
-    public String removeFromCart(@RequestParam Long productId, HttpSession session) {
+    public ResponseEntity<String> removeFromCart(@RequestParam Long productId, HttpSession session) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
-                return "error:Usuário não autenticado";
+                return ResponseEntity.status(401).body("Usuário não autenticado");
             }
 
             String userEmail = auth.getName();
             cartService.removeFromCart(userEmail, productId);
             session.setAttribute("cartItemCount", cartService.getCartItemCount(userEmail));
             
-            return "success:Item removido do carrinho";
+            return ResponseEntity.ok("success:Item removido do carrinho");
         } catch (Exception e) {
-            return "error:" + e.getMessage();
+            return ResponseEntity.badRequest().body("error:" + e.getMessage());
         }
     }
 
@@ -235,7 +235,6 @@ public class CartController {
             cartService.clearCart(userEmail);
             session.setAttribute("cartItemCount", 0);
             
-            redirectAttributes.addFlashAttribute("success", "Carrinho limpo com sucesso");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erro ao limpar carrinho: " + e.getMessage());
         }
@@ -386,19 +385,19 @@ public class CartController {
 
     @PostMapping("/api/apply-coupon")
     @ResponseBody
-    public Map<String, Object> applyCouponApi(@RequestBody Map<String, String> req, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> applyCouponApi(@RequestBody Map<String, String> req, HttpSession session) {
         String coupon = req.get("coupon");
         if ("LUZ15".equalsIgnoreCase((String) session.getAttribute("appliedCoupon"))) {
             Map<String, Object> resp = new java.util.HashMap<>();
             resp.put("success", false);
             resp.put("message", "O cupom LUZ15 já foi aplicado nesta compra.");
-            return resp;
+            return ResponseEntity.ok(resp);
         }
         Map<String, Object> resp = new java.util.HashMap<>();
         if (coupon == null || coupon.isBlank()) {
             resp.put("success", false);
             resp.put("message", "Digite um cupom válido.");
-            return resp;
+            return ResponseEntity.ok(resp);
         }
         if (coupon.equalsIgnoreCase("LUZ15")) {
             session.setAttribute("appliedCoupon", coupon.toUpperCase());
@@ -410,14 +409,14 @@ public class CartController {
             session.setAttribute("couponSuccess", false);
             resp.put("success", false);
             resp.put("message", "Cupom inválido ou não suportado.");
-            return resp;
+            return ResponseEntity.ok(resp);
         }
         // Calcular desconto e totais
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
             resp.put("success", false);
             resp.put("message", "Usuário não autenticado");
-            return resp;
+            return ResponseEntity.status(401).body(resp);
         }
         String userEmail = auth.getName();
         var cartItems = cartService.getCartItems(userEmail);
@@ -458,6 +457,6 @@ public class CartController {
         resp.put("shipping", shipping);
         resp.put("total", total);
         resp.put("message", "Cupom aplicado: 15% OFF em Iluminação!");
-        return resp;
+        return ResponseEntity.ok(resp);
     }
 } 

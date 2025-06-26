@@ -130,7 +130,7 @@ public class ShippingServiceImpl implements ShippingService {
                 Double originLon = (Double) originData.get("longitude");
                 Double destLat = (Double) destinationData.get("latitude");
                 Double destLon = (Double) destinationData.get("longitude");
-                
+            
                 if (originLat != null && originLon != null && destLat != null && destLon != null) {
                     return calculateDistanceFromCoordinates(originLat, originLon, destLat, destLon);
                 }

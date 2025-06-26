@@ -650,15 +650,15 @@
 
                 <div class="cart-content">
                     <!-- Alertas -->
-                    <div th:if="${param.success}" class="custom-alert alert-success alert-dismissible fade show" role="alert">
+                    <div th:if="${success}" class="custom-alert alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle me-2"></i>
-                        <span th:text="${param.success}">Sucesso!</span>
+                        <span th:text="${success}">Sucesso!</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
 
-                    <div th:if="${param.error}" class="custom-alert alert-danger alert-dismissible fade show" role="alert">
+                    <div th:if="${error}" class="custom-alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        <span th:text="${param.error}">Erro!</span>
+                        <span th:text="${error}">Erro!</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
 
@@ -667,7 +667,7 @@
                         <i class="fas fa-shopping-cart empty-cart-icon"></i>
                         <h3>Seu carrinho está vazio</h3>
                         <p>Adicione alguns produtos para começar suas compras!</p>
-                        <a href="/products" class="continue-shopping">
+                        <a href="/" class="continue-shopping">
                             <i class="fas fa-arrow-left me-2"></i>Continuar Comprando
                         </a>
                     </div>
@@ -676,9 +676,9 @@
                     <div th:if="${!#lists.isEmpty(cartItems)}">
                         
                         <!-- Botão Limpar Carrinho -->
-                        <div class="clear-cart-section">
-                            <form method="post" action="/cart/clear" style="display: inline;">
-                                <button type="submit" class="clear-cart-btn" onclick="return confirm('Tem certeza que deseja limpar o carrinho?')">
+                        <div class="clear-cart-section mb-3">
+                            <form th:action="@{/cart/clear}" method="post" style="display: inline;">
+                                <button type="submit" class="clear-cart-btn">
                                     <i class="fas fa-trash me-2"></i>Limpar Carrinho
                                 </button>
                             </form>
@@ -857,9 +857,6 @@
             // Adicionar CSRF token se disponível
             if (csrfToken && csrfHeader) {
                 headers[csrfHeader.content] = csrfToken.content;
-                console.log('CSRF token adicionado (cart update):', csrfHeader.content, csrfToken.content);
-            } else {
-                console.warn('CSRF tokens não encontrados (cart update)');
             }
 
             console.log('Atualizando quantidade do produto:', productId, 'para:', quantity);
@@ -871,9 +868,24 @@
             })
             .then(response => {
                 console.log('Resposta da atualização:', response.status, response.statusText);
+                
+                // Se o status for 401 (Unauthorized), redirecionar para login
+                if (response.status === 401) {
+                    alert('Você precisa estar logado para atualizar o carrinho.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return null;
+                }
+                
                 return response.text();
             })
             .then(data => {
+                if (data === null) {
+                    // Já foi tratado o redirecionamento
+                    return;
+                }
+                
                 console.log('Dados da resposta (update):', data);
                 if (data.startsWith('success')) {
                     location.reload();
@@ -890,52 +902,62 @@
         }
 
         function removeFromCart(productId) {
-            if (confirm('Tem certeza que deseja remover este item do carrinho?')) {
-                const cartItem = event.target.closest('.cart-item');
-                cartItem.classList.add('loading');
+            const cartItem = event.target.closest('.cart-item');
+            cartItem.classList.add('loading');
 
-                // Obter o token CSRF
-                const csrfToken = document.querySelector('meta[name="_csrf"]');
-                const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
-                
-                const headers = {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                };
-                
-                // Adicionar CSRF token se disponível
-                if (csrfToken && csrfHeader) {
-                    headers[csrfHeader.content] = csrfToken.content;
-                    console.log('CSRF token adicionado (cart remove):', csrfHeader.content, csrfToken.content);
-                } else {
-                    console.warn('CSRF tokens não encontrados (cart remove)');
-                }
-
-                console.log('Removendo produto do carrinho:', productId);
-
-                fetch('/cart/remove', {
-                    method: 'POST',
-                    headers: headers,
-                    body: `productId=${productId}`
-                })
-                .then(response => {
-                    console.log('Resposta da remoção:', response.status, response.statusText);
-                    return response.text();
-                })
-                .then(data => {
-                    console.log('Dados da resposta (remove):', data);
-                    if (data.startsWith('success')) {
-                        location.reload();
-                    } else {
-                        alert('Erro ao remover item: ' + data.split(':')[1]);
-                        cartItem.classList.remove('loading');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro na remoção:', error);
-                    alert('Erro ao remover item: ' + error.message);
-                    cartItem.classList.remove('loading');
-                });
+            // Obter o token CSRF
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+            
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            };
+            
+            // Adicionar CSRF token se disponível
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.content] = csrfToken.content;
             }
+
+            console.log('Removendo produto do carrinho:', productId);
+
+            fetch('/cart/remove', {
+                method: 'POST',
+                headers: headers,
+                body: `productId=${productId}`
+            })
+            .then(response => {
+                console.log('Resposta da remoção:', response.status, response.statusText);
+                
+                // Se o status for 401 (Unauthorized), redirecionar para login
+                if (response.status === 401) {
+                    alert('Você precisa estar logado para remover itens do carrinho.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return null;
+                }
+                
+                return response.text();
+            })
+            .then(data => {
+                if (data === null) {
+                    // Já foi tratado o redirecionamento
+                    return;
+                }
+                
+                console.log('Dados da resposta (remove):', data);
+                if (data.startsWith('success')) {
+                    location.reload();
+                } else {
+                    alert('Erro ao remover item: ' + data.split(':')[1]);
+                    cartItem.classList.remove('loading');
+                }
+            })
+            .catch(error => {
+                console.error('Erro na remoção:', error);
+                alert('Erro ao remover item: ' + error.message);
+                cartItem.classList.remove('loading');
+            });
         }
 
         // Animação de entrada suave

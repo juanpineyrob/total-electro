@@ -23,6 +23,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     @Query("SELECT COUNT(c) FROM CartItem c WHERE c.user.email = :userEmail")
     int countByUserEmail(@Param("userEmail") String userEmail);
     
-    @Query("SELECT SUM(c.quantity * c.product.price) FROM CartItem c WHERE c.user.email = :userEmail")
+    @Query("SELECT SUM(c.quantity * CASE WHEN c.product.discountPercent IS NOT NULL AND c.product.discountPercent > 0 " +
+           "THEN c.product.price * (1 - c.product.discountPercent / 100.0) " +
+           "ELSE c.product.price END) FROM CartItem c WHERE c.user.email = :userEmail")
     Double getTotalByUserEmail(@Param("userEmail") String userEmail);
 } 

@@ -540,8 +540,23 @@
                     },
                     body: formData
                 })
-                .then(response => response.text())
+                .then(response => {
+                    // Se o status for 401 (Unauthorized), redirecionar para login
+                    if (response.status === 401) {
+                        showToast('Você precisa estar logado para adicionar produtos ao carrinho.', true);
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                        return null;
+                    }
+                    return response.text();
+                })
                 .then(text => {
+                    if (text === null) {
+                        // Já foi tratado o redirecionamento
+                        return;
+                    }
+                    
                     const [status, data] = text.split(/:(.*)/s);
                     if (status === 'success') {
                         const cartCount = parseInt(data, 10);
