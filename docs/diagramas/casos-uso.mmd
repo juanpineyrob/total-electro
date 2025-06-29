@@ -1,0 +1,28 @@
+flowchart TD
+  Usuario([Usuario])
+  Admin([Admin])
+  Registrarse((Registrarse))
+  IniciarSesion((Iniciar sesión))
+  BuscarProductos((Buscar productos))
+  AgregarCarrito((Agregar al carrito))
+  Comprar((Comprar))
+  HacerPreguntas((Hacer preguntas))
+  DejarResenas((Dejar reseñas))
+  GestionarProductos((Gestionar productos))
+  GestionarUsuarios((Gestionar usuarios))
+  GestionarPedidos((Gestionar pedidos))
+  ResponderPreguntas((Responder preguntas))
+  GenerarReportes((Generar reportes))
+
+  Usuario --> Registrarse
+  Usuario --> IniciarSesion
+  Usuario --> BuscarProductos
+  Usuario --> AgregarCarrito
+  Usuario --> Comprar
+  Usuario --> HacerPreguntas
+  Usuario --> DejarResenas
+  Admin --> GestionarProductos
+  Admin --> GestionarUsuarios
+  Admin --> GestionarPedidos
+  Admin --> ResponderPreguntas
+  Admin --> GenerarReportes 
