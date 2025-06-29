@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +30,25 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0.0) FROM Order o WHERE o.status = 'COMPLETADA' AND YEAR(o.date) = YEAR(CURRENT_DATE) AND MONTH(o.date) = MONTH(CURRENT_DATE)")
     Double findCurrentMonthCompletedOrdersTotal();
+    
+    @Query("SELECT o FROM Order o WHERE o.date >= :startDate AND o.date < :endDate")
+    List<Order> findByDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    
+    @Query("SELECT o FROM Order o WHERE o.date >= :startDate AND o.date < :endDate AND o.status = 'COMPLETADA'")
+    List<Order> findCompletedByDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    
+    default List<Order> findByDateBetween(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
+        return findByDateBetween(startDateTime, endDateTime);
+    }
+
+    default List<Order> findCompletedByDateBetween(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
+        return findCompletedByDateBetween(startDateTime, endDateTime);
+    }
+
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0.0) FROM Order o WHERE o.status = 'COMPLETADA'")
+    Double sumTotalCompletedOrders();
 } 

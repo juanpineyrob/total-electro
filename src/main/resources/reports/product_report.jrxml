@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ProductReport" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
+              uuid="b2c3d4e5-f6g7-8901-bcde-f23456789012">
+    
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    
+    <parameter name="totalProducts" class="java.lang.Integer"/>
+    <parameter name="totalValue" class="java.lang.Double"/>
+    
+    <field name="id" class="java.lang.Long"/>
+    <field name="name" class="java.lang.String"/>
+    <field name="short_description" class="java.lang.String"/>
+    <field name="price" class="java.math.BigDecimal"/>
+    <field name="views" class="java.lang.Integer"/>
+    <field name="category.name" class="java.lang.String"/>
+    
+    <title>
+        <band height="80" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="30" uuid="title-uuid"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Relatório de Produtos - Total Electro"]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="0" y="40" width="277" height="20" uuid="total-products-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total de Produtos: " + $P{totalProducts}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="277" y="40" width="278" height="20" uuid="total-value-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Valor Total em Estoque: R$ " + $P{totalValue}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="30" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="50" height="30" uuid="header-id"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ID]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="50" y="0" width="150" height="30" uuid="header-name"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Nome]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="200" y="0" width="100" height="30" uuid="header-category"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Categoria]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="300" y="0" width="80" height="30" uuid="header-price"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Preço]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="380" y="0" width="80" height="30" uuid="header-stock"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Visualizações]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="460" y="0" width="95" height="30" uuid="header-total"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20" splitType="Prevent">
+            <textField>
+                <reportElement x="0" y="0" width="50" height="20" uuid="detail-id"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="50" y="0" width="150" height="20" uuid="detail-name"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="200" y="0" width="100" height="20" uuid="detail-category"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{category.name}]]></textFieldExpression>
+            </textField>
+            
+            <textField pattern="#,##0.00">
+                <reportElement x="300" y="0" width="80" height="20" uuid="detail-price"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["R$ " + $F{price}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="380" y="0" width="80" height="20" uuid="detail-stock"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{views}]]></textFieldExpression>
+            </textField>
+            
+            <textField pattern="#,##0.00">
+                <reportElement x="460" y="0" width="95" height="20" uuid="detail-total"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["R$ " + ($F{price} * $F{views})]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <summary>
+        <band height="30" splitType="Stretch">
+            <textField>
+                <reportElement x="380" y="0" width="80" height="30" uuid="summary-label"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total Geral:"]]></textFieldExpression>
+            </textField>
+            
+            <textField pattern="#,##0.00">
+                <reportElement x="460" y="0" width="95" height="30" uuid="summary-total"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["R$ " + $P{totalValue}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport> 

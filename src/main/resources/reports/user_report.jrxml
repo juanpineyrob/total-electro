@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="UserReport" pageWidth="595" pageHeight="842" columnWidth="555"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
+              uuid="c3d4e5f6-g7h8-9012-cdef-345678901234">
+    
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    
+    <parameter name="totalUsers" class="java.lang.Integer"/>
+    <parameter name="activeUsers" class="java.lang.Long"/>
+    
+    <field name="id" class="java.lang.Long"/>
+    <field name="email" class="java.lang.String"/>
+    <field name="firstName" class="java.lang.String"/>
+    <field name="lastName" class="java.lang.String"/>
+    <field name="roles" class="java.util.Set"/>
+    <field name="city" class="java.lang.String"/>
+    
+    <title>
+        <band height="80" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="30" uuid="title-uuid"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Relatório de Usuários - Total Electro"]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="0" y="40" width="277" height="20" uuid="total-users-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total de Usuários: " + $P{totalUsers}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="277" y="40" width="278" height="20" uuid="active-users-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Usuários Ativos: " + $P{activeUsers}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="30" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="50" height="30" uuid="header-id"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ID]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="50" y="0" width="150" height="30" uuid="header-name"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Nome]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="200" y="0" width="200" height="30" uuid="header-email"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Email]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="400" y="0" width="80" height="30" uuid="header-status"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Status]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement x="480" y="0" width="75" height="30" uuid="header-date"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Cidade]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20" splitType="Prevent">
+            <textField>
+                <reportElement x="0" y="0" width="50" height="20" uuid="detail-id"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="50" y="0" width="150" height="20" uuid="detail-name"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{firstName} + " " + $F{lastName}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="200" y="0" width="200" height="20" uuid="detail-email"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="400" y="0" width="80" height="20" uuid="detail-status"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{roles}.size() > 0 ? "Ativo" : "Inativo"]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="480" y="0" width="75" height="20" uuid="detail-date"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <summary>
+        <band height="30" splitType="Stretch">
+            <textField>
+                <reportElement x="400" y="0" width="80" height="30" uuid="summary-label"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total:"]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="480" y="0" width="75" height="30" uuid="summary-total"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{totalUsers}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport> 
