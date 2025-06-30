@@ -483,13 +483,88 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     function showSlide(n) {
-      document.getElementById('slide-0').classList.remove('active');
-      document.getElementById('slide-1').classList.remove('active');
+      const slide0 = document.getElementById('slide-0');
+      const slide1 = document.getElementById('slide-1');
+      const dot0 = document.getElementById('dot-0');
+      const dot1 = document.getElementById('dot-1');
+      
+      // Remove active class from all slides
+      slide0.classList.remove('active');
+      slide1.classList.remove('active');
+      
+      // Add active class to selected slide
       document.getElementById('slide-' + n).classList.add('active');
-      document.getElementById('dot-0').style.color = n === 0 ? '#f36f21' : '#eee';
-      document.getElementById('dot-1').style.color = n === 1 ? '#f36f21' : '#eee';
+      
+      // Update dot colors
+      dot0.style.color = n === 0 ? '#f36f21' : '#eee';
+      dot1.style.color = n === 1 ? '#f36f21' : '#eee';
+      
+      // Handle horizontal scrolling for mobile
+      if (window.innerWidth <= 991) {
+        const activeSlide = document.getElementById('slide-' + n);
+        if (activeSlide) {
+          activeSlide.scrollLeft = 0;
+        }
+      }
     }
-    window.onload = function() { showSlide(0); };
+    
+    // Add touch/swipe support for mobile carousel
+    function initCarouselTouch() {
+      const slides = document.querySelectorAll('.carousel-slide');
+      
+      slides.forEach(slide => {
+        let startX = 0;
+        let endX = 0;
+        let isScrolling = false;
+        
+        slide.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          isScrolling = false;
+        });
+        
+        slide.addEventListener('touchmove', (e) => {
+          // Detect if user is scrolling horizontally
+          const currentX = e.touches[0].clientX;
+          const diff = Math.abs(currentX - startX);
+          if (diff > 10) {
+            isScrolling = true;
+          }
+        });
+        
+        slide.addEventListener('touchend', (e) => {
+          endX = e.changedTouches[0].clientX;
+          if (!isScrolling) {
+            handleSwipe(startX, endX);
+          }
+        });
+      });
+    }
+    
+    function handleSwipe(startX, endX) {
+      const threshold = 80; // Increased threshold for better accuracy
+      const diff = startX - endX;
+      
+      if (Math.abs(diff) > threshold) {
+        const currentSlide = document.querySelector('.carousel-slide.active');
+        const currentSlideId = currentSlide.id;
+        const currentIndex = parseInt(currentSlideId.split('-')[1]);
+        
+        if (diff > 0) {
+          // Swipe left - go to next slide
+          const nextIndex = currentIndex === 0 ? 1 : 0;
+          showSlide(nextIndex);
+        } else {
+          // Swipe right - go to previous slide
+          const prevIndex = currentIndex === 1 ? 0 : 1;
+          showSlide(prevIndex);
+        }
+      }
+    }
+    
+    window.onload = function() { 
+      showSlide(0);
+      initCarouselTouch();
+    };
 
     // Função para adicionar produto ao carrinho
     function addToCart(button) {
