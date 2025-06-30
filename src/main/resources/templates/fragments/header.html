@@ -91,11 +91,17 @@
                       th:text="${session.cartItemCount}">
                 </span>
             </a>
+            <!-- Botón hamburguesa solo visible en móvil -->
+            <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Abrir menú">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
         </div>
     </div>
 
     <!-- MENU -->
-    <nav class="main-menu">
+    <nav class="main-menu" id="main-menu">
         <div class="menu-items">
             <a th:href="@{/product/category/iluminacion}">
                 Iluminação
@@ -151,6 +157,24 @@
             </a>
         </div>
     </nav>
+    <!-- Overlay para cerrar el menú en móvil -->
+    <div id="menu-overlay" class="menu-overlay"></div>
+    <script>
+    // Script para menú hamburguesa
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('menu-toggle');
+        const mainMenu = document.getElementById('main-menu');
+        const overlay = document.getElementById('menu-overlay');
+        menuToggle.addEventListener('click', function() {
+            mainMenu.classList.toggle('open');
+            overlay.classList.toggle('show');
+        });
+        overlay.addEventListener('click', function() {
+            mainMenu.classList.remove('open');
+            overlay.classList.remove('show');
+        });
+    });
+    </script>
 </div>
 
 </body>
