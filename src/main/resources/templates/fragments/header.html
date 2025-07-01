@@ -74,15 +74,15 @@
             <a href="/"><img th:src="@{/images/logo.png}" alt="Total Electro"></a>
         </div>
         <div class="search-bar">
-            <form th:action="@{/product/search}" method="get">
-                <input type="text" name="name" placeholder="Pesquisar...">
-                <button type="submit">Buscar</button>
+            <form th:action="@{/product/search}" method="get" id="searchForm">
+                <input type="text" name="name" placeholder="Digite e pressione Enter..." id="searchInput">
+                <button type="submit" class="search-btn">Buscar</button>
             </form>
         </div>
         <div class="header-actions">
             
-            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn">Minha conta</a>
-            <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn">Entrar</a>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="account header-btn desktop-only">Minha conta</a>
+            <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="account header-btn desktop-only">Entrar</a>
             <a th:href="@{/cart}" class="cart header-btn" id="cart-link">
                 <i class="fas fa-shopping-cart" style="font-size: 1.2rem; margin-right: 0.5rem;"></i>
                 <span th:if="${session.cartItemCount != null && session.cartItemCount > 0}"
@@ -156,6 +156,17 @@
                 Ofertas e promoções
             </a>
         </div>
+        <!-- Links de conta para mobile -->
+        <div class="mobile-account-links">
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}" class="mobile-account-link">
+                <i class="fas fa-user"></i>
+                Minha conta
+            </a>
+            <a th:unless="${#authorization.expression('isAuthenticated()')}" th:href="@{/login}" class="mobile-account-link">
+                <i class="fas fa-sign-in-alt"></i>
+                Entrar
+            </a>
+        </div>
     </nav>
     <!-- Overlay para cerrar el menú en móvil -->
     <div id="menu-overlay" class="menu-overlay"></div>
@@ -173,6 +184,27 @@
             mainMenu.classList.remove('open');
             overlay.classList.remove('show');
         });
+        
+        // Script para busca com Enter
+        const searchInput = document.getElementById('searchInput');
+        const searchForm = document.getElementById('searchForm');
+        
+        if (searchInput && searchForm) {
+            searchInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        searchForm.submit();
+                    }
+                }
+            });
+            
+            // Focar no input de busca quando a página carrega (apenas em desktop)
+            if (window.innerWidth > 768) {
+                searchInput.focus();
+            }
+        }
     });
     </script>
 </div>

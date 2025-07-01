@@ -1131,6 +1131,27 @@ footer {
     padding: 10px 15px;
     font-size: 13px;
   }
+  
+  .search-bar input {
+    width: 250px;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 20px;
+  }
+  
+  .search-bar input::placeholder {
+    font-size: 13px;
+    color: #999;
+  }
+  
+  .search-bar input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(243, 111, 33, 0.2);
+  }
+  
+  .search-bar button {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1372,102 +1393,152 @@ footer {
 .menu-overlay.show {
   display: block;
 }
+
+/* Links de conta - Desktop only */
+.desktop-only {
+  display: block;
+}
+
+/* Links de conta - Mobile only */
+.mobile-account-links {
+  display: none;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.mobile-account-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.mobile-account-link:hover {
+  background-color: #f8f9fa;
+  color: #f36f21;
+}
+
+.mobile-account-link i {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
 @media (max-width: 991px) {
   .main-menu {
     position: fixed;
-    top: 64px;
-    left: 0;
+    top: 0;
+    left: -100vw;
     width: 100vw;
-    height: calc(100vh - 64px);
-    background: white !important;
+    max-width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    background: #fff;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 0;
-    box-shadow: none;
-    z-index: 1202;
-    border: none !important;
-    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-    transform: translateX(-100%);
-    display: flex;
+    padding: 3.5rem 0 2rem 0;
+    box-sizing: border-box;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
   }
   .main-menu.open {
-    transform: translateX(0);
-    background: white !important;
+    left: 0;
   }
   .main-menu.open .menu-items a {
-    color: #111 !important;
+    opacity: 1;
+    transform: translateX(0);
   }
   .main-menu.open ~ .menu-overlay {
-    display: block;
-    background: #fff !important;
     opacity: 1;
+    visibility: visible;
   }
   .menu-items {
     flex-direction: column;
-    gap: 0;
+    gap: 1.5rem;
     width: 100%;
-    margin-top: 0;
+    align-items: flex-start;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
   }
   .menu-items a {
-    padding: 24px 32px;
-    border-bottom: 1px solid #f3f3f3;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid #eee;
+    font-size: 18px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
     width: 100%;
-    font-size: 22px;
-    color: #111 !important;
-    background: none;
+    box-sizing: border-box;
     text-align: left;
   }
   .menu-items .submenu {
     position: static;
-    background: #f8f9fa;
-    border: none;
-    box-shadow: none;
-    min-width: 0;
-    padding-left: 24px;
     display: none;
+    box-shadow: none;
+    border: none;
+    background: #f8f9fa;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
   }
   .menu-items a:active .submenu,
   .menu-items a:focus .submenu {
     display: block;
   }
   .menu-offers {
+    margin-top: 2rem;
     width: 100%;
-    padding: 24px 32px;
-    margin-top: auto;
   }
   .offers-link-btn {
-    background: #f36f21;
-    color: #fff;
-    border-radius: 8px;
-    font-size: 20px;
-    width: 100%;
-    padding: 18px 0;
-    text-align: center;
-    display: block;
-    margin: 0 auto;
+    padding: 0.7rem 0.8rem;
+    font-size: 15px;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .menu-overlay {
+  
+  /* Mostrar links de conta no mobile */
+  .mobile-account-links {
+    display: block;
+    margin-top: 2.5rem;
+  }
+  
+  /* Esconder links de conta no desktop */
+  .desktop-only {
     display: none;
   }
+  
+  .menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
   .top-header {
-    padding: 0 12px;
-    height: 64px;
-    z-index: 1300;
-    position: relative;
+    padding: 0 16px;
   }
   .logo-header img {
     height: 60px;
-    margin-top: 0;
+    margin-top: 15px;
   }
   .search-bar input {
-    width: 100px;
-    font-size: 14px;
-    padding: 6px 10px;
+    width: 300px;
   }
   .search-bar button {
-    padding: 6px 10px;
-    font-size: 14px;
+    display: none;
   }
 }
 @media (max-width: 991px) {
@@ -1708,6 +1779,22 @@ footer {
     margin-left: 4px;
     opacity: 0.8;
   }
+  
+  /* Busca mobile otimizada */
+  .search-bar input {
+    width: 180px;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 18px;
+  }
+  
+  .search-bar input::placeholder {
+    font-size: 11px;
+  }
+  
+  .search-bar button {
+    display: none;
+  }
 }
 
 @media (max-width: 407px) {
@@ -1716,11 +1803,23 @@ footer {
     padding: 0 4px;
   }
   .logo-header img {
-    height: 36px;
-    margin-top: 0;
+    height: 50px;
+    margin-top: 10px;
   }
   .search-bar {
     margin-right: 4px;
+  }
+  .search-bar input {
+    width: 150px;
+    font-size: 11px;
+    padding: 5px 8px;
+    border-radius: 16px;
+  }
+  .search-bar input::placeholder {
+    font-size: 10px;
+  }
+  .search-bar button {
+    display: none;
   }
   .header-actions {
     gap: 6px;
@@ -1789,12 +1888,566 @@ footer {
   }
 }
 
-@media (max-width: 399px) {
+/* Regra geral para esconder botão de busca em mobile */
+@media (max-width: 991px) {
   .search-bar button {
     display: none !important;
   }
-  .search-bar input {
-    width: 100% !important;
-    min-width: 0;
+}
+
+/* ===== ESTILOS PARA PÁGINAS DE LOGIN E REGISTRO ===== */
+
+/* Estilos gerais para cards de login/registro */
+.login-card,
+.register-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover,
+.register-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.login-card .card-header,
+.register-card .card-header {
+  background: linear-gradient(135deg, #f36f21, #e55a1b);
+  color: white;
+  border-radius: 12px 12px 0 0 !important;
+  border: none;
+  padding: 1.5rem;
+}
+
+.login-card .card-header h3,
+.register-card .card-header h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.login-card .card-body,
+.register-card .card-body {
+  padding: 2rem;
+}
+
+/* Estilos para formulários */
+.form-label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #f36f21;
+  box-shadow: 0 0 0 0.2rem rgba(243, 111, 33, 0.25);
+}
+
+/* Botões personalizados */
+.login-btn,
+.register-btn {
+  background: linear-gradient(135deg, #f36f21, #e55a1b);
+  border: none;
+  border-radius: 8px;
+  padding: 0.875rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover,
+.register-btn:hover {
+  background: linear-gradient(135deg, #e55a1b, #d44a0a);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(243, 111, 33, 0.3);
+}
+
+/* Links personalizados */
+.register-link,
+.login-link {
+  color: #f36f21;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.register-link:hover,
+.login-link:hover {
+  color: #e55a1b;
+  text-decoration: underline;
+}
+
+/* Alertas personalizados */
+.alert {
+  border-radius: 8px;
+  border: none;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+  color: #721c24;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+}
+
+/* ===== RESPONSIVO PARA LOGIN E REGISTRO ===== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .login-card .card-body,
+  .register-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .login-card .card-header,
+  .register-card .card-header {
+    padding: 1.25rem;
+  }
+  
+  .login-card .card-header h3,
+  .register-card .card-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .form-control {
+    padding: 0.875rem 1rem;
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+  
+  .login-btn,
+  .register-btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  /* Ajuste para campos de nome e sobrenome no registro */
+  .register-card .row .col-md-6 {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+  
+  .login-card .card-body,
+  .register-card .card-body {
+    padding: 1.25rem;
+  }
+  
+  .login-card .card-header,
+  .register-card .card-header {
+    padding: 1rem;
+  }
+  
+  .login-card .card-header h3,
+  .register-card .card-header h3 {
+    font-size: 1.125rem;
+  }
+  
+  .form-label {
+    font-size: 0.9rem;
+  }
+  
+  .form-control {
+    padding: 0.75rem 0.875rem;
+    font-size: 16px;
+  }
+  
+  .login-btn,
+  .register-btn {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Ajuste para campos de nome e sobrenome no registro */
+  .register-card .row .col-md-6 {
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Melhorar layout dos campos nome/sobrenome em mobile */
+  .register-card .row .col-12.col-md-6 {
+    margin-bottom: 1rem;
+  }
+  
+  /* Melhor espaçamento para telas pequenas */
+  .mb-3 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem !important;
+  }
+  
+  /* Melhorar espaçamento entre campos em mobile */
+  .register-card .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  /* Ajuste para campos de entrada em mobile */
+  .register-card .form-control {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .login-card .card-body,
+  .register-card .card-body {
+    padding: 1rem;
+  }
+  
+  .login-card .card-header,
+  .register-card .card-header {
+    padding: 0.875rem;
+  }
+  
+  .login-card .card-header h3,
+  .register-card .card-header h3 {
+    font-size: 1rem;
+  }
+  
+  .form-label {
+    font-size: 0.85rem;
+  }
+  
+  .form-control {
+    padding: 0.625rem 0.75rem;
+    font-size: 16px;
+  }
+  
+  .login-btn,
+  .register-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Ajuste para campos de nome e sobrenome no registro */
+  .register-card .row .col-md-6 {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Melhor espaçamento para telas muito pequenas */
+  .mb-3 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .mt-3 {
+    margin-top: 0.75rem !important;
+  }
+  
+  /* Ajuste para alertas em telas pequenas */
+  .alert {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== MELHORIAS ESPECÍFICAS PARA TABLETS ===== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .login-card .card-body,
+  .register-card .card-body {
+    padding: 2.5rem;
+  }
+  
+  .login-card .card-header,
+  .register-card .card-header {
+    padding: 2rem;
+  }
+  
+  .login-card .card-header h3,
+  .register-card .card-header h3 {
+    font-size: 1.75rem;
+  }
+  
+  .form-control {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+  }
+  
+  .login-btn,
+  .register-btn {
+    padding: 1.125rem 2rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* ===== ANIMAÇÕES E EFEITOS ===== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card,
+.register-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Efeito de loading para botões */
+.login-btn:active,
+.register-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(243, 111, 33, 0.2);
+}
+
+/* Melhoria na acessibilidade */
+.form-control:focus,
+.login-btn:focus,
+.register-btn:focus {
+  outline: none;
+}
+
+/* Estilo para campos com erro */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Estilo para campos válidos */
+.form-control.is-valid {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* ===== MELHORIAS ADICIONAIS PARA MOBILE ===== */
+
+@media (max-width: 480px) {
+  /* Melhorar contraste e legibilidade em telas pequenas */
+  .form-label {
+    font-weight: 600;
+    color: #222;
+  }
+  
+  /* Ajuste para botões em telas muito pequenas */
+  .login-btn,
+  .register-btn {
+    min-height: 44px; /* Melhora a acessibilidade touch */
+  }
+  
+  /* Melhorar espaçamento entre campos em mobile */
+  .register-card .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  /* Ajuste para campos de entrada em mobile */
+  .register-card .form-control {
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* ===== CORREÇÃO PARA BARRAS VERTICAIS EM MOBILE ===== */
+@media (max-width: 991px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Garantir que o carousel não cause overflow horizontal */
+  .carousel-slide {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carousel-slide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Garantir que o menu hambúrguer não cause overflow */
+  .main-menu {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .menu-overlay {
+    overflow: hidden;
+  }
+  
+  /* Garantir que o header não cause overflow */
+  .top-header {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Correções adicionais para telas menores */
+  .carousel-slide {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carousel-slide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Garantir que o menu hambúrguer funcione corretamente */
+  .main-menu {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .main-menu.open {
+    overflow-x: hidden;
+  }
+  
+  .menu-overlay {
+    overflow: hidden;
+  }
+  
+  .menu-overlay.show {
+    overflow: hidden;
+  }
+  
+  /* Garantir que o header não cause overflow */
+  .top-header {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 576px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Correções finais para telas muito pequenas */
+  .carousel-slide {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carousel-slide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Garantir que o menu hambúrguer não cause overflow */
+  .main-menu {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .main-menu.open {
+    overflow-x: hidden;
+  }
+  
+  .menu-overlay {
+    overflow: hidden;
+  }
+  
+  .menu-overlay.show {
+    overflow: hidden;
+  }
+  
+  /* Garantir que o header não cause overflow */
+  .top-header {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Correções finais para telas muito pequenas */
+  .carousel-slide {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .carousel-slide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Garantir que o menu hambúrguer não cause overflow */
+  .main-menu {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .main-menu.open {
+    overflow-x: hidden;
+  }
+  
+  .menu-overlay {
+    overflow: hidden;
+  }
+  
+  .menu-overlay.show {
+    overflow: hidden;
+  }
+  
+  /* Garantir que o header não cause overflow */
+  .top-header {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 991px) {
+  .offers-link-btn {
+    padding: 0.7rem 0.8rem;
+    font-size: 15px;
+    min-height: 38px;
+  }
+}
+
+@media (max-width: 576px) {
+  .offers-link-btn {
+    padding: 0.5rem 0.6rem;
+    font-size: 14px;
+    min-height: 34px;
   }
 } 

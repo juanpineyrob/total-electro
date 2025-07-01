@@ -75,25 +75,27 @@ public class  SecurityConfig {
                         new AntPathRequestMatcher("/cart/save-shipping"), // Endpoint para salvar frete
                         new AntPathRequestMatcher("/cart/clear-shipping"), // Endpoint para limpar frete
                         new AntPathRequestMatcher("/cart/test-clear"), // Endpoint de teste
-                        new AntPathRequestMatcher("/cart/test-shipping/**") // Endpoint de teste de frete
+                        new AntPathRequestMatcher("/cart/test-shipping/**"), // Endpoint de teste de frete
+                        new AntPathRequestMatcher("/offers") // Página de ofertas
                     ).permitAll()
                     // Rutas que requieren autenticación
                     .requestMatchers(
+                        new AntPathRequestMatcher("/cart"),
                         new AntPathRequestMatcher("/cart/add"),
                         new AntPathRequestMatcher("/cart/update"),
                         new AntPathRequestMatcher("/cart/remove"),
                         new AntPathRequestMatcher("/cart/clear"),
                         new AntPathRequestMatcher("/cart/apply-coupon"),
                         new AntPathRequestMatcher("/cart/api/apply-coupon"),
+                        new AntPathRequestMatcher("/cart/api/items"),
                         new AntPathRequestMatcher("/cart/checkout"),
+                        new AntPathRequestMatcher("/checkout/cart"),
                         new AntPathRequestMatcher("/profile/**"),
                         new AntPathRequestMatcher("/orders/**"),
                         new AntPathRequestMatcher("/api/reviews/**")
                     ).authenticated()
                     // Rutas de administración
-                    .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
-                    // Cualquier otra ruta requiere autenticación
-                    .anyRequest().authenticated();
+                    .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN");
 
                 // Agregar logging para depuración
                 logger.info("Rutas públicas configuradas:");
@@ -127,9 +129,15 @@ public class  SecurityConfig {
             .exceptionHandling(exception -> {
                 exception
                     .authenticationEntryPoint((request, response, authException) -> {
-                        if (request.getRequestURI().startsWith("/profile")) {
+                        // Só redirecionar para login se a requisição for para uma rota protegida
+                        String requestURI = request.getRequestURI();
+                        if (requestURI.startsWith("/profile") || 
+                            requestURI.startsWith("/cart") ||
+                            requestURI.startsWith("/orders/") ||
+                            requestURI.startsWith("/admin/")) {
                             response.sendRedirect("/login");
                         } else {
+                            // Para outras rotas, permitir acesso sem redirecionamento
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                         }
                     });
@@ -150,10 +158,8 @@ public class  SecurityConfig {
                 session
                     .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                     .maximumSessions(1)
-                    .expiredUrl("/login?expired=true")
                     .maxSessionsPreventsLogin(false)
                     .and()
-                    .invalidSessionUrl("/login?invalid=true")
                     .sessionFixation().newSession()
                     .enableSessionUrlRewriting(false);
                 logger.info("Gestión de sesión configurada");

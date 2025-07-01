@@ -7,8 +7,10 @@ public class CartItemDTO {
     public String productImage;
     public double productPrice;
     public int quantity;
+    public Long productId;
 
     public CartItemDTO(CartItem item) {
+        this.productId = item.getProduct().getId();
         this.productName = item.getProduct().getName();
         String raw = item.getProduct().getImageUrl();
         if (raw != null && raw.contains("/")) {

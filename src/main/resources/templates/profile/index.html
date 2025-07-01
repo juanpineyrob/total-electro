@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Perfil - Total Electro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -324,6 +325,533 @@
             color: #f36f21;
             min-width: 110px;
             display: inline-block;
+        }
+        
+        /* ===== ESTILOS RESPONSIVOS PARA MOBILE ===== */
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 1rem auto;
+                padding: 1rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .profile-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            
+            .profile-welcome h2 {
+                font-size: 1.5rem;
+            }
+            
+            .profile-welcome p {
+                font-size: 0.9rem;
+            }
+            
+            .tab-nav {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            
+            .tab-nav-link {
+                width: 100%;
+                text-align: left;
+                padding: 1rem 1.25rem;
+                border-bottom: 1px solid #e0e0e0;
+                border-radius: 0;
+                min-width: auto;
+            }
+            
+            .tab-nav-link.active {
+                border-bottom: 3px solid #f36f21;
+                background-color: #fff;
+            }
+            
+            .tab-content {
+                padding: 1.5rem;
+            }
+            
+            .info-group {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .info-group dt {
+                font-size: 0.9rem;
+                margin-top: 0.75rem;
+            }
+            
+            .info-group dd {
+                font-size: 1rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .profile-edit-form {
+                padding: 1.5rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+            
+            .form-control {
+                padding: 0.875rem 1rem;
+                font-size: 16px; /* Evita zoom no iOS */
+            }
+            
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                width: 100%;
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Ajuste para botões em linha */
+            .form-group + div[style*="flex"] {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .order-history-wrapper {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .order-table.professional {
+                font-size: 0.85rem;
+            }
+            
+            .order-table.professional th,
+            .order-table.professional td {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .btn-details {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .status-badge {
+                font-size: 0.8rem;
+                padding: 0.3em 0.8em;
+            }
+            
+            .modal-content {
+                padding: 2rem 1.5rem 1.5rem 1.5rem;
+                margin: 1rem;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .order-details-list li {
+                font-size: 0.95rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .order-details-list strong {
+                min-width: 90px;
+                font-size: 0.9rem;
+            }
+            
+            /* Estilo específico para o botão Sair em mobile */
+            .tab-nav form {
+                width: 100%;
+            }
+            
+            .tab-nav form .tab-nav-link {
+                width: 100%;
+                text-align: left;
+                color: #d9534f !important;
+                border-top: 1px solid #e0e0e0;
+                margin-top: 0.5rem;
+            }
+            
+            .tab-nav form .tab-nav-link:hover {
+                background-color: rgba(217, 83, 79, 0.1);
+                color: #c9302c !important;
+            }
+            
+            /* Melhorar experiência de toque */
+            .tab-nav-link,
+            .btn-primary-custom,
+            .btn-secondary-custom,
+            .btn-details {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            /* Melhorar feedback visual para toque */
+            .tab-nav-link:active,
+            .btn-primary-custom:active,
+            .btn-secondary-custom:active,
+            .btn-details:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            /* Melhorar contraste e legibilidade */
+            .info-group dt {
+                color: #222;
+                font-weight: 700;
+            }
+            
+            .info-group dd {
+                color: #333;
+                font-weight: 500;
+            }
+            
+            /* Melhorar espaçamento para leitura */
+            .tab-content h3 {
+                font-size: 1.25rem;
+                margin-bottom: 1.5rem;
+                color: #222;
+                font-weight: 600;
+            }
+            
+            /* Melhorar formulários em mobile */
+            .form-group label {
+                font-weight: 600;
+                color: #222;
+                margin-bottom: 0.5rem;
+            }
+            
+            .form-control:focus {
+                border-color: #f36f21;
+                box-shadow: 0 0 0 0.2rem rgba(243, 111, 33, 0.25);
+            }
+            
+            /* Melhorar tabela de pedidos em mobile */
+            .order-table.professional {
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .order-table.professional thead {
+                background: #f8f9fa;
+            }
+            
+            .order-table.professional th {
+                font-weight: 700;
+                color: #222;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+            }
+            
+            .order-table.professional tbody tr:nth-child(even) {
+                background-color: #f8f9fa;
+            }
+            
+            .order-table.professional tbody tr:hover {
+                background-color: #e9ecef;
+            }
+            
+            /* Melhorar modal em mobile */
+            .modal-overlay {
+                padding: 1rem;
+                align-items: flex-start;
+                padding-top: 2rem;
+            }
+            
+            .modal-content {
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .profile-container {
+                margin: 0.5rem auto;
+                padding: 0.75rem;
+            }
+            
+            .profile-header {
+                padding: 1.25rem;
+                gap: 0.75rem;
+            }
+            
+            .profile-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 1.75rem;
+            }
+            
+            .profile-welcome h2 {
+                font-size: 1.25rem;
+            }
+            
+            .profile-welcome p {
+                font-size: 0.85rem;
+            }
+            
+            .tab-nav-link {
+                padding: 0.875rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .tab-content {
+                padding: 1.25rem;
+            }
+            
+            .info-group {
+                padding: 1.25rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            .info-group dt {
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+            }
+            
+            .info-group dd {
+                font-size: 0.9rem;
+            }
+            
+            .profile-edit-form {
+                padding: 1.25rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-control {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+            
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.9rem;
+            }
+            
+            .order-history-wrapper {
+                padding: 1.25rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            .order-table.professional {
+                font-size: 0.8rem;
+            }
+            
+            .order-table.professional th,
+            .order-table.professional td {
+                padding: 0.5rem 0.25rem;
+            }
+            
+            .btn-details {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .status-badge {
+                font-size: 0.75rem;
+                padding: 0.25em 0.6em;
+            }
+            
+            .modal-content {
+                padding: 1.5rem 1.25rem 1.25rem 1.25rem;
+                margin: 0.5rem;
+            }
+            
+            .order-details-list li {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .order-details-list strong {
+                min-width: 80px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-container {
+                margin: 0.25rem auto;
+                padding: 0.5rem;
+            }
+            
+            .profile-header {
+                padding: 1rem;
+                gap: 0.5rem;
+            }
+            
+            .profile-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .profile-welcome h2 {
+                font-size: 1.125rem;
+            }
+            
+            .profile-welcome p {
+                font-size: 0.8rem;
+            }
+            
+            .tab-nav-link {
+                padding: 0.75rem 0.875rem;
+                font-size: 0.85rem;
+            }
+            
+            .tab-content {
+                padding: 1rem;
+            }
+            
+            .info-group {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .info-group dt {
+                font-size: 0.8rem;
+                margin-top: 0.5rem;
+            }
+            
+            .info-group dd {
+                font-size: 0.85rem;
+            }
+            
+            .profile-edit-form {
+                padding: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 0.875rem;
+            }
+            
+            .form-control {
+                padding: 0.625rem 0.75rem;
+                font-size: 16px;
+            }
+            
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+                min-height: 44px; /* Melhora a acessibilidade touch */
+            }
+            
+            .order-history-wrapper {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .order-table.professional {
+                font-size: 0.75rem;
+            }
+            
+            .order-table.professional th,
+            .order-table.professional td {
+                padding: 0.4rem 0.2rem;
+            }
+            
+            .btn-details {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+                min-height: 36px;
+            }
+            
+            .status-badge {
+                font-size: 0.7rem;
+                padding: 0.2em 0.5em;
+            }
+            
+            .modal-content {
+                padding: 1.25rem 1rem 1rem 1rem;
+                margin: 0.25rem;
+            }
+            
+            .order-details-list li {
+                font-size: 0.85rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .order-details-list strong {
+                min-width: 70px;
+                font-size: 0.8rem;
+            }
+            
+            /* Melhorar legibilidade em telas muito pequenas */
+            .form-label {
+                font-weight: 600;
+                color: #222;
+                font-size: 0.85rem;
+            }
+            
+            /* Ajuste para tabelas em telas muito pequenas */
+            .order-table.professional {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .order-table.professional th,
+            .order-table.professional td {
+                white-space: nowrap;
+                min-width: 80px;
+            }
+        }
+        
+        /* ===== MELHORIAS ESPECÍFICAS PARA TABLETS ===== */
+        
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .profile-container {
+                margin: 1.5rem auto;
+                padding: 1.5rem;
+            }
+            
+            .profile-header {
+                padding: 2.5rem;
+            }
+            
+            .profile-avatar {
+                width: 90px;
+                height: 90px;
+                font-size: 2.75rem;
+            }
+            
+            .profile-welcome h2 {
+                font-size: 2rem;
+            }
+            
+            .profile-welcome p {
+                font-size: 1.1rem;
+            }
+            
+            .tab-content {
+                padding: 2.5rem;
+            }
+            
+            .info-group {
+                padding: 2.5rem;
+            }
+            
+            .profile-edit-form {
+                padding: 2.5rem;
+            }
+            
+            .form-control {
+                padding: 1rem 1.25rem;
+                font-size: 1.1rem;
+            }
+            
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                padding: 1.125rem 2rem;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
