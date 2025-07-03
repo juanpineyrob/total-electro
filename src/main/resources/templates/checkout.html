@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Finalizar Compra - Total Electro</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -416,6 +418,19 @@
     <th:block th:insert="~{fragments/header :: header}"></th:block>
 
     <div class="checkout-container">
+        <!-- Mensagens de erro/sucesso -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
         <!-- Header -->
         <div class="checkout-header">
             <div class="header-content">
@@ -433,7 +448,9 @@
             <div class="checkout-grid">
             <!-- Formulário de Checkout -->
             <div class="checkout-form">
-                <form id="checkout-form" th:action="${isCartCheckout ? '/checkout/process-cart' : '/checkout/process'}" method="post">
+                <form id="checkout-form" action="/" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" name="action" value="process-cart"/>
                         <!-- Dados Pessoais -->
                         <div class="form-section">
                         <h2 class="section-title">
@@ -499,19 +516,20 @@
                             <div class="form-grid">
                             <div class="form-group full-width">
                                 <label class="form-label">Número do Cartão</label>
-                                <input type="text" name="cardNumber" id="cardNumber" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19">
+                                <input type="text" name="cardNumber" id="cardNumber" class="form-input" required placeholder="0000 0000 0000 0000" maxlength="19" pattern="[0-9\s]{13,19}" title="Digite apenas números do cartão (13-19 dígitos)">
+                                <div id="cardNumberError" class="text-danger mt-1" style="display: none; font-size: 12px;"></div>
                                 </div>
                                 <div class="form-group">
                                 <label class="form-label">Nome no Cartão</label>
-                                <input type="text" name="cardName" class="form-input" placeholder="NOME COMO ESTÁ NO CARTÃO">
+                                <input type="text" name="cardName" class="form-input" required placeholder="NOME COMO ESTÁ NO CARTÃO">
                                 </div>
                                 <div class="form-group">
                                 <label class="form-label">Data de Validade</label>
-                                <input type="text" name="expiryDate" id="expiryDate" class="form-input" placeholder="MM/AA" maxlength="5">
+                                <input type="text" name="expiryDate" id="expiryDate" class="form-input" required placeholder="MM/AA" maxlength="5">
                                 </div>
                                 <div class="form-group">
                                 <label class="form-label">CVV</label>
-                                <input type="text" name="cvv" id="cvv" class="form-input" placeholder="123" maxlength="4">
+                                <input type="text" name="cvv" id="cvv" class="form-input" required placeholder="123" maxlength="4">
                                 </div>
                             </div>
                         </div>
@@ -582,7 +600,7 @@
                             <span id="shippingErrorMessage"></span>
                         </div>
                     </div>
-                    <button class="btn btn-success w-100 mt-3" id="btnFinalizarCompra" type="submit" form="checkout-form">
+                    <button class="btn btn-success w-100 mt-3" id="btnFinalizarCompra" type="submit" form="checkout-form" disabled style="opacity: 0.6; cursor: not-allowed;">
                         <i class="fas fa-lock me-1"></i> Finalizar Compra
                     </button>
                 </div>
@@ -760,6 +778,138 @@
                     }
                 });
             }
+
+        // Validação do número do cartão
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            let formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaços a cada 4 dígitos
+            
+            // Limita a 16 dígitos
+            if (value.length > 16) {
+                value = value.substring(0, 16);
+                formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            }
+            
+            e.target.value = formattedValue;
+            
+            // Validação e exibição de erro
+            const errorDiv = document.getElementById('cardNumberError');
+            if (value.length > 0 && value.length !== 16) {
+                errorDiv.textContent = 'O número do cartão deve ter exatamente 16 dígitos';
+                errorDiv.style.display = 'block';
+                e.target.style.borderColor = '#dc3545';
+            } else {
+                errorDiv.style.display = 'none';
+                e.target.style.borderColor = '#ddd';
+            }
+            
+            validateForm();
+        });
+
+        // Validação da data de validade
+        document.getElementById('expiryDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            // Formatar como MM/AA
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            
+            e.target.value = value;
+            
+            // Validação
+            if (value.length > 0) {
+                const parts = value.split('/');
+                if (parts.length === 2) {
+                    const month = parseInt(parts[0]);
+                    const year = parseInt(parts[1]);
+                    
+                    if (month < 1 || month > 12) {
+                        e.target.style.borderColor = '#dc3545';
+                    } else {
+                        e.target.style.borderColor = '#ddd';
+                    }
+                }
+            }
+            
+            validateForm();
+        });
+
+        // Validação do CVV
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            // Limita a 3-4 dígitos
+            if (value.length > 4) {
+                value = value.substring(0, 4);
+            }
+            
+            e.target.value = value;
+            
+            // Validação
+            if (value.length > 0 && (value.length < 3 || value.length > 4)) {
+                e.target.style.borderColor = '#dc3545';
+            } else {
+                e.target.style.borderColor = '#ddd';
+            }
+            
+            validateForm();
+        });
+
+        // Validação de todos os campos obrigatórios
+        function validateForm() {
+            const firstName = document.querySelector('input[name="firstName"]').value.trim();
+            const lastName = document.querySelector('input[name="lastName"]').value.trim();
+            const email = document.querySelector('input[name="email"]').value.trim();
+            const phone = document.querySelector('input[name="phone"]').value.trim();
+            const address = document.querySelector('input[name="address"]').value.trim();
+            const city = document.querySelector('input[name="city"]').value.trim();
+            const state = document.querySelector('input[name="state"]').value.trim();
+            const zipCode = document.querySelector('input[name="zipCode"]').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\D/g, '');
+            const cardName = document.querySelector('input[name="cardName"]').value.trim();
+            const expiryDate = document.getElementById('expiryDate').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+            
+            // Validar email
+            const emailValid = email && email.match(/^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/);
+            
+            // Validar CEP
+            const zipCodeValid = zipCode && zipCode.match(/^\d{5}-?\d{3}$/);
+            
+            // Validar data de validade
+            const expiryDateValid = expiryDate && expiryDate.match(/^(0[1-9]|1[0-2])\/\d{2}$/);
+            
+            // Validar CVV
+            const cvvValid = cvv && cvv.match(/^\d{3,4}$/);
+            
+            // Verificar se todos os campos estão preenchidos e válidos
+            const isFormValid = firstName && lastName && emailValid && phone && 
+                               address && city && state && zipCodeValid && 
+                               cardNumber.length === 16 && cardName && 
+                               expiryDateValid && cvvValid;
+            
+            // Habilitar/desabilitar botão
+            const submitButton = document.getElementById('btnFinalizarCompra');
+            if (isFormValid) {
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+            } else {
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.6';
+                submitButton.style.cursor = 'not-allowed';
+            }
+        }
+
+        // Adicionar validação em tempo real para todos os campos
+        document.querySelectorAll('input[required]').forEach(input => {
+            input.addEventListener('input', validateForm);
+            input.addEventListener('blur', validateForm);
+        });
+
+        // Formulário será enviado diretamente para o index
+        console.log('Checkout carregado - formulário configurado para ir direto para index');
 
         document.addEventListener('DOMContentLoaded', function() {
             fetch('/cart/api/items')
