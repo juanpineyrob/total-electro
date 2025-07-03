@@ -26,7 +26,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 3. Presione Enter
 
 #### Paso 2: Página Principal
-- **Captura de Pantalla**: `docs/screenshots/01-homepage.png`
+- **Captura de Pantalla**: ![Página Principal](screenshots/01-homepage.png)
 - La página principal muestra:
   - Logo de Total Electro
   - Menú de navegación
@@ -38,7 +38,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 
 #### Paso 1: Acceder al Registro
 1. En la página principal, haga clic en "Registrarse" en el menú superior
-2. **Captura de Pantalla**: `docs/screenshots/02-register-page.png`
+2. **Captura de Pantalla**: ![Página de Registro](screenshots/02-register-page.png)
 
 #### Paso 2: Completar Formulario
 1. Complete todos los campos obligatorios:
@@ -50,18 +50,18 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - **Dirección**: Su dirección completa
    - **Teléfono**: Su número de teléfono
 
-2. **Captura de Pantalla**: `docs/screenshots/03-register-form.png`
+2. **Captura de Pantalla**: ![Formulario de Registro](screenshots/03-register-form.png)
 
 #### Paso 3: Confirmar Registro
 1. Haga clic en el botón "Registrarse"
 2. Si todos los datos son correctos, será redirigido a la página principal
-3. **Captura de Pantalla**: `docs/screenshots/04-register-success.png`
+3. **Captura de Pantalla**: ![Registro Exitoso](screenshots/04-register-success.png)
 
 ### 2.3 Inicio de Sesión
 
 #### Paso 1: Acceder al Login
 1. En la página principal, haga clic en "Iniciar Sesión" en el menú superior
-2. **Captura de Pantalla**: `docs/screenshots/05-login-page.png`
+2. **Captura de Pantalla**: ![Página de Login](screenshots/05-login-page.png)
 
 #### Paso 2: Ingresar Credenciales
 1. Ingrese su email registrado
@@ -71,7 +71,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 #### Paso 3: Verificar Acceso
 1. Si las credenciales son correctas, será redirigido a la página principal
 2. Verá su nombre en el menú superior
-3. **Captura de Pantalla**: `docs/screenshots/06-login-success.png`
+3. **Captura de Pantalla**: ![Login Exitoso](screenshots/06-login-success.png)
 
 ## 3. Navegación y Búsqueda
 
@@ -85,12 +85,12 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Automatización y Domótica
    - Seguridad Eléctrica
 
-2. **Captura de Pantalla**: `docs/screenshots/07-categories.png`
+2. **Captura de Pantalla**: ![Categorías](screenshots/07-categories.png)
 
 #### Paso 2: Seleccionar Categoría
 1. Haga clic en la categoría que le interese
 2. Se mostrarán todos los productos de esa categoría
-3. **Captura de Pantalla**: `docs/screenshots/08-category-products.png`
+3. **Captura de Pantalla**: ![Productos por Categoría](screenshots/08-category-products.png)
 
 ### 3.2 Búsqueda de Productos
 
@@ -105,7 +105,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - **Categorías**: Marque las categorías que le interesen
    - **Ordenar por**: Seleccione el criterio de ordenamiento
 
-2. **Captura de Pantalla**: `docs/screenshots/09-search-filters.png`
+2. **Captura de Pantalla**: ![Filtros de Búsqueda](screenshots/09-search-filters.png)
 
 ## 4. Gestión de Productos
 
@@ -123,7 +123,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Dimensiones
    - Imagen del producto
 
-2. **Captura de Pantalla**: `docs/screenshots/10-product-details.png`
+2. **Captura de Pantalla**: ![Detalles del Producto](screenshots/10-product-details.png)
 
 #### Paso 3: Ver Preguntas y Reseñas
 1. Desplácese hacia abajo para ver:
@@ -131,7 +131,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Reseñas de otros clientes
    - Calificaciones promedio
 
-2. **Captura de Pantalla**: `docs/screenshots/11-product-reviews.png`
+2. **Captura de Pantalla**: ![Reseñas del Producto](screenshots/11-product-reviews.png)
 
 ### 4.2 Hacer Preguntas sobre Productos
 
@@ -142,7 +142,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 #### Paso 2: Escribir Pregunta
 1. En el campo de texto, escriba su pregunta
 2. Haga clic en "Enviar pregunta"
-3. **Captura de Pantalla**: `docs/screenshots/12-ask-question.png`
+3. **Captura de Pantalla**: ![Hacer Pregunta](screenshots/12-ask-question.png)
 
 ### 4.3 Agregar Productos al Carrito
 
@@ -153,7 +153,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 #### Paso 2: Confirmar Agregado
 1. Aparecerá un mensaje confirmando que el producto fue agregado
 2. El contador del carrito en el menú superior se actualizará
-3. **Captura de Pantalla**: `docs/screenshots/13-add-to-cart.png`
+3. **Captura de Pantalla**: ![Agregar al Carrito](screenshots/13-add-to-cart.png)
 
 ## 5. Gestión del Carrito
 
@@ -171,7 +171,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Eliminar producto
    - Ver subtotal
 
-3. **Captura de Pantalla**: `docs/screenshots/14-cart-view.png`
+3. **Captura de Pantalla**: ![Vista del Carrito](screenshots/14-cart-view.png)
 
 ### 5.2 Modificar Carrito
 
@@ -199,7 +199,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Tiempo estimado de entrega
    - Dirección de origen y destino
 
-2. **Captura de Pantalla**: `docs/screenshots/15-shipping-calculation.png`
+2. **Captura de Pantalla**: ![Cálculo de Envío](screenshots/15-shipping-calculation.png)
 
 ### 5.4 Aplicar Cupones
 
@@ -211,7 +211,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 #### Paso 2: Verificar Descuento
 1. Si el cupón es válido, se aplicará el descuento
 2. El total se actualizará automáticamente
-3. **Captura de Pantalla**: `docs/screenshots/16-coupon-applied.png`
+3. **Captura de Pantalla**: ![Cupón Aplicado](screenshots/16-coupon-applied.png)
 
 ## 6. Proceso de Checkout
 
@@ -242,7 +242,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - **Estado**: Estado o provincia
    - **CEP**: Código postal
 
-2. **Captura de Pantalla**: `docs/screenshots/17-checkout-form.png`
+2. **Captura de Pantalla**: ![Formulario de Checkout](screenshots/17-checkout-form.png)
 
 ### 6.3 Confirmar Compra
 
@@ -256,7 +256,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 
 #### Paso 2: Confirmar Pedido
 1. Haga clic en "Confirmar Pedido"
-2. **Captura de Pantalla**: `docs/screenshots/18-order-confirmation.png`
+2. **Captura de Pantalla**: ![Confirmación de Pedido](screenshots/18-order-confirmation.png)
 
 ## 7. Gestión de Cuenta
 
@@ -269,7 +269,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 #### Paso 2: Ver Información
 1. Verá toda su información personal
 2. Podrá editar los datos haciendo clic en "Editar"
-3. **Captura de Pantalla**: `docs/screenshots/19-user-profile.png`
+3. **Captura de Pantalla**: ![Perfil de Usuario](screenshots/19-user-profile.png)
 
 ### 7.2 Editar Información Personal
 
@@ -299,7 +299,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Fecha de compra
    - Total pagado
 
-3. **Captura de Pantalla**: `docs/screenshots/20-order-history.png`
+3. **Captura de Pantalla**: ![Historial de Pedidos](screenshots/20-order-history.png)
 
 ## 8. Sistema de Reseñas
 
@@ -316,7 +316,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 3. **Fotos**: Opcionalmente, suba fotos del producto
 4. Haga clic en "Enviar Reseña"
 
-3. **Captura de Pantalla**: `docs/screenshots/21-write-review.png`
+3. **Captura de Pantalla**: ![Escribir Reseña](screenshots/21-write-review.png)
 
 ### 8.2 Ver Reseñas
 
@@ -352,7 +352,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Total de usuarios
    - Ventas del mes actual
 
-2. **Captura de Pantalla**: `docs/screenshots/22-admin-dashboard.png`
+2. **Captura de Pantalla**: ![Dashboard Administrativo](screenshots/22-admin-dashboard.png)
 
 #### Paso 2: Gestionar Pedidos
 1. Haga clic en "Pedidos" para ver todos los pedidos
@@ -361,7 +361,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Cambiar estado (completar/cancelar)
    - Filtrar por estado
 
-3. **Captura de Pantalla**: `docs/screenshots/23-admin-orders.png`
+3. **Captura de Pantalla**: ![Gestión de Pedidos](screenshots/23-admin-orders.png)
 
 ### 9.3 Gestión de Productos
 
@@ -379,7 +379,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Imagen
 3. Haga clic en "Guardar"
 
-4. **Captura de Pantalla**: `docs/screenshots/24-admin-create-product.png`
+4. **Captura de Pantalla**: ![Crear Producto](screenshots/24-admin-create-product.png)
 
 #### Paso 3: Editar Producto
 1. En la lista de productos, haga clic en "Editar"
@@ -399,7 +399,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
    - Historial de pedidos
    - Roles asignados
 
-3. **Captura de Pantalla**: `docs/screenshots/25-admin-user-details.png`
+3. **Captura de Pantalla**: ![Detalles de Usuario](screenshots/25-admin-user-details.png)
 
 #### Paso 3: Editar Usuario
 1. En los detalles del usuario, haga clic en "Editar"
@@ -417,7 +417,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 2. Escriba su respuesta
 3. Haga clic en "Enviar Respuesta"
 
-4. **Captura de Pantalla**: `docs/screenshots/26-admin-answer-question.png`
+4. **Captura de Pantalla**: ![Responder Pregunta](screenshots/26-admin-answer-question.png)
 
 ### 9.6 Generar Reportes
 
@@ -434,7 +434,7 @@ Este manual proporciona instrucciones detalladas para el uso del sistema Total E
 2. Configure los filtros (fechas, etc.)
 3. Haga clic en "Generar PDF"
 
-4. **Captura de Pantalla**: `docs/screenshots/27-admin-reports.png`
+4. **Captura de Pantalla**: ![Generar Reportes](screenshots/27-admin-reports.png)
 
 ## 10. Solución de Problemas
 
